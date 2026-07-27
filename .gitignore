@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+
+# Python (lectures/ai_tooling/008-Spikes has .py scripts)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env/secrets
+.env
