@@ -4,7 +4,9 @@ Within this repo there are two folders.
 
 # lectures
 
-This folder is where I directly copy and paste the lecture notes which I generate inside of my other projects. Each of the sub folders here is a specific project which I have been building and playing around with. 
+This folder is where I directly copy and paste the lecture notes which I generate inside of my other projects. Each of the sub folders here is a specific project which I have been building and playing around with.
+
+Some sub folders here are **knowledge domains** rather than projects (for example `carreer_path`, `firmware`). These hold lectures about a subject area rather than about a specific codebase. If I ask you to teach me a domain that isn't tied to one of my projects, create or use a domain sub folder here rather than putting it in `project_ideas` — `project_ideas` is only for lectures about projects I want to build. Use the same `(Number)-(title).md` naming convention described below.
 
 # project_ideas 
 
@@ -15,4 +17,4 @@ Documents here should be named
 (Number)-(title).md
 001-example_title.md
 
-For these documents, you can refer to my  personal.md to get an understanding of who I am, my goals, and my current strengths / weaknesses.
+For these documents, you can refer to my `persona.md` (in the repo root) to get an understanding of who I am, my goals, and my current strengths / weaknesses.
