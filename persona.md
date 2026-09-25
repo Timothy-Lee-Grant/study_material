@@ -121,6 +121,10 @@ This is now my top priority, above any specific technology. My hypothesis (see A
 * Version control and team workflow
 * Everyday developer fluency: shortcuts, terminal, debugger, IDE navigation, reading logs
 
+## Chosen specialty — the .NET ecosystem
+
+As of Sept 2026 I've realized I really enjoy .NET and want it as my primary backend ecosystem (it also aligns with the Microsoft goal). Domain lectures live in `lectures/dotnet/`, starting with `001-the_dotnet_atlas.md` (a top-down map of the ecosystem plus a hands-on lab) and a roadmap of follow-up lectures (002+). When suggesting implementations for new skills, prefer C#/.NET where reasonable.
+
 ## Then — backend & infrastructure
 
 1. Backend Engineering
