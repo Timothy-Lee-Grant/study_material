@@ -846,4 +846,4 @@ Status claims in this lecture were checked on 2026-09-25 against these sources. 
 
 ---
 
-*End of Lecture 002. Suggested next: pick idea I-1 this weekend, and keep Lecture 001's lab going in parallel. The planned "Generic Host & DI, in depth" lecture moves to 003.*
+*End of Lecture 002. Suggested next: pick idea I-1 this weekend, and keep Lecture 001's lab going in parallel. The planned "Generic Host & DI, in depth" lecture is now 004 (003 became "Seeing Design").*

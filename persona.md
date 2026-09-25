@@ -42,6 +42,10 @@ Rough shape of the system (as I understand it):
 | Audit log | Separate component the main process talks to over **gRPC** | Essentially unfamiliar |
 | Build / deploy | (1) A PowerShell script builds a Docker "emulator" container shaped like the Pi's filesystem, drops in compiled DLLs, and runs each entry point as a **systemd** unit; (2) the official release is an **Azure DevOps pipeline** that runs unit + integration tests and produces a flashable **OS image** for the Pi | Used the emulator; learned what pipelines/agents are |
 
+### Status update (late Sept 2026)
+
+The loan to the software team is expected to **end within weeks**. The plan for using the remaining time, continuing to grow through open source afterward, and pursuing Microsoft is in `lectures/carreer_path/003-maximizing-learning-rate-and-the-microsoft-path.md`. The design skills I'm targeting next (junior → mid-level) are in `lectures/dotnet/003-seeing_design.md`. Note: AZ-204 was retired on July 31, 2026. The Azure developer certification path is now **AI-200 (Developing AI Cloud Solutions on Azure)**.
+
 ### Honest confidence level on the work project
 
 I was at the edge of my knowledge every single day for six months. I can explain how the pieces I built work, but much of it is not rock-solid — I got it working with help, and some of it deserves a second pass to truly own it (see the Knowledge Confidence Map below).
