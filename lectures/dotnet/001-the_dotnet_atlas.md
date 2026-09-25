@@ -2892,19 +2892,20 @@ Each future lecture takes one 🔵 or ⚫ area from this atlas and turns it 🟢
 
 | # | Working title | Why it's next |
 |---|---|---|
-| 002 | **Generic Host & DI, in depth**: lifetimes, scopes, `IHostedLifecycleService`, options validation, writing your own `Add…()` extensions | Everything at work sits on this |
-| 003 | **Interop in depth**: marshalling rules, `SafeHandle`, strings, arrays, callbacks, `NativeLibrary`, testing native boundaries | Turns your strongest area into expertise |
-| 004 | **async in .NET, in depth**: thread pool, `SynchronizationContext`, `ValueTask`, `Channel<T>` patterns, cancellation design | Builds on `concurrency/001` with the .NET specifics |
-| 005 | **Data access**: EF Core modeling, migrations, query translation, time-series tables, SQLite on devices, Dapper | The state/value model, generalized |
-| 006 | **Testing strategy**: xUnit v3, fakes vs mocks, `WebApplicationFactory`, Testcontainers, testing hosted services and time | Makes you fast *and* safe |
-| 007 | **MSBuild, NuGet & solution architecture**: props/targets, Central Package Management, versioning, authoring packages | Removes the last "random folders" mystery |
-| 008 | **ASP.NET Core in depth**: middleware authoring, routing, minimal APIs vs controllers, auth, Blazor overview | Connects to `yarp/` |
-| 009 | **gRPC & Protocol Buffers**: contract evolution, streaming, deadlines, interceptors | Closes the audit-log ❌ |
-| 010 | **Observability in .NET**: `ILogger` → OpenTelemetry, `System.Diagnostics.Metrics`, `ActivitySource` traces | Pairs with `llm_orchistration/018–020` |
-| 011 | **Performance**: `Span<T>`, allocations, BenchmarkDotNet, GC modes, `dotnet-counters` / `dotnet-trace` | Senior-level depth |
-| 012 | **Shipping on Azure**: Azure DevOps & GitHub Actions YAML, containers, Azure Container Apps / AKS, Key Vault, managed identity | Directly addresses the "zero Azure" resume gap |
-| 013 | **PowerShell module engineering**: binary modules, manifests, DI inside modules, dependency isolation | Deepens something you already built |
-| 014 | **Architecture patterns in .NET**: layered/clean architecture, vertical slices, CQRS, the Result pattern | For design interviews |
+| 002 | **.NET Meets the Metal**: .NET on devices, runtime portability, and where you fit (✅ written) | Maps your firmware + .NET combination |
+| 003 | **Generic Host & DI, in depth**: lifetimes, scopes, `IHostedLifecycleService`, options validation, writing your own `Add…()` extensions | Everything at work sits on this |
+| 004 | **Interop in depth**: marshalling rules, `SafeHandle`, strings, arrays, callbacks, `NativeLibrary`, testing native boundaries | Turns your strongest area into expertise |
+| 005 | **async in .NET, in depth**: thread pool, `SynchronizationContext`, `ValueTask`, `Channel<T>` patterns, cancellation design | Builds on `concurrency/001` with the .NET specifics |
+| 006 | **Data access**: EF Core modeling, migrations, query translation, time-series tables, SQLite on devices, Dapper | The state/value model, generalized |
+| 007 | **Testing strategy**: xUnit v3, fakes vs mocks, `WebApplicationFactory`, Testcontainers, testing hosted services and time | Makes you fast *and* safe |
+| 008 | **MSBuild, NuGet & solution architecture**: props/targets, Central Package Management, versioning, authoring packages | Removes the last "random folders" mystery |
+| 009 | **ASP.NET Core in depth**: middleware authoring, routing, minimal APIs vs controllers, auth, Blazor overview | Connects to `yarp/` |
+| 010 | **gRPC & Protocol Buffers**: contract evolution, streaming, deadlines, interceptors | Closes the audit-log ❌ |
+| 011 | **Observability in .NET**: `ILogger` → OpenTelemetry, `System.Diagnostics.Metrics`, `ActivitySource` traces | Pairs with `llm_orchistration/018–020` |
+| 012 | **Performance**: `Span<T>`, allocations, BenchmarkDotNet, GC modes, `dotnet-counters` / `dotnet-trace` | Senior-level depth |
+| 013 | **Shipping on Azure**: Azure DevOps & GitHub Actions YAML, containers, Azure Container Apps / AKS, Key Vault, managed identity | Directly addresses the "zero Azure" resume gap |
+| 014 | **PowerShell module engineering**: binary modules, manifests, DI inside modules, dependency isolation | Deepens something you already built |
+| 015 | **Architecture patterns in .NET**: layered/clean architecture, vertical slices, CQRS, the Result pattern | For design interviews |
 
 ---
 
@@ -2953,4 +2954,4 @@ Each future lecture takes one 🔵 or ⚫ area from this atlas and turns it 🟢
 
 ---
 
-*End of Lecture 001. Next: 002, "Generic Host & DI, in depth." Before starting it, finish lab steps 1–8 and be able to answer self-check questions 13–21 without looking.*
+*End of Lecture 001. Next: 002, ".NET Meets the Metal" (already written), then 003, "Generic Host & DI, in depth." Before starting it, finish lab steps 1–8 and be able to answer self-check questions 13–21 without looking.*

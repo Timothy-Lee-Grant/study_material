@@ -123,7 +123,7 @@ This is now my top priority, above any specific technology. My hypothesis (see A
 
 ## Chosen specialty — the .NET ecosystem
 
-As of Sept 2026 I've realized I really enjoy .NET and want it as my primary backend ecosystem (it also aligns with the Microsoft goal). Domain lectures live in `lectures/dotnet/`, starting with `001-the_dotnet_atlas.md` (a top-down map of the ecosystem plus a hands-on lab) and a roadmap of follow-up lectures (002+). When suggesting implementations for new skills, prefer C#/.NET where reasonable.
+As of Sept 2026 I've realized I really enjoy .NET and want it as my primary backend ecosystem (it also aligns with the Microsoft goal). Domain lectures live in `lectures/dotnet/`, starting with `001-the_dotnet_atlas.md` (a top-down map of the ecosystem plus a hands-on lab) and a roadmap of follow-up lectures (002+). When suggesting implementations for new skills, prefer C#/.NET where reasonable. A second focus is **.NET on devices** (embedded Linux, MCUs, device-to-Azure), where my firmware + .NET combination is rare; see `lectures/dotnet/002-dotnet_meets_the_metal.md`. Portfolio plan: LLM_Monitor = AI pillar, a device-to-cloud system = devices pillar.
 
 ## Then — backend & infrastructure
 
