@@ -617,4 +617,4 @@ Checked 2026-09-25. Re-verify on real hardware; this area changes with kernel an
 
 ---
 
-*End of Lecture 004. Next in this folder: 005, "Generic Host & DI, in depth." Before then: Phase 0 (your first PR) and the `strace` exercise.*
+*End of Lecture 004. Next in this folder: 005, "From Sockets to WebSockets to YARP," then 006, "Generic Host & DI, in depth." Before then: Phase 0 (your first PR) and the `strace` exercise.*
