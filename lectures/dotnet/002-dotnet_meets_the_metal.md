@@ -2,6 +2,8 @@
 
 # Lecture 002 — .NET Meets the Metal: A Map of .NET on Devices, and Where You Fit
 
+> **Update (2026-09-25, evening):** Timothy clarified that his interest is **embedded Linux**, not microcontrollers or bare-metal .NET. Lecture 004 (`004-the_i2c_target_problem.md`) supersedes this lecture's avenue recommendations. Treat §6–§7 here (MCUs, no-runtime C#) as background reading only.
+
 > **For:** Timothy Lee Grant
 > **Date:** 2026-09-25
 > **Prerequisite:** Lecture 001 (The .NET Atlas). This lecture reuses its vocabulary: IL, JIT, GC, P/Invoke, the Generic Host, and the 🟢/🔵/⚫ tags.
@@ -846,4 +848,4 @@ Status claims in this lecture were checked on 2026-09-25 against these sources. 
 
 ---
 
-*End of Lecture 002. Suggested next: pick idea I-1 this weekend, and keep Lecture 001's lab going in parallel. The planned "Generic Host & DI, in depth" lecture is now 004 (003 became "Seeing Design").*
+*End of Lecture 002. Suggested next: pick idea I-1 this weekend, and keep Lecture 001's lab going in parallel. The planned "Generic Host & DI, in depth" lecture is now 005.*

@@ -626,4 +626,4 @@ In priority order for you:
 
 ---
 
-*End of Lecture 003. Next in this folder: 004, "Generic Host & DI, in depth." Keep the companion career lecture open alongside this one. It turns this material into a weekly practice.*
+*End of Lecture 003. Next in this folder: 004, "The I2C Target Problem," then 005, "Generic Host & DI, in depth." Keep the companion career lecture open alongside this one. It turns this material into a weekly practice.*
