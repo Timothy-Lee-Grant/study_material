@@ -73,6 +73,8 @@ Each entry: **Problem → Why it fits → How to fix it → Steps → Done when 
 
 > **🟢 Open, available · 🛠️ Contribute.**
 
+> ⚠️ **Update (2026-09-26, see `lectures/001-questions_from_the_issue_shortlist.md` Q2):** the core of this is **already documented** on the YARP **Timeouts** page (its WebSockets section, `ms.date` 11/01/2025). The WebSockets page itself still doesn't mention `ActivityTimeout`. **Revised task:** comment on #1764 pointing this out, then either (a) add a short cross-reference sentence to `websockets.md` in `dotnet/AspNetCore.Docs` (the GitHub web editor is fine, no clone needed), or (b) let the maintainers close it as covered. Q2 has the exact steps and a draft comment.
+
 **Link:** https://github.com/dotnet/yarp/issues/1764 · Labels: `Type: Documentation`, `help wanted` · Milestone: Backlog
 
 **Problem.** YARP closes a proxied request that has been idle for **100 seconds** (the default activity timeout). That protects the proxy from leaking resources, but it means an idle WebSocket connection gets dropped. The fix for users is to send keep-alives from the **client or the destination server** (WebSocket-level pings or application-level heartbeats), not from the proxy. The maintainer explained this in the issue, but it never made it into the docs. As of 2026-09-26, the YARP WebSockets page on Microsoft Learn only says that HTTP request timeouts are disabled after the WebSocket handshake. It says nothing about the activity timeout or keep-alives.
