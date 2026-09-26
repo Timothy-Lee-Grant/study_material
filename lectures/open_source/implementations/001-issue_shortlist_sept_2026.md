@@ -27,6 +27,11 @@
 | **K** | [#275 — Remove Autofac and Moq from tests](https://github.com/dotnet/yarp/issues/275) | 🟢 · 🛠️ | YARP | Test refactor | Incremental | No | `help wanted`; can be done a few files at a time. Good for learning YARP's test suite. |
 | **L** | [#2667 — Use the request path for the trace name](https://github.com/dotnet/yarp/issues/2667) + [PR #3031](https://github.com/dotnet/yarp/pull/3031) | 🟡 · 📖 (open PR by another contributor) | YARP | Observability (study + review) | ~4–8 h | No | *You found this one.* An open community PR, and a real design tension with OpenTelemetry conventions. 🧭 Explorer. |
 | **M** | [#3008 — Async watch in the Kubernetes controller](https://github.com/dotnet/yarp/issues/3008) + [PR #3024](https://github.com/dotnet/yarp/pull/3024) | ⚫ · 📖 → follow-up #3033 🟢 · 🛠️ | YARP | Async refactor (study) → follow-up [#3033](https://github.com/dotnet/yarp/issues/3033) | ~6–10 h | No | *You found this one.* A completed community PR with 12 review-driven commits: a model for async code and for how review works. 🧭 Explorer. |
+| **N** | [OTel .NET #7449 — `Baggage.Current` leaks across async flows](https://github.com/open-telemetry/opentelemetry-dotnet/issues/7449) | 🟡 · 📖 (fix attempts reverted/abandoned; needs a major version) | OpenTelemetry .NET | Context propagation bug (study) | ~4–6 h | No | 📡 Telemetry track. How request context flows *inside* a process, and why getting it wrong is subtle. 🧭 Explorer. |
+| **O** | [MCP C# SDK `Diagnostics.cs`](https://github.com/modelcontextprotocol/csharp-sdk/blob/main/src/ModelContextProtocol.Core/Diagnostics.cs) + [SEP-414](https://modelcontextprotocol.io/seps/414-request-meta) | ⚫ (SEP final; code shipped) · 📖 code tour + hands-on | MCP C# SDK | Distributed tracing across a process boundary | ~6–10 h | No | 📡 Telemetry track. One trace spanning an MCP client and server, which is directly relevant to your AI pillar. 🧭 Explorer. |
+| **P** | [YARP #3016 — Improve logging and error output in the container image](https://github.com/dotnet/yarp/issues/3016) | 🟢 · 📖 now, 🛠️ only if invited | YARP | Operational logging design | ~3–5 h (study) | No | 📡 Telemetry track. What operators actually need from a proxy's logs, specified by an ASP.NET architect. 🧭 Explorer. |
+| **Q** | [OTel .NET Contrib #4473 — InfluxDB exporter backpressure](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/issues/4473) | 🟢 · 🛠️ stretch (`help wanted`; confirm unclaimed) | OpenTelemetry .NET Contrib | Feature: bounded queues / overload | ~15–30 h | No (Docker) | 📡 Telemetry track. Backpressure is a core distributed-systems concept, in a small, bounded component. 🧭 Explorer. |
+| **R** | [OTel .NET Contrib #4516 — Expose GC mode/configuration as metrics](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/issues/4516) | 🟢 · 🛠️ (comment first; direction unconfirmed) | OpenTelemetry .NET Contrib | Small metrics feature | ~6–10 h | No | 📡 Telemetry track. Your first *metric* instrument, plus a little runtime/GC knowledge. ⚓/🧭 mix. |
 
 ### Recommended order
 
@@ -515,6 +520,185 @@ await foreach (var (watchEventType, item) in
 
 ---
 
+## 2b. 📡 Telemetry & distributed-systems track (items N–R)
+
+> **Added 2026-09-26** at your request: extra issues chosen to build telemetry and distributed-systems understanding. Together with **L** (trace naming and cardinality) and **P**, they cover the whole telemetry pipeline:
+
+```
+ ┌───────────────────────────── one request's journey ─────────────────────────────┐
+ │                                                                                  │
+ │  INSIDE A PROCESS            ACROSS PROCESSES              OUT TO A BACKEND      │
+ │  context flows with async    context rides on the wire     data is exported      │
+ │  code (Activity.Current,     (HTTP `traceparent` header,   (OTLP, Prometheus,    │
+ │  Baggage.Current)            MCP `params._meta`)            InfluxDB…)           │
+ │         N                            O                          Q                │
+ │                                                                                  │
+ │  WHAT YOU RECORD:  names & attributes (L: cardinality) · metrics (R) · logs (P)  │
+ └──────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Suggested order:** O (build the mental model hands-on) → N (the subtle in-process part) → L (naming) → P (logs) → R (first small contribution) → Q (stretch).
+
+**Environment note:** the OpenTelemetry .NET repos are moving to the .NET 11 SDK (an "[Infra] Support .NET 11" PR is in progress). Use **Codespaces** for building them, per the persona's compatibility matrix. Items N and O's experiments run fine on .NET 10 on any of your machines.
+
+---
+
+### N. OpenTelemetry .NET #7449 — `Baggage.Current` leaks across async flows 🧭 Explorer
+
+> **🟡 Open, but effectively claimed/stalled · 📖 Learn.** Labeled `needs-majorversion-bump` (a correct fix changes behavior people may depend on). A proposed fix, [PR #7191](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7191), "gained little traction" and was abandoned. An earlier fix (PR #5208, for [#3257](https://github.com/open-telemetry/opentelemetry-dotnet/issues/3257) from 2022) was **reverted** (PR #5227). Study it; don't try to fix it.
+
+**What baggage is.** Trace context (`traceparent`) identifies *which trace* a request belongs to. **Baggage** carries small *key-value pairs* alongside it (e.g., `tenant=contoso`), so downstream services can read them. Inside a process, the current values live in "ambient" storage that should follow the async flow of each request.
+
+**The bug.** In .NET, "follows the async flow" means `AsyncLocal<T>`: each async flow gets its own view, and a child flow's changes **don't flow back** to its parent. But OpenTelemetry doesn't store the `Baggage` value directly. It stores a **mutable holder object**:
+
+```csharp
+// src/OpenTelemetry.Api/Baggage.cs (simplified)
+private sealed class BaggageHolder { public Baggage Baggage; }
+
+private static readonly RuntimeContextSlot<BaggageHolder> RuntimeContextSlot =
+    RuntimeContext.RegisterSlot<BaggageHolder>("otel.baggage");   // AsyncLocal-backed
+
+public static Baggage Current
+{
+    get => RuntimeContextSlot.Get()?.Baggage ?? default;
+    set => EnsureBaggageHolder().Baggage = value;   // mutates the SHARED holder
+}
+```
+
+`AsyncLocal` copies the **reference** to the holder into child flows, not the holder itself. So once a holder exists, every parallel task that inherited it points at the **same object**, and setting `Baggage.Current` in one task changes what the parent and sibling tasks see. The 2022 report showed exactly this with `Parallel.ForEach`: messages processed in parallel overwrote each other's baggage.
+
+**Firmware analogy:** each task gets its own copy of a *pointer*, but they all point to one shared global struct. Writes through any copy are visible to all. That's a shared-state bug hiding behind something that looks per-task.
+
+**Why it's hard to fix:** making it truly per-flow changes observable behavior. Some existing code may *rely* on setting baggage in a child and reading it in the parent. That's why the issue needs a major version bump, and why two fix attempts didn't land.
+
+**Concepts you'll encounter:** `AsyncLocal<T>` and `ExecutionContext` flow; reference vs. value semantics in ambient state; W3C Baggage vs. W3C Trace Context; why `Activity.Current` behaves differently; compatibility and semantic versioning as a design constraint. (Exposure map: *Concurrency & event dispatch*, *Observability*, *Error handling & API compatibility*. Also hits your *async/await internals* focus directly.)
+
+**Steps.**
+- [ ] Read #3257 (the 2022 report and its repro), then #7449, then skim PR #7191's description and tests.
+- [ ] **Experiment (30 min, any machine, .NET 10):** a console app that (1) uses a plain `AsyncLocal<string>`, sets it in two parallel tasks, and shows each task sees its own value while the parent is unaffected; (2) does the same with `AsyncLocal<Holder>` where `Holder` is a class you mutate, and watch the leak appear; (3) repeats it with `Baggage.Current` from the `OpenTelemetry.Api` package.
+- [ ] Write down, in your own words, why (2) leaks and (1) doesn't. That one paragraph is the lesson.
+- [ ] Optional: read the reviewer comments on PR #7191 and on the reverted PR #5208 to see what reviewers worried about.
+
+**Done when:** your experiment runs and your study-log entry explains the mechanism.
+
+---
+
+### O. MCP C# SDK: distributed tracing across a JSON-RPC boundary (code tour + hands-on) 🧭 Explorer
+
+> **⚫ Done work (SEP-414 is Final; the C# SDK is cited as a reference implementation) · 📖 Learn.** Not an issue. It's a well-built piece of real code to study and run. Possible 🛠️ follow-up at the end.
+
+**The problem it solves.** HTTP services propagate a trace across processes with the `traceparent` header. MCP messages are **JSON-RPC**, which can travel over stdio (no HTTP headers at all) or HTTP. So how does a trace started in an MCP **client** continue in the MCP **server**? The answer ([SEP-414](https://modelcontextprotocol.io/seps/414-request-meta)): put the W3C trace context inside the message itself, in `params._meta`:
+
+```json
+{
+  "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+  "params": {
+    "name": "get_weather",
+    "arguments": { "location": "New York" },
+    "_meta": { "traceparent": "00-0af7651916cd43dd8448eb211c80319c-00f067aa0ba902b7-01" }
+  }
+}
+```
+
+The `traceparent` value is `version-traceid-parentspanid-flags`. The 32-hex-digit **trace ID** is the same across every service in the request, and the **parent span ID** says which span in the caller made this call.
+
+**Where it lives in the C# SDK:** `src/ModelContextProtocol.Core/Diagnostics.cs` defines:
+- An `ActivitySource` and a `Meter` (both named `"Experimental.ModelContextProtocol"`): the sources of spans and metrics.
+- A duration **histogram** in seconds with explicit bucket boundaries taken from the OpenTelemetry **MCP semantic conventions**.
+- `InjectActivityContext(...)`: on the client, uses .NET's `DistributedContextPropagator` to write the current trace context into `params._meta`.
+- `ExtractActivityContext(...)`: on the server, reads it back out so the server's span becomes a **child** of the client's span.
+
+**Firmware analogy:** it's like embedding a sequence/correlation number in each frame's header, so a logic analyzer capture from both ends of a link can be lined up message by message.
+
+**Concepts you'll encounter:** W3C Trace Context (`traceparent`/`tracestate`); inject/extract with a propagator; carriers (headers vs. message metadata); parent/child spans; `ActivitySource`/`Meter`; histogram bucket design; semantic conventions for a new protocol. (Exposure map: *Observability*, *Protocols & versioning*, *Cloud & distributed systems*.)
+
+**Steps.**
+- [ ] Read SEP-414 (short), then `Diagnostics.cs` top to bottom. Find where the client calls inject and where the server calls extract (search the repo for both method names).
+- [ ] **Hands-on (the important part):** build a tiny MCP server and client in C# (stdio is fine), add OpenTelemetry with `AddSource("Experimental.ModelContextProtocol")` on both, and export to the console or the Aspire dashboard. Call one tool. Confirm that both processes' spans share **one trace ID**, and that the server span's parent is the client span.
+- [ ] Break it on purpose: strip `_meta` from the message (or disable propagation) and watch the trace split into two unrelated traces. Seeing it break is what makes it stick.
+- [ ] Connect it to LLM_Monitor: your planned C#→Python distributed traces work the same way (HTTP headers as the carrier).
+- [ ] **🛠️ Possible follow-up:** if the SDK's docs don't show an end-to-end tracing setup, ask in the repo's Discussions whether a doc or sample would be welcome. It pairs naturally with item H.
+
+**Done when:** you have a screenshot of one trace spanning two processes, and a study-log entry.
+
+---
+
+### P. YARP #3016 — Improve logging and error output in the YARP container image 🧭 Explorer
+
+> **🟢 Open · 📖 Learn now, 🛠️ only if invited.** Filed on 2026-04-11 by David Fowler (an ASP.NET Core architect) with the `Container` label. It's a design spec from the core team, not a `help wanted` issue. Treat it as a study of *what good operational logging looks like*. If you want to help, ask whether any piece is open to contributors before writing code.
+
+**The problem.** The YARP container image relies on raw ASP.NET Core framework logging. A failed proxy request produces about **20 lines of stack trace** without the facts an operator needs: which route, which destination, what status, how long it took.
+
+**The proposal (from the issue):**
+- A `Log.Level` setting with three modes: `default` (startup banner + warnings/errors), `requests` (one line per request: method, path, handler, status, duration), and `debug` (full framework logs + the resolved configuration dumped as JSON at startup).
+- **Condensed errors:** one line with route name, destination address, request path, status code, and error summary, instead of a stack trace.
+- Standard `Logging:LogLevel` configuration keeps working.
+- It benchmarks the experience against **Caddy** (another reverse proxy), including Caddy's structured JSON error format.
+
+**Why it's worth studying:** it's a senior engineer thinking about telemetry from the **operator's** point of view, which is a different question from "what can the code emit?" The fields chosen (route, destination, status, duration) are the proxy equivalent of the classic **RED metrics** (Rate, Errors, Duration) and the "golden signals." That's exactly the vocabulary distributed-systems interviews use.
+
+**Concepts you'll encounter:** structured vs. unstructured logging; log levels as an operator interface; high-performance logging in .NET (`LoggerMessage` source generator); request-summary ("access log") middleware; configuration dumps for debuggability; comparing against a competitor's UX. (Exposure map: *Observability*, *Containers & deployment*.)
+
+**Steps.**
+- [ ] Read the issue in full, then look at how YARP's current container image is built (search the repo for the container project/Dockerfile).
+- [ ] Run the YARP container image locally (or in Codespaces) with a misconfigured destination and look at the actual log output. That's the "before."
+- [ ] Write your own one-line request log format and one-line error format. Compare them to the issue's proposal and to Caddy's docs.
+- [ ] Watch for PRs linked to #3016 and do a predict-the-review when one appears.
+
+**Done when:** study-log entry with your "before" output and your proposed formats.
+
+---
+
+### Q. OpenTelemetry .NET Contrib #4473 — InfluxDB exporter backpressure (stretch) 🧭 Explorer
+
+> **🟢 Open · 🛠️ Contribute, stretch.** Labeled `help wanted` (`comp:exporter.influxdb`, opened 2026-06-08). **Confirm it's unclaimed and that the component owners agree with the design before starting.** Contrib components each have named owners.
+
+**The problem.** When an app produces metrics faster than the InfluxDB exporter can write them, pending batches pile up in memory **without limit**, which can eventually crash or restart the process. The request is a **bounded queue** with a configurable overflow policy:
+- **Block** until space frees up
+- **Drop** the new batch
+- **Evict the oldest** batch to make room
+
+The default behavior must stay unchanged when the option isn't set.
+
+**Why it fits:** backpressure is one of the most important distributed-systems concepts (what happens when a producer outpaces a consumer?), and you already know it from firmware as a **full ring buffer**: do you stall the producer, drop the incoming sample, or overwrite the oldest? The same three choices exist in `System.Threading.Channels` as `BoundedChannelFullMode.Wait`, `DropWrite`, and `DropOldest`, which could be a natural implementation tool here.
+
+**Concepts you'll encounter:** bounded vs. unbounded queues; overload policies and their trade-offs (latency vs. data loss vs. memory); `System.Threading.Channels`; exporter lifecycle (flush/shutdown); testing under load; the OpenTelemetry exporter model. (Exposure map: *Cloud & distributed systems*, *Concurrency & event dispatch*, *Performance*.)
+
+**Steps.**
+- [ ] Read the issue, the InfluxDB exporter's source (`src/OpenTelemetry.Exporter.InfluxDB/`), and its component owners (listed in the contrib repo's metadata files).
+- [ ] Reproduce the unbounded growth: InfluxDB in Docker (Codespaces), a test app emitting lots of metrics, and a throttled or stopped InfluxDB; watch memory climb.
+- [ ] Comment with your reproduction and a design sketch (options API, default, where the bounded queue sits, metrics about dropped batches) and ask the owners to confirm.
+- [ ] Implement with tests for each policy.
+
+**Done when:** merged, or your design comment gets a clear decision. Either way, it's a strong learning item.
+
+---
+
+### R. OpenTelemetry .NET Contrib #4516 — Expose .NET GC mode/configuration as metrics ⚓/🧭
+
+> **🟢 Open · 🛠️ Contribute, comment first.** (`comp:instrumentation.runtime`, Feature, opened 2026-06-16.) The maintainers' direction wasn't visible when checked. **Ask before building.**
+
+**The problem.** The runtime instrumentation reports GC *behavior* (heap sizes, collection counts, pause durations) but not GC *configuration* (Workstation vs. Server GC, concurrent/background GC on or off). Without the configuration, the behavior metrics are hard to interpret. Server GC and Workstation GC produce very different heap and pause profiles. The request is a metric, constant for the process lifetime, describing the GC mode.
+
+**Why it fits:** a small, bounded feature that teaches you how a **metric instrument** is defined, named, and tested, plus a bit of .NET runtime knowledge (GC modes) that's useful in performance interviews.
+
+**Design questions to raise (good material for your comment):**
+- A constant value as a metric: is it an observable gauge with value 1 and the mode as an attribute, or a resource attribute instead?
+- Naming: does it fit the OpenTelemetry **semantic conventions** for .NET runtime metrics (and .NET's newer built-in `System.Runtime` metrics)? The runtime instrumentation may be steered toward those conventions, which could change the answer.
+- Where the value comes from: `System.Runtime.GCSettings.IsServerGC` and `GCSettings.LatencyMode`.
+
+**Concepts you'll encounter:** `Meter` and instrument types (counter, histogram, observable gauge); attributes and cardinality; semantic conventions for runtime metrics; .NET GC modes. (Exposure map: *Observability*, *Performance*.)
+
+**Steps.**
+- [ ] Read the runtime instrumentation's existing metrics code and its README list of metrics.
+- [ ] Read the OpenTelemetry semantic conventions for .NET runtime metrics.
+- [ ] Comment with the design questions above and a proposed metric name/shape. Wait for the owners.
+- [ ] Implement with a test, following the existing instruments' patterns.
+
+**Done when:** merged, or the owners explain a different direction (log that in your study log).
+
+---
+
 ## 3. Progress tracker
 
 Update this table as you go. It's the "status board" for the open_source home base.
@@ -534,6 +718,11 @@ Update this table as you go. It's the "status board" for the open_source home ba
 | K | yarp#275 | ☐ not started | | | | |
 | L | yarp#2667 / PR #3031 | ☐ not started | | | | Study + predict-the-review; no competing PR |
 | M | yarp#3008 / PR #3024 → #3033 | ☐ not started | | | | Study; research comment on #3033 |
+| N | otel-dotnet#7449 | ☐ not started | | | | Study + AsyncLocal experiment |
+| O | MCP `Diagnostics.cs` + SEP-414 | ☐ not started | | | | Hands-on: one trace across client + server |
+| P | yarp#3016 | ☐ not started | | | | Study; ask before contributing |
+| Q | otel-contrib#4473 | ☐ not started | | | | Stretch; confirm unclaimed |
+| R | otel-contrib#4516 | ☐ not started | | | | Comment first |
 
 **Re-run this search monthly** (next: late October 2026) and create `002-issue_shortlist_<month>.md` when the list goes stale. Newer issues labeled `up-for-grabs` (dotnet/iot), `help wanted` + `ready for work` (MCP SDK), and `help wanted` (YARP) are the ones to scan first.
 
@@ -544,6 +733,7 @@ Update this table as you go. It's the "status board" for the open_source home ba
 - dotnet/iot issues: [#2297](https://github.com/dotnet/iot/issues/2297) · [#2352](https://github.com/dotnet/iot/issues/2352) · [#2356](https://github.com/dotnet/iot/issues/2356) · [#2403](https://github.com/dotnet/iot/issues/2403) · [#2419](https://github.com/dotnet/iot/issues/2419) · [#2428](https://github.com/dotnet/iot/issues/2428) · [#2600](https://github.com/dotnet/iot/issues/2600) · [#2602](https://github.com/dotnet/iot/issues/2602) · [#2604](https://github.com/dotnet/iot/issues/2604) · [open issues list](https://github.com/dotnet/iot/issues)
 - dotnet/iot source on `main`: [`EdgeEventBuffer.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/Interop/Unix/libgpiod/V2/Proxies/EdgeEventBuffer.cs) · [`LibGpiodV2EventObserver.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/System/Device/Gpio/Drivers/LibGpiodV2EventObserver.cs) · [`GpioDriver.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/System/Device/Gpio/GpioDriver.cs) · [`GpioPin.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/System/Device/Gpio/GpioPin.cs) · [nRF24L01 README](https://github.com/dotnet/iot/blob/main/src/devices/Nrf24l01/README.md) · [commit dd8e964](https://github.com/dotnet/iot/commit/dd8e964) · [CONTRIBUTING](https://github.com/dotnet/iot/blob/main/Documentation/CONTRIBUTING.md)
 - MCP C# SDK: [open issues](https://github.com/modelcontextprotocol/csharp-sdk/issues) · [#1774](https://github.com/modelcontextprotocol/csharp-sdk/issues/1774) · [#1781](https://github.com/modelcontextprotocol/csharp-sdk/issues/1781) · [#1806](https://github.com/modelcontextprotocol/csharp-sdk/issues/1806) · [PR #1702](https://github.com/modelcontextprotocol/csharp-sdk/pull/1702) · [CONTRIBUTING](https://github.com/modelcontextprotocol/csharp-sdk/blob/main/CONTRIBUTING.md)
+- Telemetry track (items N–R): [otel-dotnet #7449](https://github.com/open-telemetry/opentelemetry-dotnet/issues/7449) · [#3257](https://github.com/open-telemetry/opentelemetry-dotnet/issues/3257) · [PR #7191](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7191) · [`Baggage.cs`](https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Api/Baggage.cs) · [SEP-414](https://modelcontextprotocol.io/seps/414-request-meta) · [MCP C# SDK `Diagnostics.cs`](https://github.com/modelcontextprotocol/csharp-sdk/blob/main/src/ModelContextProtocol.Core/Diagnostics.cs) · [SEP-2028 draft (forwarding `_meta` to HTTP headers)](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2028) · [YARP #3016](https://github.com/dotnet/yarp/issues/3016) · [otel-contrib #4473](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/issues/4473) · [otel-contrib #4516](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/issues/4516) · [otel-dotnet PR #6899 (.NET 11 support)](https://github.com/open-telemetry/opentelemetry-dotnet/pull/6899)
 - YARP (added items L–M): [#2667](https://github.com/dotnet/yarp/issues/2667) · [PR #3031](https://github.com/dotnet/yarp/pull/3031) · [#3008](https://github.com/dotnet/yarp/issues/3008) · [PR #3024](https://github.com/dotnet/yarp/pull/3024) · [#3033](https://github.com/dotnet/yarp/issues/3033) · [OpenTelemetry HTTP span semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/)
 - YARP: [#275](https://github.com/dotnet/yarp/issues/275) · [#1764](https://github.com/dotnet/yarp/issues/1764) · [#2847](https://github.com/dotnet/yarp/issues/2847) · [Migrate YARP docs to AspNetCore.Docs (#34650)](https://github.com/dotnet/AspNetCore.Docs/issues/34650) · [YARP WebSockets doc](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/yarp/websockets?view=aspnetcore-10.0) · [lets-encrypt.md in AspNetCore.Docs](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/fundamentals/servers/yarp/lets-encrypt.md) · [LettuceEncrypt-Archon on NuGet](https://www.nuget.org/packages/LettuceEncrypt-Archon/)
 

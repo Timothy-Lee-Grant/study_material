@@ -53,6 +53,7 @@ These are the strengths to lead with when choosing issues. An issue that uses tw
 | **Primary** | [`dotnet/iot`](https://github.com/dotnet/iot) | Where my hardware and interop background adds the most value |
 | **Secondary** | [`modelcontextprotocol/csharp-sdk`](https://github.com/modelcontextprotocol/csharp-sdk) | AI tooling in .NET; maintained in collaboration with Microsoft |
 | **Backend satellite** | [`dotnet/yarp`](https://github.com/dotnet/yarp) (+ its docs in `dotnet/AspNetCore.Docs`) | Reverse proxy / networking. Builds the backend side of my profile. |
+| **Telemetry track** | [`open-telemetry/opentelemetry-dotnet`](https://github.com/open-telemetry/opentelemetry-dotnet) and [`-contrib`](https://github.com/open-telemetry/opentelemetry-dotnet-contrib) | Building depth in telemetry and distributed systems. Contrib is organized by component with named owners. |
 | **Reading, not contributing yet** | `Microsoft.Extensions.*` in `dotnet/runtime` | Studying DI, Hosting, and Options design in depth |
 
 The current issue plan is in `implementations/001-issue_shortlist_sept_2026.md`.
@@ -197,6 +198,7 @@ Re-check each repo's `global.json` before starting. It pins the SDK version, and
 | **MCP C# SDK** | ✅ requires the .NET 10 SDK | ⚠️ disk; some tests need Docker | ✅ best fit | Docker-based tests are easiest in Codespaces |
 | **YARP** | ⚠️ depends on the SDK pin; `main` tends to track the newest .NET | ⚠️ disk | ✅ | |
 | **dotnet/AspNetCore.Docs**, **dotnet/docs** | ✅ (Markdown) | ✅ | ✅ | Any machine works. Docs PRs can even be made from the GitHub web editor. |
+| **OpenTelemetry .NET / Contrib** | ⚠️ until the repos move to the .NET 11 SDK (in progress as of Sept 2026) | ⚠️ disk | ✅ best fit | Some exporters need Docker (e.g., InfluxDB) |
 | **dotnet/runtime** | ❌ too large; SDK will be 11+ | ❌ disk | ⚠️ only with a large machine type | Reading only, for now |
 
 ### 8.4 Plan: free options first, then targeted purchases
