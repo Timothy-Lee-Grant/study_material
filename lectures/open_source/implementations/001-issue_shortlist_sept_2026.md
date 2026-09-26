@@ -10,19 +10,23 @@
 
 ## 0. The shortlist at a glance
 
-| # | Issue | Repo | Type | Effort | Needs hardware? | Why it's on the list |
-|---|---|---|---|---|---|---|
-| **A** | [#1764 — Doc WebSocket keep-alive requirement](https://github.com/dotnet/yarp/issues/1764) | YARP (docs live in AspNetCore.Docs) | Docs | ~2–4 h | No | `help wanted`; the maintainer already wrote the technical explanation. Ideal first PR. |
-| **B** | [#2297 — Update Pi samples for the new `config.txt` location](https://github.com/dotnet/iot/issues/2297) | dotnet/iot | Docs / triage | ~2–4 h | Optional | `up-for-grabs`; partly fixed already, so the job is an audit + cleanup. |
-| **C** | [#2600 — LibGpiodV2: unchecked null from `gpiod_edge_event_buffer_get_event`](https://github.com/dotnet/iot/issues/2600) | dotnet/iot | Bug (native interop) | ~6–12 h | Helpful (any Pi) | P/Invoke + native-crash bug with a clear defensive fix. Directly in your interop wheelhouse. |
-| **D** | [#2602 — `GpiodException` escapes `GpioDriver.TryCreate`](https://github.com/dotnet/iot/issues/2602) | dotnet/iot | Bug (error handling / design) | ~6–10 h | Helpful | Small code change, but needs a design decision. Touches containers + Generic Host startup. |
-| **E** | [#1806 — Flaky OAuth metadata fetch timeout on Windows](https://github.com/modelcontextprotocol/csharp-sdk/issues/1806) | MCP C# SDK | Test fix | ~4–8 h | No | `help wanted` + `ready for work`; a proven fix pattern already exists (PR #1702). |
-| **F** | [#2356 — MPU-6050: `CalibrateGyroscopeAccelerometer` throws on bandwidth readback](https://github.com/dotnet/iot/issues/2356) | dotnet/iot | Bug (device binding) | ~8–15 h | **Yes** (MPU-6050, ~$5–10) | A register-level bug: datasheet reading is exactly your strength. Strong resume story. |
-| **G** | [#2403 — `GpioPin` event handler passes the wrong `sender`](https://github.com/dotnet/iot/issues/2403) | dotnet/iot | Bug (API behavior) | ~4–8 h | No | Small, testable, and a good lesson in .NET event conventions and compatibility. |
-| **H** | [#1781 — Integration tests for Streamable HTTP MCP servers](https://github.com/modelcontextprotocol/csharp-sdk/issues/1781) | MCP C# SDK | Docs / sample | ~8–12 h | No | `help wanted` + `ready for work`; overlaps with testing skills you want for LLM_Monitor. |
-| **I** | [#2847 — LettuceEncrypt is archived](https://github.com/dotnet/yarp/issues/2847) | YARP (docs) | Docs + research | ~4–8 h | No | `help wanted`; requires evaluating alternatives, which is real engineering judgment. |
-| **J** | [#2352 — FT4232H I2C write-read without repeated start](https://github.com/dotnet/iot/issues/2352) | dotnet/iot | Bug / feature (protocol) | ~15–30 h | **Yes** (FTDI board + logic analyzer) | Stretch. An I2C repeated-start problem is pure home turf, but it needs specific hardware. |
-| **K** | [#275 — Remove Autofac and Moq from tests](https://github.com/dotnet/yarp/issues/275) | YARP | Test refactor | Incremental | No | `help wanted`; can be done a few files at a time. Good for learning YARP's test suite. |
+**Labels** (as of 2026-09-26). **State:** 🟢 open, available · 🟡 open, claimed by someone else · ⚫ closed. **Intent:** 🛠️ Contribute (worth developing a PR, reproduction, or comment) · 📖 Learn (study it; don't try to take it over).
+
+| # | Issue | State · Intent | Repo | Type | Effort | Needs hardware? | Why it's on the list |
+|---|---|---|---|---|---|---|---|
+| **A** | [#1764 — Doc WebSocket keep-alive requirement](https://github.com/dotnet/yarp/issues/1764) | 🟢 · 🛠️ | YARP (docs live in AspNetCore.Docs) | Docs | ~2–4 h | No | `help wanted`; the maintainer already wrote the technical explanation. Ideal first PR. |
+| **B** | [#2297 — Update Pi samples for the new `config.txt` location](https://github.com/dotnet/iot/issues/2297) | 🟢 · 🛠️ | dotnet/iot | Docs / triage | ~2–4 h | Optional | `up-for-grabs`; partly fixed already, so the job is an audit + cleanup. |
+| **C** | [#2600 — LibGpiodV2: unchecked null from `gpiod_edge_event_buffer_get_event`](https://github.com/dotnet/iot/issues/2600) | 🟢 · 🛠️ | dotnet/iot | Bug (native interop) | ~6–12 h | Helpful (any Pi) | P/Invoke + native-crash bug with a clear defensive fix. Directly in your interop wheelhouse. |
+| **D** | [#2602 — `GpiodException` escapes `GpioDriver.TryCreate`](https://github.com/dotnet/iot/issues/2602) | 🟢 · 🛠️ (ask first) | dotnet/iot | Bug (error handling / design) | ~6–10 h | Helpful | Small code change, but needs a design decision. Touches containers + Generic Host startup. |
+| **E** | [#1806 — Flaky OAuth metadata fetch timeout on Windows](https://github.com/modelcontextprotocol/csharp-sdk/issues/1806) | 🟢 · 🛠️ | MCP C# SDK | Test fix | ~4–8 h | No | `help wanted` + `ready for work`; a proven fix pattern already exists (PR #1702). |
+| **F** | [#2356 — MPU-6050: `CalibrateGyroscopeAccelerometer` throws on bandwidth readback](https://github.com/dotnet/iot/issues/2356) | 🟢 · 🛠️ | dotnet/iot | Bug (device binding) | ~8–15 h | **Yes** (MPU-6050, ~$5–10) | A register-level bug: datasheet reading is exactly your strength. Strong resume story. |
+| **G** | [#2403 — `GpioPin` event handler passes the wrong `sender`](https://github.com/dotnet/iot/issues/2403) | 🟢 · 🛠️ | dotnet/iot | Bug (API behavior) | ~4–8 h | No | Small, testable, and a good lesson in .NET event conventions and compatibility. |
+| **H** | [#1781 — Integration tests for Streamable HTTP MCP servers](https://github.com/modelcontextprotocol/csharp-sdk/issues/1781) | 🟢 · 🛠️ | MCP C# SDK | Docs / sample | ~8–12 h | No | `help wanted` + `ready for work`; overlaps with testing skills you want for LLM_Monitor. |
+| **I** | [#2847 — LettuceEncrypt is archived](https://github.com/dotnet/yarp/issues/2847) | 🟢 · 🛠️ | YARP (docs) | Docs + research | ~4–8 h | No | `help wanted`; requires evaluating alternatives, which is real engineering judgment. |
+| **J** | [#2352 — FT4232H I2C write-read without repeated start](https://github.com/dotnet/iot/issues/2352) | 🟢 · 🛠️ (ask first: assigned to maintainers but still `up-for-grabs`) | dotnet/iot | Bug / feature (protocol) | ~15–30 h | **Yes** (FTDI board + logic analyzer) | Stretch. An I2C repeated-start problem is pure home turf, but it needs specific hardware. |
+| **K** | [#275 — Remove Autofac and Moq from tests](https://github.com/dotnet/yarp/issues/275) | 🟢 · 🛠️ | YARP | Test refactor | Incremental | No | `help wanted`; can be done a few files at a time. Good for learning YARP's test suite. |
+| **L** | [#2667 — Use the request path for the trace name](https://github.com/dotnet/yarp/issues/2667) + [PR #3031](https://github.com/dotnet/yarp/pull/3031) | 🟡 · 📖 (open PR by another contributor) | YARP | Observability (study + review) | ~4–8 h | No | *You found this one.* An open community PR, and a real design tension with OpenTelemetry conventions. 🧭 Explorer. |
+| **M** | [#3008 — Async watch in the Kubernetes controller](https://github.com/dotnet/yarp/issues/3008) + [PR #3024](https://github.com/dotnet/yarp/pull/3024) | ⚫ · 📖 → follow-up #3033 🟢 · 🛠️ | YARP | Async refactor (study) → follow-up [#3033](https://github.com/dotnet/yarp/issues/3033) | ~6–10 h | No | *You found this one.* A completed community PR with 12 review-driven commits: a model for async code and for how review works. 🧭 Explorer. |
 
 ### Recommended order
 
@@ -36,7 +40,7 @@
 
 **One active PR at a time** until two are merged. Comments to claim or ask design questions don't count against that limit, so it's fine to have a question open on D while you work on C.
 
-### Study-only (already claimed; don't pick these up)
+### 📖 Learn-only picks (🟡 claimed by someone else)
 
 These are worth *reading* because they're in the same code you'd touch, but someone is already working on them:
 
@@ -67,6 +71,8 @@ Each entry: **Problem → Why it fits → How to fix it → Steps → Done when 
 
 ### A. YARP #1764 — Document the WebSocket keep-alive requirement
 
+> **🟢 Open, available · 🛠️ Contribute.**
+
 **Link:** https://github.com/dotnet/yarp/issues/1764 · Labels: `Type: Documentation`, `help wanted` · Milestone: Backlog
 
 **Problem.** YARP closes a proxied request that has been idle for **100 seconds** (the default activity timeout). That protects the proxy from leaking resources, but it means an idle WebSocket connection gets dropped. The fix for users is to send keep-alives from the **client or the destination server** (WebSocket-level pings or application-level heartbeats), not from the proxy. The maintainer explained this in the issue, but it never made it into the docs. As of 2026-09-26, the YARP WebSockets page on Microsoft Learn only says that HTTP request timeouts are disabled after the WebSocket handshake. It says nothing about the activity timeout or keep-alives.
@@ -94,6 +100,8 @@ Each entry: **Problem → Why it fits → How to fix it → Steps → Done when 
 
 ### B. dotnet/iot #2297 — Update Raspberry Pi samples for the new `config.txt` location
 
+> **🟢 Open, available · 🛠️ Contribute (audit may end in a close-it comment).**
+
 **Link:** https://github.com/dotnet/iot/issues/2297 · Labels: `bug`, `Priority:2`, `up-for-grabs` · Opened March 2024 · No assignee
 
 **Problem.** Raspberry Pi OS Bookworm moved the boot config from `/boot/config.txt` to `/boot/firmware/config.txt`. Sample READMEs still told users to edit the old path (the report named the nRF24L01 sample).
@@ -117,6 +125,8 @@ Each entry: **Problem → Why it fits → How to fix it → Steps → Done when 
 ---
 
 ### C. dotnet/iot #2600 — LibGpiodV2: unchecked null pointer crashes the process ⭐
+
+> **🟢 Open, available · 🛠️ Contribute.**
 
 **Link:** https://github.com/dotnet/iot/issues/2600 · Labels: `untriaged` · Opened 2026-08-19 · No PR linked
 
@@ -160,6 +170,8 @@ If `gpiod_edge_event_buffer_get_event` returns **NULL** (for example, when the c
 ---
 
 ### D. dotnet/iot #2602 — `GpiodException` escapes `GpioDriver.TryCreate`
+
+> **🟢 Open, available · 🛠️ Contribute, after a maintainer picks a direction.**
 
 **Link:** https://github.com/dotnet/iot/issues/2602 · Labels: `untriaged` · Opened 2026-08-23
 
@@ -205,6 +217,8 @@ A reasonable proposal: **option 3 for the missing-library case**, plus throwing 
 
 ### E. MCP C# SDK #1806 — Flaky OAuth metadata timeout on Windows CI
 
+> **🟢 Open, available · 🛠️ Contribute.**
+
 **Link:** https://github.com/modelcontextprotocol/csharp-sdk/issues/1806 · Labels: `bug`, `area-tests`, `help wanted`, `P3`, `ready for work` · Unassigned · Opened 2026-08-09
 
 **Problem.** Three tests fail intermittently on `windows-latest`: `OAuth.AuthTests.CannotAuthenticate_WithInvalidClientMetadataDocument`, `OAuth.DcrFailureTests.DcrRejection_PropagatesToConsumer_WithStatusBodyAndSentParameters`, and the `auth/offline-access-scope` conformance scenario. The OAuth metadata fetch runs over an **in-memory duplex pipe with a TLS handshake**. On a slow CI agent it hits a short production-default timeout, and the resulting `TaskCanceledException` shows up as a confusing assertion failure.
@@ -228,6 +242,8 @@ A reasonable proposal: **option 3 for the missing-library case**, plus throwing 
 ---
 
 ### F. dotnet/iot #2356 — MPU-6050 calibration throws a bandwidth readback error
+
+> **🟢 Open, available · 🛠️ Contribute (needs the sensor).**
 
 **Link:** https://github.com/dotnet/iot/issues/2356 · Labels: `bug`, `Priority:3` · Opened 2024-10-02 · No assignee, no PR
 
@@ -260,6 +276,8 @@ If the setter writes 6500-style bits and the getter decodes them 6500-style, a 6
 ---
 
 ### G. dotnet/iot #2403 — `GpioPin` event handlers receive the wrong `sender`
+
+> **🟢 Open, available · 🛠️ Contribute.**
 
 **Link:** https://github.com/dotnet/iot/issues/2403 · Labels: `bug`, `Priority:2` · Opened 2025-07-08 · No assignee, no PR
 
@@ -310,6 +328,8 @@ The subtle part: `remove` must unregister the **same delegate instance** that wa
 
 ### H. MCP C# SDK #1781 — Show how to integration-test a Streamable HTTP MCP server
 
+> **🟢 Open, available · 🛠️ Contribute.**
+
 **Link:** https://github.com/modelcontextprotocol/csharp-sdk/issues/1781 · Labels: `documentation`, `help wanted`, `P3`, `ready for work` · Unassigned · Opened 2026-08-02
 
 **Problem.** A user asked how to write end-to-end integration tests for an ASP.NET Core MCP server using the Streamable HTTP transport, the way you'd test an MVC app. There's no doc or sample for it.
@@ -336,6 +356,8 @@ The subtle part: `remove` must unregister the **same delegate instance** that wa
 
 ### I. YARP #2847 — LettuceEncrypt is archived
 
+> **🟢 Open, available · 🛠️ Contribute (research first).**
+
 **Link:** https://github.com/dotnet/yarp/issues/2847 · Labels: `Type: Documentation`, `help wanted` · Opened 2025-05-15 · No assignee
 
 **Problem.** The YARP "Let's Encrypt" doc recommends `natemcmaster/LettuceEncrypt`, which was **archived on 2025-04-24**. The docs point users at an unmaintained dependency for TLS certificate automation.
@@ -356,6 +378,8 @@ The subtle part: `remove` must unregister the **same delegate instance** that wa
 ---
 
 ### J. dotnet/iot #2352 — FT4232H: write-read without a repeated start (stretch)
+
+> **🟢 Open (assigned to maintainers, still `up-for-grabs`) · 🛠️ Contribute, only after asking.**
 
 **Link:** https://github.com/dotnet/iot/issues/2352 · Labels: `bug`, `Priority:2`, `up-for-grabs` · Opened 2024-09-20 · Assigned to two maintainers, but still `up-for-grabs` with no PR
 
@@ -379,6 +403,8 @@ The subtle part: `remove` must unregister the **same delegate instance** that wa
 
 ### K. YARP #275 — Remove Autofac and Moq from the tests
 
+> **🟢 Open, available · 🛠️ Contribute (incrementally).**
+
 **Link:** https://github.com/dotnet/yarp/issues/275 · Labels: `Type: Task`, `help wanted` · No assignee, no PR
 
 **Problem.** YARP's tests use Autofac (a DI container) and Moq (a mocking library). The maintainers consider both unnecessary: the built-in DI container and hand-written fakes are just as short and require no extra knowledge.
@@ -395,6 +421,95 @@ The subtle part: `remove` must unregister the **same delegate instance** that wa
 **Done when:** each small PR merges. The issue closes when the package references are removed.
 
 **Watch out for:** don't change what a test *asserts*, only how its dependencies are built.
+
+---
+
+### L. YARP #2667 + PR #3031 — Name proxy traces by request path 🧭 Explorer
+
+> **🟡 Open, claimed · 📖 Learn.** Another contributor's PR is open. Study it; don't open a competing PR. The optional 🛠️ part is a respectful comment, or a docs PR if maintainers choose that route.
+
+**Links:** [issue #2667](https://github.com/dotnet/yarp/issues/2667) · [PR #3031](https://github.com/dotnet/yarp/pull/3031)
+**Status on 2026-09-26:** issue **open** (`Type: Documentation`, `help wanted`, Backlog, opened 2024-11-28). PR **open**, opened 2026-05-22 by a community contributor. **No maintainer review visible yet.**
+
+**Problem.** With YARP + OpenTelemetry + the Aspire dashboard, every proxied request shows up with the same span name (from the route/operation), so you can't tell requests apart without opening each trace. The reporter wants the **actual request path** as the name.
+
+**What PR #3031 does.** A 5-line change in `src/ReverseProxy/Model/ProxyPipelineInitializerMiddleware.cs`, where YARP creates the `proxy.forwarder` activity:
+
+```csharp
+var activity = Observability.YarpActivitySource.CreateActivity("proxy.forwarder", ActivityKind.Server);
+
+if (activity is not null && context.Request.Path.Value is { Length: > 0 } path)
+{
+    activity.DisplayName = path;          // what dashboards show
+}                                         // OperationName stays "proxy.forwarder" (what filters match on)
+```
+
+It also adds a test (`Invoke_SetsActivityDisplayName_FromRequestPath`) that registers an `ActivityListener`, runs the middleware with path `/api/users/42`, and asserts the display name. The author notes that since the issue is labeled Documentation, a docs-only fix might be preferred.
+
+**The design tension (this is the real lesson).** The [OpenTelemetry HTTP semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/) say HTTP span names **should be `{method} {target}`**, where `{target}` for server spans is the **route template** (`http.route`), and that instrumentation **"MUST NOT default to using URI path"** as the target. The reason is **cardinality**. `/api/users/42`, `/api/users/43`, … each become a distinct span name, which breaks aggregation in trace backends and can leak identifiers (user IDs, tokens in paths) into telemetry. So the PR is useful in a local Aspire dashboard, but it goes against the convention as a *default*. That's a likely reason the issue was labeled Documentation, and possibly why the PR hasn't been merged.
+
+**Concepts you'll encounter:** `System.Diagnostics.Activity` / `ActivitySource`; `OperationName` vs. `DisplayName`; OpenTelemetry span naming and semantic conventions; telemetry cardinality and PII; the ASP.NET Core middleware pipeline; testing diagnostics with `ActivityListener`; the Aspire dashboard. (Exposure map: *Observability*, *Networking & proxies*, *Error handling & API compatibility*.)
+
+**Steps.**
+- [ ] Read the issue and the PR (description, diff, test). Then read `ProxyPipelineInitializerMiddleware.cs` in full to see where the activity starts and ends.
+- [ ] Read the OpenTelemetry HTTP span-naming section linked above, and check what ASP.NET Core's own server activity uses for its name/tags (`http.route`).
+- [ ] **Predict the review:** write down what you'd expect a maintainer to say (default-on vs. opt-in? path vs. route template? PII?). Save it in your study log and compare if a review appears.
+- [ ] Try it: run a small YARP app with OpenTelemetry + the Aspire dashboard (or the console exporter) and look at the span names before and after applying the PR's change locally.
+- [ ] Sketch the **docs-shaped alternative** the label suggests: showing users how to rename the span themselves, e.g., an OpenTelemetry `BaseProcessor<Activity>` that renames `proxy.forwarder` activities to `{method} {route}`, or a small middleware that sets `Activity.Current.DisplayName`. **Verify which approach actually works with YARP's activity before writing anything.**
+- [ ] **Etiquette:** don't open a competing PR. If you have a well-researched point (e.g., the semantic-convention concern), a short, respectful comment on the PR or issue is a legitimate contribution. If the PR is later closed in favor of docs, the docs change goes to `dotnet/AspNetCore.Docs` (like item A).
+
+**Done when:** your study-log entry is written. Optionally, a constructive comment posted, or a docs PR if the maintainers choose that route.
+
+---
+
+### M. YARP #3008 + PR #3024 — Async watch in the Kubernetes controller 🧭 Explorer
+
+> **⚫ Closed · 📖 Learn** (the work is done; study it). **Follow-up #3033: 🟢 Open · 🛠️ Contribute** (a research comment).
+
+**Links:** [issue #3008](https://github.com/dotnet/yarp/issues/3008) · [PR #3024](https://github.com/dotnet/yarp/pull/3024) · follow-up [issue #3033](https://github.com/dotnet/yarp/issues/3033)
+**Status on 2026-09-26:** issue #3008 **closed via PR #3024** (the PR's commits run from 2026-04-24 to 2026-05-28, reviewed by maintainer MihaZupan). **Confirm the merge on the PR page.** The follow-up #3033 is **open** (`Type: Idea`, Backlog, no assignee).
+
+**Problem.** YARP's Kubernetes ingress controller keeps an in-memory cache of Kubernetes resources (Ingresses, Services, Endpoints, Secrets) using the **list-then-watch ("informer") pattern**: list everything once, then watch for changes from that `resourceVersion`. `ResourceInformer.cs` used the Kubernetes client's **callback-based** watch methods, bridged back to `async` code with a `TaskCompletionSource` (`watcherCompletionSource`). The issue proposed switching to the client's `IAsyncEnumerable` watch methods and consuming them with `await foreach`.
+
+**What PR #3024 did** (12 commits, most driven by review):
+
+```csharp
+private sealed class WatchState
+{
+    public long LastEventStopwatchTimestamp = Stopwatch.GetTimestamp();
+}
+
+// inside WatchAsync:
+await foreach (var (watchEventType, item) in
+    WatchResourceListAsync(_lastResourceVersion, _selector, OnError)
+        .WithCancellation(linkedCancellationTokenSource.Token))
+{
+    Interlocked.Exchange(ref watchState.LastEventStopwatchTimestamp, Stopwatch.GetTimestamp());
+    OnEvent(watchEventType, item);
+}
+```
+
+- **Callbacks → `IAsyncEnumerable`:** the watch becomes a loop that reads like synchronous code, and cancellation flows through `WithCancellation`.
+- **Stalled-watch detection:** a timer compares the last-event timestamp to a timeout (about 9.5 minutes) and cancels a watch that went quiet so it reconnects.
+- **Review-driven changes worth studying:**
+  - `DateTime` ticks → `Stopwatch.GetTimestamp()`/`GetElapsedTime()` (a monotonic clock is correct for measuring elapsed time; wall-clock time can jump).
+  - A `CancellationRequested` guard was **removed** after the reviewer pointed out that calling `Cancel()` twice is harmless.
+  - A missed parameter pass-through (`resourceVersion`, `fieldSelector`, `onError`) was fixed for the Ingress informer.
+  - Smaller style fixes (`==` over `string.Equals(..., Ordinal)`, comment conventions).
+
+**Follow-up you could engage with: #3033.** The same contributor proposes merging the separate list + watch calls into one, using Kubernetes' **streaming list** feature (which the issue describes as beta, introduced around Kubernetes v1.33). The open question is whether YARP should adopt it before it's generally available. A useful, low-risk contribution would be to **research the feature's current status** and summarize it on the issue: stability level, which Kubernetes versions support it, and whether the C# Kubernetes client exposes it.
+
+**Concepts you'll encounter:** the Kubernetes API and the list/watch (informer) pattern; `resourceVersion` and reconnection; `IAsyncEnumerable` and `await foreach`; `WithCancellation` and linked `CancellationTokenSource`s; `TaskCompletionSource` (what it was replacing); `Interlocked`; monotonic vs. wall-clock time; closure-capture warnings; how a community PR evolves through review. (Exposure map: *Concurrency & event dispatch*, *Cloud & distributed systems*, *Containers & deployment*.) It also lines up directly with your *async/await internals* learning focus.
+
+**Steps.**
+- [ ] Read issue #3008, then PR #3024's description and **each commit in order** (the `.patch` view shows them). For each commit, write one line: what changed and why.
+- [ ] Draw the before/after control flow of `WatchAsync`: callback + `TaskCompletionSource` versus `await foreach`.
+- [ ] Do a **predict-the-review on commit 1 only**: write your own review before reading MihaZupan's comments, then compare.
+- [ ] Learn the informer pattern at the Kubernetes level (list → watch from `resourceVersion` → handle expiry/relist). The Kubernetes "API concepts" doc covers efficient detection of changes.
+- [ ] Optional hands-on: in a Codespace, create a local cluster with `kind` and run a 30-line C# console app that watches Pods with the Kubernetes client's async watch API, then kill and restart the API connection to see reconnection behavior.
+- [ ] For #3033: research streaming lists' current status and post a short, sourced summary on the issue if nobody has already.
+
+**Done when:** your study-log entry (with the commit-by-commit notes) is written. Stretch: a research comment on #3033.
 
 ---
 
@@ -415,6 +530,8 @@ Update this table as you go. It's the "status board" for the open_source home ba
 | I | yarp#2847 | ☐ not started | | | | |
 | J | iot#2352 | ☐ not started | | | | Hardware needed |
 | K | yarp#275 | ☐ not started | | | | |
+| L | yarp#2667 / PR #3031 | ☐ not started | | | | Study + predict-the-review; no competing PR |
+| M | yarp#3008 / PR #3024 → #3033 | ☐ not started | | | | Study; research comment on #3033 |
 
 **Re-run this search monthly** (next: late October 2026) and create `002-issue_shortlist_<month>.md` when the list goes stale. Newer issues labeled `up-for-grabs` (dotnet/iot), `help wanted` + `ready for work` (MCP SDK), and `help wanted` (YARP) are the ones to scan first.
 
@@ -425,6 +542,7 @@ Update this table as you go. It's the "status board" for the open_source home ba
 - dotnet/iot issues: [#2297](https://github.com/dotnet/iot/issues/2297) · [#2352](https://github.com/dotnet/iot/issues/2352) · [#2356](https://github.com/dotnet/iot/issues/2356) · [#2403](https://github.com/dotnet/iot/issues/2403) · [#2419](https://github.com/dotnet/iot/issues/2419) · [#2428](https://github.com/dotnet/iot/issues/2428) · [#2600](https://github.com/dotnet/iot/issues/2600) · [#2602](https://github.com/dotnet/iot/issues/2602) · [#2604](https://github.com/dotnet/iot/issues/2604) · [open issues list](https://github.com/dotnet/iot/issues)
 - dotnet/iot source on `main`: [`EdgeEventBuffer.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/Interop/Unix/libgpiod/V2/Proxies/EdgeEventBuffer.cs) · [`LibGpiodV2EventObserver.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/System/Device/Gpio/Drivers/LibGpiodV2EventObserver.cs) · [`GpioDriver.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/System/Device/Gpio/GpioDriver.cs) · [`GpioPin.cs`](https://github.com/dotnet/iot/blob/main/src/System.Device.Gpio/System/Device/Gpio/GpioPin.cs) · [nRF24L01 README](https://github.com/dotnet/iot/blob/main/src/devices/Nrf24l01/README.md) · [commit dd8e964](https://github.com/dotnet/iot/commit/dd8e964) · [CONTRIBUTING](https://github.com/dotnet/iot/blob/main/Documentation/CONTRIBUTING.md)
 - MCP C# SDK: [open issues](https://github.com/modelcontextprotocol/csharp-sdk/issues) · [#1774](https://github.com/modelcontextprotocol/csharp-sdk/issues/1774) · [#1781](https://github.com/modelcontextprotocol/csharp-sdk/issues/1781) · [#1806](https://github.com/modelcontextprotocol/csharp-sdk/issues/1806) · [PR #1702](https://github.com/modelcontextprotocol/csharp-sdk/pull/1702) · [CONTRIBUTING](https://github.com/modelcontextprotocol/csharp-sdk/blob/main/CONTRIBUTING.md)
+- YARP (added items L–M): [#2667](https://github.com/dotnet/yarp/issues/2667) · [PR #3031](https://github.com/dotnet/yarp/pull/3031) · [#3008](https://github.com/dotnet/yarp/issues/3008) · [PR #3024](https://github.com/dotnet/yarp/pull/3024) · [#3033](https://github.com/dotnet/yarp/issues/3033) · [OpenTelemetry HTTP span semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/)
 - YARP: [#275](https://github.com/dotnet/yarp/issues/275) · [#1764](https://github.com/dotnet/yarp/issues/1764) · [#2847](https://github.com/dotnet/yarp/issues/2847) · [Migrate YARP docs to AspNetCore.Docs (#34650)](https://github.com/dotnet/AspNetCore.Docs/issues/34650) · [YARP WebSockets doc](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/yarp/websockets?view=aspnetcore-10.0) · [lets-encrypt.md in AspNetCore.Docs](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/fundamentals/servers/yarp/lets-encrypt.md) · [LettuceEncrypt-Archon on NuGet](https://www.nuget.org/packages/LettuceEncrypt-Archon/)
 
 The MPU-6050 register-level hypothesis in item F comes from general knowledge of the InvenSense datasheets. It hasn't been verified against the dotnet/iot source yet, so confirm it before relying on it.

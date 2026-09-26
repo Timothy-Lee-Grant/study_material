@@ -1,8 +1,8 @@
 # Open Source Contributor Profile — Timothy Grant
 
-> **What this is:** the living reference for my open-source work. It covers what I bring, where I'm focusing, how I work, and the development environment I work in. It's the first thing to read (for me, or for an AI session helping me) before choosing an issue or planning a contribution.
+> **What this is:** the living reference for my open-source work. It covers why I contribute, what I bring, how issues are chosen, how I work, and the development environment I work in. It's the first thing to read (for me, or for an AI session helping me) before choosing an issue or planning a contribution.
 >
-> **Last updated:** 2026-09-26 · **Update it:** after every merged PR, every hardware change, and at each monthly issue-shortlist refresh.
+> **Last updated:** 2026-09-26 · **Update it:** after studying an issue, after every merged PR, after every hardware change, and at each monthly issue-shortlist refresh.
 >
 > **Related:** `implementations/` (actionable plans and issue shortlists) · `lectures/` (supporting concepts) · the repo-root `persona.md` (broader learning profile)
 
@@ -12,11 +12,24 @@
 
 Firmware engineer turned .NET engineer, working across the hardware/software boundary. My background is embedded C on bare-metal microcontrollers (I2C, SPI, register-level drivers). More recently I've been on a production .NET team, where I built a Linux background service that ingests hardware telemetry through native interop (P/Invoke, struct marshalling, native callbacks) and feeds a rules engine that drives automated decisions. That work shipped through code review and CI/CD.
 
-In open source, I focus on **.NET libraries where systems knowledge matters**: device and GPIO libraries, native interop, and developer tooling for AI systems (MCP). My goal is sustained, high-quality contributions to Microsoft-maintained .NET repositories.
+In open source, I focus on **.NET libraries where systems knowledge matters**: device and GPIO libraries, native interop, and developer tooling for AI systems (MCP). My goals are sustained, high-quality contributions to Microsoft-maintained .NET repositories, and **steady exposure to technologies and engineering concepts I haven't worked with yet.**
 
 ---
 
-## 2. What I bring
+## 2. Why open source
+
+| Motivation | What it means in practice |
+|---|---|
+| 🔭 **Exposure to new technologies and concepts** | The biggest lesson from my time on a production .NET team: much of my growth came from *encountering* things I'd never have met on my own (a new protocol, a hosting model, a build pipeline, an interop pattern) and having a real reason to understand them. Open-source codebases offer that same exposure on demand, across far more technologies than any single job. **This is a primary goal, not a side effect.** |
+| 🧠 **Expert code review** | Maintainer review is the best feedback available outside a team: specific, public, and from people who designed the code. |
+| 📜 **Public, verifiable work** | Merged contributions in respected repositories are evidence anyone can inspect. |
+| 🤝 **Working with strong engineers** | Collaborating with maintainers, many of them at Microsoft, on real problems. |
+
+Because exposure is a primary goal, **studying an issue deeply counts as progress even when I don't end up submitting a PR for it.** Each issue I study should leave behind at least one new concept I can explain (tracked in §7.2).
+
+---
+
+## 3. What I bring
 
 These are the strengths to lead with when choosing issues. An issue that uses two or more of them is a strong fit.
 
@@ -33,7 +46,7 @@ These are the strengths to lead with when choosing issues. An issue that uses tw
 
 ---
 
-## 3. Focus and venues
+## 4. Focus and venues
 
 | Role | Repository | Why |
 |---|---|---|
@@ -48,7 +61,54 @@ The current issue plan is in `implementations/001-issue_shortlist_sept_2026.md`.
 
 ---
 
-## 4. How I work (contribution principles)
+## 5. How issues are chosen
+
+Every issue on a shortlist is scored on five dimensions. The first two carry the most weight.
+
+| Dimension | Question | Weight |
+|---|---|---|
+| **Exposure value** | Which concepts or technologies would I meet that I haven't worked with yet (§7.2)? How transferable are they to backend/cloud/systems work? | High |
+| **Strength fit** | Does it use my strengths (§3), so I can contribute something maintainers can't easily get elsewhere? | High |
+| **Feasibility** | Can I build, test, and reproduce it with my environment (§8.3) and hardware (§8.5)? | Gate (must pass) |
+| **Scope & maintainer signal** | Is it labeled for contributors, unclaimed, and scoped to one area? | Gate (must pass) |
+| **Career signal** | Microsoft-maintained repo? A story I could tell in an interview? | Medium |
+
+### 5.1 Two kinds of issues: anchors and explorers
+
+| Kind | Definition | Why both matter |
+|---|---|---|
+| ⚓ **Anchor** | Mostly in familiar territory (hardware, interop, I2C/SPI). High chance of a quality PR. | Builds a track record and maintainer trust |
+| 🧭 **Explorer** | At least one significant concept I haven't worked with before (e.g., OAuth flows, TLS/ACME, protocol versioning, WebSockets, test infrastructure, concurrency design). | Delivers the exposure that drives growth |
+
+**Target mix for each shortlist:** roughly half anchors and half explorers, with **at least two explorers from outside the device domain**. Every shortlist entry must list **"Concepts you'll encounter"** so the exposure value is explicit.
+
+### 5.2 The refinement loop
+
+```
+ shortlist ──► study issues ──► log reactions (§10.2) + new concepts (§7.2)
+     ▲                                          │
+     └──── next shortlist weights toward what ──┘
+           was most interesting and useful
+```
+
+Each refresh should be better targeted than the last, because it's informed by what I actually found valuable.
+
+### 5.3 Learning picks: closed and claimed issues count too
+
+An issue doesn't have to be available to be worth my time. A closed issue with a well-reviewed PR, or an open issue someone else is already working on, can teach as much as one I solve myself: a real bug, the fix, and the review discussion, all in one place. **Suggestions may include these freely**, including examples chosen at the suggester's discretion ("here's something worth seeing"), as long as each one is clearly labeled.
+
+Every suggested item carries two labels:
+
+| Label | Values | Meaning |
+|---|---|---|
+| **State** | 🟢 **Open, available** · 🟡 **Open, claimed** (assigned or has someone else's PR) · ⚫ **Closed** (fixed, merged, or declined) | What's actually happening on GitHub, as of the date checked |
+| **Intent** | 🛠️ **Contribute**: worth my time to develop a PR, reproduction, or comment · 📖 **Learn**: study it for the concepts, code, and review; don't try to take it over | How I should spend time on it |
+
+For 📖 **Learn** items, the write-up should focus on **what the issue was, what the fix or discussion shows, and the key lessons**. Code excerpts and before/after comparisons are welcome. If a learning item has an open follow-up I could pick up, call that out separately as 🛠️.
+
+---
+
+## 6. How I work (contribution principles)
 
 1. **Comment before code.** For anything bigger than a typo, agree the approach with a maintainer on the issue first.
 2. **Small, focused PRs, with tests.** One concern per PR. Bug fixes come with a test that fails before the fix.
@@ -60,9 +120,11 @@ The current issue plan is in `implementations/001-issue_shortlist_sept_2026.md`.
 
 ---
 
-## 5. Current learning focus
+## 7. Current learning focus and exposure map
 
-What I'm actively deepening. When an issue touches one of these, it doubles as study:
+### 7.1 Actively deepening
+
+When an issue touches one of these, it doubles as study:
 
 | Area | Why now | How open source helps |
 |---|---|---|
@@ -72,13 +134,35 @@ What I'm actively deepening. When an issue touches one of these, it doubles as s
 | Distributed systems and networking | Backend career direction | YARP issues and docs |
 | .NET API design and review | Needed before proposing any new public API | Reading API review threads; the I2C target discussion |
 
+### 7.2 Exposure map
+
+The concept areas I want exposure to, and where I've encountered each one through open-source work. **Shortlists should prioritize areas that are still empty.**
+
+| Concept area | Examples | Encountered via (issue / PR) | Depth |
+|---|---|---|---|
+| Native interop & memory layout | P/Invoke, struct layout across architectures, native asserts, `SafeHandle` | | |
+| Hardware protocols & drivers | I2C/SPI edge cases, register maps, libgpiod | | |
+| Concurrency & event dispatch | Observer threads, locks vs. concurrent collections, event wrappers | | |
+| Error handling & API compatibility | Exception design, fallbacks, behavior changes vs. breaking changes | | |
+| Networking & proxies | Reverse proxies, WebSockets, timeouts, keep-alives | | |
+| Security & identity | OAuth 2.0 / OIDC, TLS, certificate automation (ACME) | | |
+| Protocols & versioning | Capability negotiation, spec-driven SDKs (MCP), JSON-RPC | | |
+| Testing infrastructure | Flaky tests, CI timing, `WebApplicationFactory`, fakes vs. mocks | | |
+| Build, packaging & CI | MSBuild, multi-targeting, NuGet packaging, GitHub Actions / Azure Pipelines | | |
+| Containers & deployment | Device access in containers, minimal/chiseled images | | |
+| Observability | OpenTelemetry, `Activity`, metrics | | |
+| Performance | Benchmarking, allocations, startup (JIT vs. AOT) | | |
+| Cloud & distributed systems | Azure SDK patterns, retries/resilience, messaging | | |
+
+**Depth levels:** *Read* (studied the issue/code) → *Reproduced* → *Contributed* (merged PR) → *Can explain* (wrote a note or lecture about it).
+
 ---
 
-## 6. Development environment
+## 8. Development environment
 
-Open-source work depends on being able to **build and test the repo locally**, so this section is a working constraint for issue selection, not just an inventory. **Check the compatibility matrix (§6.3) before picking an issue.**
+Open-source work depends on being able to **build and test the repo locally**, so this section is a working constraint for issue selection, not just an inventory. **Check the compatibility matrix (§8.3) before picking an issue.**
 
-### 6.1 Machines
+### 8.1 Machines
 
 | Machine | Role | Capabilities | Constraints |
 |---|---|---|---|
@@ -95,7 +179,7 @@ Open-source work depends on being able to **build and test the repo locally**, s
 > ```
 > Record the model name here: *(fill in)*
 
-### 6.2 The .NET version landscape (why this matters now)
+### 8.2 The .NET version landscape (why this matters now)
 
 | Version | Status (as of 2026-09-26) | Implication |
 |---|---|---|
@@ -103,7 +187,7 @@ Open-source work depends on being able to **build and test the repo locally**, s
 | **.NET 10** | LTS, supported until Nov 2028 | Runs on **every** machine I own. The safe baseline for personal projects. |
 | **.NET 11** | RC1 shipped Sept 8, 2026 (go-live license); GA expected in November; STS (24 months) | Requires `x86-64-v2` on x64. **Runs on the Mac and the Pis, not the desktop.** Repos' `main` branches will move their `global.json` SDK to 11 over the next months. |
 
-### 6.3 Compatibility matrix: where each repo can be built and tested
+### 8.3 Compatibility matrix: where each repo can be built and tested
 
 Re-check each repo's `global.json` before starting. It pins the SDK version, and that pin is what decides whether a machine can build the repo.
 
@@ -115,7 +199,7 @@ Re-check each repo's `global.json` before starting. It pins the SDK version, and
 | **dotnet/AspNetCore.Docs**, **dotnet/docs** | ✅ (Markdown) | ✅ | ✅ | Any machine works. Docs PRs can even be made from the GitHub web editor. |
 | **dotnet/runtime** | ❌ too large; SDK will be 11+ | ❌ disk | ⚠️ only with a large machine type | Reading only, for now |
 
-### 6.4 Plan: free options first, then targeted purchases
+### 8.4 Plan: free options first, then targeted purchases
 
 **Tier 0: no cost (use immediately).**
 - **GitHub Codespaces** for the MCP C# SDK and YARP. The GitHub Free plan includes **120 core-hours and 15 GB-month of storage per month** (60 hours of a 2-core machine). Delete codespaces when a PR is done so storage doesn't accumulate.
@@ -139,7 +223,7 @@ Re-check each repo's `global.json` before starting. It pins the SDK version, and
 - [ ] Codespaces quota runs out two months in a row → Tier 2
 - [ ] The Mac drops below 10 GB free during normal work → Tier 1 (or Tier 2 if not done)
 
-### 6.5 Hardware lab (for reproductions)
+### 8.5 Hardware lab (for reproductions)
 
 | Item | Status | Needed for |
 |---|---|---|
@@ -154,17 +238,19 @@ All of this is **personal equipment**, kept separate from anything employer-owne
 
 ---
 
-## 7. Time budget
+## 9. Time budget
 
 | Block | Hours / week | Notes |
 |---|---|---|
-| Open-source contribution | ~3 | Issue work, reviews, reproductions |
+| Open-source contribution | ~3 | Issue study, reproductions, PRs, responding to reviews |
 | Reading / "predict the review" | ~1 (from the design-reading block) | One merged PR per week in a focus repo |
 | Community | ~0.5 | Issue discussions, answering questions |
 
 ---
 
-## 8. Contribution record
+## 10. Record and feedback
+
+### 10.1 Contribution record
 
 Update after each contribution. This is the source for resume lines and interview stories.
 
@@ -174,12 +260,43 @@ Update after each contribution. This is the source for resume lines and intervie
 
 ---
 
-## 9. Notes for AI sessions using this profile
+### 10.2 Issue study log (feedback for future shortlists)
 
-- **Check §6.3 before recommending an issue.** Don't recommend work that needs a .NET 11 SDK build on the Linux desktop, or a large clone on the MacBook. Suggest Codespaces or flag the hardware need instead.
-- **Prefer issues that use §2 strengths**, especially hardware reproductions and native interop.
+After studying an issue from a shortlist, add a row, even if I decide not to work on it. **This is the main input for honing future suggestions.**
+
+| Date | Issue | Anchor / Explorer | Interest (1–5) | Useful for growth (1–5) | New concepts met | Decision (pursue / park / skip) and why |
+|---|---|---|---|---|---|---|
+| | | | | | | |
+
+### 10.3 Preference signals
+
+Patterns distilled from §10.2. Update at each shortlist refresh.
+
+- **More of:** *(fill in as patterns emerge, e.g., "issues where the root cause crosses the managed/native boundary")*
+- **Less of:** *(fill in)*
+- **Concepts I want next:** *(fill in; also update §7.2)*
+
+---
+
+## 11. Notes for AI sessions using this profile
+
+**When producing or refreshing an issue shortlist:**
+
+1. **Read §2, §5, §7.2, and §10 first.** They define what "a better issue" means for me, and they change over time.
+2. **Score each candidate on §5's dimensions.** Apply the gates (feasibility against §8.3 and §8.5; unclaimed, labeled, scoped) before anything else.
+3. **Balance the list:** about half anchors and half explorers, with at least two explorers outside the device domain (§5.1).
+   **Include 📖 Learn picks freely** (closed issues, merged PRs, issues someone else has claimed) when they teach something valuable. Suggestions at your own discretion are welcome (§5.3).
+   **Label every item with State (🟢 / 🟡 / ⚫) and Intent (🛠️ Contribute / 📖 Learn)**, as of the date checked.
+4. **For every issue, include "Concepts you'll encounter"** and mark which §7.2 areas it covers. Prefer areas that are still empty or only at *Read* depth.
+5. **Use §10.2 and §10.3.** Weight toward issue types rated high on interest and growth; avoid repeating patterns marked "less of." Don't re-suggest issues already studied unless their status changed.
+6. **Ask for feedback** at the end: which issues were most interesting, and what to see more of. Then update §10.3.
+
+**General:**
+
+- Don't recommend work that needs a .NET 11 SDK build on the Linux desktop, or a large clone on the MacBook. Suggest Codespaces or flag the hardware need instead.
 - **Keep this document public-safe:** strengths-forward, professional, no employer names, products, or internal details.
-- **Update §6 and §8** when the user reports new hardware, a purchase, or a merged PR.
+- **Update §7.2, §8, and §10** when the user reports new hardware, a purchase, an issue studied, or a merged PR.
+
 
 ---
 
