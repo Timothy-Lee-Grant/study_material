@@ -7,6 +7,7 @@ This started as a private repo, but I'm making it public in case anyone else fin
 ## Structure
 
 - `lectures/` — lecture documents, grouped by topic/project area
+  - `lectures/open_source/` — my open-source contribution home base: a contributor profile, `implementations/` (issue shortlists and action plans), and `concept_notes/` (short Q&A notes that unblock specific issues)
 - `project_ideas/` — notes on project ideas
 
 Not meant to be a polished course — just my personal study notes.

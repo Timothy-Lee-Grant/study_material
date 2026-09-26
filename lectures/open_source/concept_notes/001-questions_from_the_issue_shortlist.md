@@ -1,9 +1,10 @@
-# Lecture 001 — Questions From the Issue Shortlist
+# Concept Notes 001 — Questions From the Issue Shortlist
 
-> **What this is:** a running Q&A log. As I read `implementations/001-issue_shortlist_sept_2026.md`, I ask questions about things I don't understand or want to explore, and each answer is **appended** here, newest at the bottom.
+> **What this is:** a running Q&A log of *concept notes*. As I read `implementations/001-issue_shortlist_sept_2026.md`, I ask about things I don't understand, and each answer is **appended** here, newest at the bottom.
+> **Style:** short and issue-focused. Just enough concept to unblock the next step, then concrete next steps. Not a full lecture; deep dives belong in the repo's top-level `lectures/` domains.
 > **Started:** 2026-09-26
 >
-> **Format for each entry:** the question (in my words) → the short answer → the full explanation → what to take away → interview relevance (where it applies).
+> **Format for each entry:** the question (in my words) → the short answer → the explanation → what to take away / next steps.
 
 ---
 
@@ -13,6 +14,7 @@
 |---|---|---|---|
 | Q1 | Why do maintainers open an issue for a simple docs fix instead of just doing it? | YARP #1764 (item A) | How open-source projects actually run |
 | Q2 | I found `src/TelemetryConsumption/WebSockets/` in YARP, but it's all C#. Where are the docs, and what am I misunderstanding? | YARP #1764 (item A) | Code vs. docs repos; finding a doc's source; verifying before contributing |
+| Q3 | What are sockets and WebSockets, what does YARP do with them, what is the proxy timeout, and how do keep-alives and browser heartbeats fix it? | YARP #1764 (item A) | Sockets, WebSocket handshake, proxy byte-pumping, idle timeouts, keep-alives |
 
 ---
 
@@ -223,5 +225,142 @@ This is now a **triage + tiny docs PR**. Both are real contributions, and it's e
 ### Interview relevance
 
 "How do you get up to speed in an unfamiliar codebase?" This is a concrete answer: separate the product code from the telemetry, tests, and docs; find the published artifact and trace it back to its source; verify the current state before changing anything. The ActivityTimeout thread (docs ↔ telemetry enum ↔ proxy behavior) is also a nice example of connecting layers, the top-down thinking design interviews look for.
+
+---
+
+## Q3. Sockets, WebSockets, YARP's role, the idle timeout, and keep-alives
+
+**Related:** [YARP #1764](https://github.com/dotnet/yarp/issues/1764), item A · **Asked:** 2026-09-26
+
+### The question
+
+I'm weak on sockets and WebSockets: what they are, how the connection is established (the handshake), and why they work the way they do. Where does YARP fit in, and what exactly is a "proxy timeout"? My reading of the fix: the **destination server** is the ASP.NET Core app YARP routes to, and it has a `KeepAliveInterval` setting in `WebSocketOptions` that prevents the timeout. And what are "application-level heartbeats" in browsers? How do they work, why are they the usual approach, and what do they cost?
+
+### The short answer
+
+- A **socket** is the OS's handle to one end of a network connection (think: a file descriptor you can read and write bytes on). A **TCP connection** is a reliable two-way byte pipe between two sockets.
+- Plain **HTTP** uses that pipe for **request → response**, and the server can't speak unless asked. A **WebSocket** starts as an HTTP request that asks to **"upgrade"**. After the server agrees, the same TCP connection becomes a **full-duplex message channel** where either side can send at any time. That's what chat, live dashboards, and notifications need.
+- **YARP** is a **reverse proxy**: clients connect to YARP, and YARP opens its own connection to a **destination** (backend) server. For a WebSocket, YARP forwards the upgrade handshake, then just **pumps bytes in both directions** between the two connections.
+- The **activity timeout** (default **100 s**) is YARP's rule: "if no bytes move in either direction for 100 s, close both connections." It protects the proxy from holding dead connections forever.
+- **Your understanding of the fix is correct**: the destination server is the ASP.NET Core app behind YARP, and `WebSocketOptions.KeepAliveInterval` makes it send small control frames periodically, so the connection is never idle for 100 s. **One gotcha:** the default `KeepAliveInterval` is **2 minutes**, which is *longer* than YARP's 100 s, so with defaults the proxy still cuts idle sockets. You have to set it below 100 s.
+- **Browser JavaScript can't send WebSocket ping frames** (the browser API doesn't expose them), so browser apps send their own tiny "heartbeat" messages on a timer. Libraries like SignalR do this for you.
+
+### The explanation
+
+#### 1. The cast of characters
+
+```
+  Browser / client app            YARP (reverse proxy)                Destination server
+  ────────────────────            ────────────────────                ──────────────────
+  socket A ══ TCP conn #1 ══► socket B      socket C ══ TCP conn #2 ══► socket D
+                               (YARP accepts)  (YARP connects)        (your ASP.NET Core app)
+
+  Two separate TCP connections. YARP sits in the middle and relays.
+```
+
+| Character | Job |
+|---|---|
+| **Socket** | The OS's endpoint object for one side of a connection. Your code reads/writes bytes on it; the kernel handles TCP. |
+| **TCP connection** | Reliable, ordered byte stream between two sockets. Opened with a handshake (SYN, SYN-ACK, ACK) and stays open until one side closes it. |
+| **HTTP** | A conversation *protocol on top of* TCP: the client sends a request, the server sends a response. The server never speaks first. |
+| **WebSocket** | A different protocol on top of TCP, entered **via** an HTTP request. Once established, it's message frames both ways, anytime. |
+| **YARP** | A reverse proxy: accepts client connections, picks a destination per its routes/clusters, and forwards traffic. |
+| **Destination server** | The backend app YARP forwards to. In #1764's scenario, an ASP.NET Core app using WebSockets. |
+
+**Firmware analogy:** a TCP connection is like a UART link that's been set up and stays up. HTTP is a strict **master–slave** protocol on that link (like I2C: the controller always initiates). A WebSocket switches the link to **full-duplex messaging**, where either side can transmit whenever it wants. YARP is a **bridge/repeater** between two links.
+
+#### 2. How a WebSocket is established (the handshake)
+
+It begins as an ordinary HTTP/1.1 request with special headers:
+
+```
+Client → Server:
+  GET /chat HTTP/1.1
+  Host: example.com
+  Upgrade: websocket                 ← "I want to switch protocols"
+  Connection: Upgrade
+  Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==     ← random nonce
+  Sec-WebSocket-Version: 13
+
+Server → Client:
+  HTTP/1.1 101 Switching Protocols   ← "agreed"
+  Upgrade: websocket
+  Connection: Upgrade
+  Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=   ← proves the server understood the request
+```
+
+After `101`, **HTTP is over on that connection.** The same TCP connection now carries WebSocket **frames**: text/binary data frames, plus **control frames**: `Ping`, `Pong`, and `Close`. (Over HTTP/2 the start is slightly different, an extended `CONNECT`, but the idea is the same. YARP's WebSockets doc covers both.)
+
+**Why start with HTTP?** So WebSockets work through the same ports (80/443), firewalls, TLS, and proxies as normal web traffic. It's a way into full-duplex communication without needing new infrastructure.
+
+#### 3. What YARP does with a WebSocket
+
+1. The client's upgrade request arrives at YARP like any HTTP request, and YARP's routing picks a destination.
+2. YARP forwards the upgrade request to the destination.
+3. The destination answers `101`, and YARP passes it back to the client.
+4. From then on, YARP **doesn't interpret the traffic.** It copies bytes from client→destination and destination→client until one side closes.
+
+So for the life of a WebSocket, YARP is holding **two TCP connections, buffers, and a running copy task**. That's cheap for one socket, but real for 100,000.
+
+#### 4. The activity timeout: why it exists
+
+A connection can die **silently**: a laptop lid closes, Wi-Fi drops, a phone switches networks. No `Close` frame is sent, and TCP won't notice on its own for a very long time. From YARP's side, a dead connection and a quiet-but-alive one look identical: no bytes moving.
+
+YARP's answer is a **watchdog**: `ActivityTimeout` (default **100 seconds**, configured per cluster under `HttpRequest.ActivityTimeout`). Any successful read/write (including WebSocket ping/pong frames) **resets** the timer. If it expires, YARP closes both connections and frees the resources. (Plain TCP keep-alives don't reset it, because they never reach YARP's code.)
+
+**Firmware analogy:** exactly a watchdog timer. The healthy system must "kick" it periodically, and silence is treated as failure. The keep-alive frame is the kick.
+
+The side effect is the problem in #1764: a **legitimately idle** WebSocket (e.g., a chat app where nobody types for two minutes) gets killed too. The fix is to make sure *something* kicks the watchdog.
+
+#### 5. Fix 1: server-side keep-alives (your reading, confirmed)
+
+In the destination server (ASP.NET Core):
+
+```csharp
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(30)   // default is 2 minutes, which is LONGER than YARP's 100 s!
+});
+```
+
+The server now sends a small control frame every 30 s. It passes through YARP, which counts it as activity, so the watchdog never fires. Browsers answer server `Ping` frames automatically at the protocol level, and no JavaScript is involved. Newer ASP.NET Core versions also have `KeepAliveTimeout`: after sending a ping, if no pong comes back in time, the *server* aborts the connection. That gives the server its own dead-peer detection.
+
+Alternatively, raise YARP's `ActivityTimeout` for that route's cluster (e.g., 10 minutes). That's simpler, but it also lets dead connections linger longer. It's a trade-off between resource cleanup and tolerance for idle connections.
+
+#### 6. Fix 2: application-level heartbeats (the browser side)
+
+The browser's JavaScript `WebSocket` API can `send()` data messages and `close()`, but it **can't send `Ping` frames**. So when the *client* needs to keep the connection alive or detect that the server vanished, the application does it itself:
+
+```js
+// Browser: send a tiny app-defined message every 30 s
+const ws = new WebSocket("wss://example.com/chat");
+setInterval(() => ws.send(JSON.stringify({ type: "ping" })), 30_000);
+// Server code recognizes {type:"ping"} and may reply {type:"pong"}.
+// If no pong arrives within N seconds, the client closes and reconnects.
+```
+
+It's "application-level" because it's an ordinary data message whose meaning the *app* defines, not a protocol control frame.
+
+**Why it's the usual approach:** it works regardless of what's in between (YARP, load balancers, corporate proxies, NAT routers with their own idle timers), and it gives the **client** its own liveness check and reconnect logic. That's why real-time libraries build it in. **SignalR** (ASP.NET Core's real-time library) sends keep-alive messages automatically, and its client treats the server as gone if it hears nothing within a timeout.
+
+**The cost:**
+- **Per connection:** a few bytes every N seconds. Negligible.
+- **At scale:** 1,000,000 connections × one message per 30 s ≈ **33,000 messages per second** for the server to handle, just for heartbeats. The interval is a tuning knob between responsiveness and load.
+- **Mobile:** each heartbeat can wake the radio, which costs battery. This is why mobile apps often use longer intervals or push notifications instead.
+- **Rule of thumb:** the heartbeat interval must be **shorter than the smallest idle timeout anywhere on the path** (YARP's 100 s, a cloud load balancer's idle timeout, a NAT's timer).
+
+### What to take away
+
+- Socket = OS endpoint; TCP = reliable byte pipe; HTTP = request/response on the pipe; WebSocket = HTTP that **upgrades** into two-way messaging.
+- YARP forwards the upgrade, then **relays bytes** and holds two connections per WebSocket.
+- `ActivityTimeout` is a **watchdog** against silently dead connections. Idle-but-alive sockets need something to kick it.
+- Keep-alives: server `KeepAliveInterval` (**set it below 100 s**; the default 2 min isn't enough), app-level heartbeats from the client, or a longer `ActivityTimeout`.
+
+### Next steps (for item A)
+
+- [ ] **See it happen (~1 h, .NET 10 on any machine):** create (1) a minimal ASP.NET Core **echo WebSocket server**, (2) a minimal YARP app routing `/ws` to it, and (3) a small console client using `ClientWebSocket` that connects through YARP and then sits idle. Watch the connection drop at about 100 s.
+- [ ] Set `KeepAliveInterval = TimeSpan.FromSeconds(30)` on the echo server and confirm the connection now survives. Then try the default (2 min) and confirm it still drops. **That gotcha is worth mentioning in your #1764 comment and in the docs sentence.**
+- [ ] Optional: open the connection from a browser (the dev tools console is enough), add a `setInterval` heartbeat, and watch the frames in the browser's Network tab (the WS "Messages" view).
+- [ ] Update your draft comment on #1764 (from Q2) with what you observed. A comment with a verified repro is much stronger than one that only cites the docs.
 
 ---

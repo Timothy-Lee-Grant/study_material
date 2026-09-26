@@ -8,6 +8,15 @@ This folder is where I directly copy and paste the lecture notes which I generat
 
 Some sub folders here are **knowledge domains** rather than projects (for example `carreer_path`, `firmware`). These hold lectures about a subject area rather than about a specific codebase. If I ask you to teach me a domain that isn't tied to one of my projects, create or use a domain sub folder here rather than putting it in `project_ideas` — `project_ideas` is only for lectures about projects I want to build. Use the same `(Number)-(title).md` naming convention described below.
 
+## lectures/open_source (open-source home base)
+
+`lectures/open_source/` is different from the other domain folders. It's my working home base for contributing to open-source projects, with this structure:
+
+- `open_source_persona.md`: my contributor profile (strengths, how issues are chosen, dev environment, study log). **Read it before suggesting issues or plans.** It must stay public-safe and strengths-forward.
+- `implementations/`: actionable documents such as issue shortlists, with concrete steps, status labels (🟢/🟡/⚫, 🛠️ Contribute / 📖 Learn), and progress trackers. Named `(Number)-(title).md`.
+- `concept_notes/`: **short, issue-focused concept explanations** that answer my questions while I work through an implementation document. Each note gives just enough understanding to unblock the next step, plus next steps. **These are not full lectures.** Deep, comprehensive lectures belong in the regular domain folders under `lectures/`. When I ask a question about an issue, append it to the current Q&A file (e.g., `001-questions_from_the_issue_shortlist.md`) and update its index.
+- `private/`: git-ignored. Candid observations about me that I copy to a private repo. Never reference its contents in public files.
+
 # project_ideas 
 
 Within this folder, this is where I will have you go and actually generate more documentation. The idea with this folder is I will be able to describe the general idea of a project which I’m having and I want you to go and create a full lecture document outlining all of the important concepts, which I will need to have an understanding of to be able to start implementing this project.

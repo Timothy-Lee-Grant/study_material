@@ -4,7 +4,7 @@
 >
 > **Last updated:** 2026-09-26 · **Update it:** after studying an issue, after every merged PR, after every hardware change, and at each monthly issue-shortlist refresh.
 >
-> **Related:** `implementations/` (actionable plans and issue shortlists) · `lectures/` (supporting concepts) · the repo-root `persona.md` (broader learning profile)
+> **Related:** `implementations/` (actionable plans and issue shortlists) · `concept_notes/` (short, issue-focused concept explanations that unblock the next step) · `private/` (git-ignored candid notes) · the repo-root `persona.md` (broader learning profile)
 
 ---
 
