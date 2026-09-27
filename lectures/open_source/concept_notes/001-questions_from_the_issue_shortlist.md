@@ -15,6 +15,7 @@
 | Q1 | Why do maintainers open an issue for a simple docs fix instead of just doing it? | YARP #1764 (item A) | How open-source projects actually run |
 | Q2 | I found `src/TelemetryConsumption/WebSockets/` in YARP, but it's all C#. Where are the docs, and what am I misunderstanding? | YARP #1764 (item A) | Code vs. docs repos; finding a doc's source; verifying before contributing |
 | Q3 | What are sockets and WebSockets, what does YARP do with them, what is the proxy timeout, and how do keep-alives and browser heartbeats fix it? | YARP #1764 (item A) | Sockets, WebSocket handshake, proxy byte-pumping, idle timeouts, keep-alives |
+| Q4 | I ran the repro. What evidence do I collect, how do I turn it into a comment and PR, and should I keep repros in a separate repo? | YARP #1764 (item A) | Evidence, PR etiquette, repro repositories |
 
 ---
 
@@ -362,5 +363,170 @@ It's "application-level" because it's an ordinary data message whose meaning the
 - [ ] Set `KeepAliveInterval = TimeSpan.FromSeconds(30)` on the echo server and confirm the connection now survives. Then try the default (2 min) and confirm it still drops. **That gotcha is worth mentioning in your #1764 comment and in the docs sentence.**
 - [ ] Optional: open the connection from a browser (the dev tools console is enough), add a `setInterval` heartbeat, and watch the frames in the browser's Network tab (the WS "Messages" view).
 - [ ] Update your draft comment on #1764 (from Q2) with what you observed. A comment with a verified repro is much stronger than one that only cites the docs.
+
+---
+
+## Q4. From repro to PR: what to collect, what to post, and a repo for repros
+
+**Related:** [YARP #1764](https://github.com/dotnet/yarp/issues/1764), item A · **Asked:** 2026-09-27 · **Input reviewed:** my `yarp_timeout` experiment (sample solution + write-up)
+
+### The question
+
+I built and ran the three-process repro (IdleClient → YARP → EchoServer). How should I document it, what information should I collect, and what exactly goes into the comment and the pull request? I'm also thinking about a separate repository for the examples and tests behind my open-source work, so a PR could link to it. Is that a good idea, and how should it be structured?
+
+### The short answer
+
+- **The repro is strong work.** It reproduced the drop to the tenth of a second, confirmed the fix, and caught the 2-minute-default gotcha. Most docs PRs have no evidence behind them at all.
+- **Fix two things before posting anything public** (details below): (1) `ClientWebSocket` has its **own keep-alive, on by default every 30 s**, so your "real 100 s default, no keep-alive" claim needs a re-run with the client's keep-alive turned off; (2) the "confirmed at the real 100 s default" line has no captured output yet.
+- **Order of operations:** comment on the issue first (short findings plus a link), wait for a maintainer's go-ahead, then open a small PR in `dotnet/AspNetCore.Docs`.
+- **A public repro repo is a good idea**, as long as every comment and PR is **self-contained without it**. Maintainers rarely click links, so the link is supporting evidence, not the argument.
+
+### 1. Two corrections before anything goes public
+
+**(a) The client keeps the connection alive too, by default.** `ClientWebSocket.Options.KeepAliveInterval` defaults to `WebSocket.DefaultKeepAliveInterval`, which is **30 seconds**. So in your IdleClient, the *client* has been sending keep-alive control frames every 30 s the whole time:
+- In the 8-second experiments that didn't matter (30 s > 8 s), so those results stand.
+- **At the real 100 s default it matters a lot:** with no server keep-alive at all, the client's own 30 s keep-alive should keep the connection alive past 100 s. So "dies at 100.0 s with no keep-alive" is probably **false as written** for a .NET client.
+
+The fix to the experiment is one line in IdleClient, controlled by an argument or env var:
+
+```csharp
+using var client = new ClientWebSocket();
+client.Options.KeepAliveInterval = TimeSpan.Zero;   // disable the client's automatic keep-alive
+```
+
+This also produces a **new finding worth including**: *.NET clients keep the connection alive by default; browser clients can't* (the browser JavaScript API has no keep-alive setting). That's a strong explanation of **who actually hits #1764**: browser-based apps, and servers that rely on ASP.NET Core's 2-minute default.
+
+It also means §8.4 of the write-up needs a small correction: `ClientWebSocket` doesn't let app code send ping frames *manually*, but it does send keep-alives *automatically*. (The property is marked unsupported on the `browser` platform, which matches the point above.)
+
+**(b) Capture the 100 s runs.** §7 of the write-up describes the real-default run but shows no output. Only claim what you've captured.
+
+**Wording tip:** say "keep-alive control frames," not "Ping frames." Depending on settings, .NET's keep-alive may send unsolicited Pong frames rather than Pings. Both reset YARP's timer, so "control frames" is accurate either way.
+
+### 2. The evidence kit (what to collect)
+
+| Item | Example / why |
+|---|---|
+| **Environment** | OS, `dotnet --info` SDK and runtime versions, `Yarp.ReverseProxy` 2.3.0 (the latest stable when checked) |
+| **Topology** | The one-line diagram: IdleClient → YARP :5000 → EchoServer :5050 |
+| **Exact configuration per run** | `ActivityTimeout`, server `KeepAliveInterval`, client `KeepAliveInterval` |
+| **A results matrix** (the heart of it) | One row per run, with observed times, not predictions |
+| **Raw output** | Client console lines and the proxy's log/stack trace for each run, saved to files |
+| **Reproduction steps** | Commands someone else could paste |
+
+Suggested final matrix (★ = runs you still need):
+
+| # | `ActivityTimeout` | Server keep-alive | Client keep-alive | Result |
+|---|---|---|---|---|
+| 1 | 8 s | 2 min (default) | 30 s (default) | Aborted at 8.0 s ✅ captured |
+| 2 | 8 s | 3 s | 30 s (default) | Survived 30 s+ ✅ captured |
+| 3 ★ | 100 s (default) | 2 min (default) | **off** | Expect abort at ~100 s |
+| 4 ★ | 100 s (default) | 30 s | **off** | Expect survives past 100 s |
+| 5 ★ | 100 s (default) | 2 min (default) | 30 s (default) | Expect survives: client keep-alive alone is enough |
+
+Runs 3–5 take about two minutes each. A small script that launches the three processes, runs a configuration, and appends the result to `results.md` makes this repeatable and less error-prone. It would also have prevented the stale-process problem from your write-up.
+
+### 3. Step one: the issue comment (before any PR)
+
+Keep it short, factual, and answerable with yes or no. Draft (fill in the ★ rows first):
+
+> Hi! I'd like to help close this out.
+>
+> I reproduced the behavior with a minimal setup (.NET 10, YARP 2.3.0: `ClientWebSocket` → YARP → ASP.NET Core echo server):
+>
+> | ActivityTimeout | Server KeepAliveInterval | Client KeepAliveInterval | Result |
+> |---|---|---|---|
+> | 100 s (default) | 2 min (ASP.NET Core default) | off | aborted at ~100 s |
+> | 100 s (default) | 30 s | off | stays open |
+> | 100 s (default) | 2 min (default) | 30 s (.NET client default) | stays open |
+>
+> The core guidance is now on the Timeouts page ([WebSockets section](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/yarp/timeouts)), but the [WebSockets page](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/yarp/websockets)'s Timeout section only mentions request timeouts. Two points seem easy to miss: `ActivityTimeout` still applies after the upgrade, and ASP.NET Core's default `KeepAliveInterval` (2 minutes) is longer than the default `ActivityTimeout` (100 s), so keep-alives need an interval below it. Browser clients can't enable keep-alives themselves.
+>
+> Would a short addition to the WebSockets page's Timeout section (linking to Timeouts#websockets) resolve this issue? If so, I'm happy to open the PR in dotnet/AspNetCore.Docs. Repro and raw results: <link>
+
+Then wait. A week without an answer is normal. Nudge once after one to two weeks (template D in the shortlist).
+
+### 4. Step two: the docs PR (after a go-ahead)
+
+**The change itself** (in `aspnetcore/fundamentals/servers/yarp/websockets.md`, Timeout section; match the page's voice):
+
+> Request timeouts are disabled after a WebSocket handshake, but the cluster's `ActivityTimeout` (default 100 seconds) still applies: an idle WebSocket connection is closed when no data flows in either direction for that long. To keep idle connections open, enable WebSocket keep-alives on the client or the destination server **with an interval shorter than `ActivityTimeout`**. ASP.NET Core's default `KeepAliveInterval` of 2 minutes is longer than the default `ActivityTimeout`. For details, see [Timeouts](xref:fundamentals/servers/yarp/timeouts#websockets).
+
+(Check the real `uid`/xref format in `timeouts.md` and follow the repo's guidance on `ms.date`.)
+
+**The PR description:**
+
+```
+Adds ActivityTimeout / keep-alive guidance to the YARP WebSockets page.
+
+Fixes dotnet/yarp#1764 (the core guidance already exists on the Timeouts page;
+this surfaces it where WebSocket users look, and calls out that ASP.NET Core's
+default KeepAliveInterval (2 min) exceeds YARP's default ActivityTimeout (100 s)).
+
+Verified with .NET 10 / YARP 2.3.0; results and repro: <link>
+```
+
+**Rules for the PR:**
+- **The docs text must not link to your repo.** Documentation links only to official sources. Your repo goes in the *comment and PR description* only.
+- **Keep the diff to that one section.** No drive-by edits elsewhere on the page.
+- **AI disclosure:** your sample code was AI-assisted. Follow the repo's policy if it asks, and write the docs sentence and PR description yourself.
+
+### 5. A repo for repros: yes, with this shape
+
+**Why it's worthwhile:** reproducible evidence for maintainers, a durable record you can reuse (a later YARP issue can start from this sample), and **portfolio proof** that you investigate before you change things, which is a trait hiring managers look for.
+
+**What to keep in mind:**
+- **Self-contained first.** Every comment and PR must stand on its own with the key numbers inline. The link is optional reading.
+- **For code PRs, the proof belongs in upstream tests.** A bug fix to dotnet/iot needs a test *in dotnet/iot*. The external repro is for investigation, not a substitute for a test.
+- **One source of truth.** Your `yarp_timeout` folder currently holds copies of `concept_notes/` and `implementations/` from this repo, and copies drift apart. Keep **study notes** here (Studying_Lectures) and **runnable repros plus their results** in the repro repo, and link between them.
+- **Public-safe:** MIT license, no employer code or details, personal hardware only.
+- **Don't commit `bin/` and `obj/`** (your archive included them). Add a standard .NET `.gitignore`.
+
+**Suggested structure** (the name is up to you, e.g., `oss-repros`):
+
+```
+oss-repros/
+├── README.md                     ← index: one row per repro (project, issue, status, PR link)
+├── LICENSE                       ← MIT
+├── .gitignore                    ← standard .NET (bin/, obj/, .vs/)
+├── yarp/
+│   └── 1764-websocket-idle-timeout/
+│       ├── README.md             ← the write-up (template below)
+│       ├── global.json           ← pinned SDK
+│       ├── src/
+│       │   ├── EchoServer/
+│       │   ├── Proxy/
+│       │   └── IdleClient/
+│       ├── run-matrix.sh         ← runs each configuration, appends to results/
+│       └── results/
+│           ├── results.md        ← the matrix
+│           └── raw/              ← console output per run
+├── dotnet-iot/
+│   └── 2356-mpu6050-bandwidth/   ← future: code + logic-analyzer captures
+└── mcp-csharp-sdk/
+    └── tracing-across-mcp/       ← future: item O's two-process trace
+```
+
+**Per-repro README template:**
+
+```
+# <project> #<issue>: <one-line title>
+Issue: <link> · Status: 🟢/🟡/⚫ · PR/comment: <link or "not yet">
+
+## Question            one or two sentences: what is being verified
+## Environment         OS, SDK/runtime, package versions, hardware if any
+## Topology            one-line diagram
+## How to run          copy-pasteable commands
+## Results             the matrix, observed values only
+## Conclusion          what this shows, and what it doesn't
+## Notes               surprises and gotchas (e.g., the client's default keep-alive)
+```
+
+### Next steps
+
+- [ ] Add a client keep-alive switch to IdleClient (`KeepAliveInterval = TimeSpan.Zero` when disabled).
+- [ ] Run matrix rows 3–5 at the real 100 s default and capture the output.
+- [ ] Correct §7 and §8.4 of the write-up (client keep-alive exists and defaults to 30 s; drop the uncaptured claim).
+- [ ] Create the repro repo with the structure above. Move the sample in, without the copied notes.
+- [ ] Post the §3 comment on #1764. Then wait for a maintainer before opening the docs PR.
 
 ---

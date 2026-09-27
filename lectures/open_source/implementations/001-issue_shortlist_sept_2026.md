@@ -705,7 +705,7 @@ Update this table as you go. It's the "status board" for the open_source home ba
 
 | Item | Issue | Status | Comment posted | PR | Merged | Notes |
 |---|---|---|---|---|---|---|
-| A | yarp#1764 | ☐ not started | | | | |
+| A | yarp#1764 | 🔄 repro built (8 s runs captured) | | | | Next: 100 s runs with client keep-alive off (Q4), then post comment |
 | B | iot#2297 | ☐ not started | | | | |
 | C | iot#2600 | ☐ not started | | | | |
 | D | iot#2602 | ☐ not started | | | | |
