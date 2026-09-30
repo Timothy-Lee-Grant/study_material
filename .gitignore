@@ -19,3 +19,6 @@ venv/
 
 # Private notes (copied manually to a private repo; never pushed)
 lectures/open_source/private/
+
+# Learning system: candid learner model, recall transcripts (never pushed)
+learning_system/private/

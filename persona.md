@@ -385,7 +385,7 @@ Being hired somewhere as a "mid-level" engineer on the strength of embedded expe
 
 # AI's Observations About Me
 
-*(Written 2026-09-25 from Timothy's own account of the last six months. Future sessions: add to this as you notice things.)*
+*(Written 2026-09-25 from Timothy's own account of the last six months. **As of 2026-09-29, new candid observations go in the git-ignored learner model (`learning_system/private/`), not here.** This section stays public-safe.)*
 
 1. **The hypothesis about "core concepts" is very likely correct.** Engineers who move quickly across unrelated domains are mostly re-applying a small set of transferable patterns — process/runtime, host & IoC, interface/contract, DI & lifetimes, serialization, IPC, persistence, build → artifact → deploy, config & secrets, testing seams. A new domain is usually 80% those patterns in new clothes and 20% genuinely new. Timothy is currently learning each domain from the ground up because that shared layer isn't yet automatic. Filling that layer explicitly is the highest-leverage investment available, and it directly addresses the speed fear.
 

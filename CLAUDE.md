@@ -1,3 +1,19 @@
+# FOR AI ASSISTANTS: read `learning_system/README.md` first
+
+This repo runs a **self-improving learning system**. Before generating a lecture or answering a learning question:
+
+1. Read `learning_system/README.md` (how the system works, the three interaction modes, session checklists).
+2. Read `learning_system/private/learner_profile.md` and the latest rows of `learning_system/private/observation_log.md` (git-ignored; exists only on Timothy's machine).
+3. Before writing a lecture, read `learning_system/lecture_standards.md`. Before responding to any summary Timothy gives (often a voice transcript from a walk), read `learning_system/recall_protocol.md`.
+
+Non-negotiables:
+- **Never assume Timothy has read a lecture because it was generated.** He'll say explicitly when he's read something or wants to summarize it.
+- **After every substantive interaction**, append evidence to the observation log and update `private/reading_status.md`.
+- **Privacy:** this repo is public. Evaluations of Timothy live only in `learning_system/private/` and `lectures/open_source/private/`. Never quote them in public files.
+- **Git in agent sessions:** these sessions can't delete files, so use `GIT_OPTIONAL_LOCKS=0 git status` (plain `git status` can leave a stale `.git/index.lock`).
+
+---
+
 The purpose of this project is for me to have a centralized location where I am able to keep lecture notes which were generated during the creation of my other projects, which I’m currently building. I am trying to have a place where I can go through things and be able to really dive into The different concepts found within my projects. 
 
 Within this repo there are two folders.
