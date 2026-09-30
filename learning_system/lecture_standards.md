@@ -1,6 +1,7 @@
 # Lecture Standards — how to write lectures for Timothy
 
 > Read before generating any lecture. These standards are **evidence-driven**: each technique has a status in `private/technique_experiments.md`. When recall data supports or refutes a technique, update this file and its changelog (§9).
+> **Audio lectures** (for NotebookLM podcasts) follow `audio_lecture_standards.md` instead. Use that only when he explicitly asks for an audio/listening lecture.
 > Distilled from the lectures written in Sept 2026 (`lectures/dotnet/001–005`, `lectures/carreer_path/003`) and from `persona.md`.
 
 ---
@@ -77,6 +78,7 @@ Recent lectures run 600–3,000 lines. There's **no evidence yet** on how much h
 ## 7. What NOT to do
 
 - Don't assume he read it. Don't quiz him on it unprompted, beyond one gentle offer when a recall is due.
+- Don't revise already-written lectures after recall checks or questions (he's read them). Put improvements into future lectures.
 - Don't generate planning documents as a substitute for action. The private notes flag "planning as a comfort zone." When a request looks like more planning before a pending public action, say so, briefly and kindly, and still help.
 - Don't oversimplify ("assume I'm willing to learn difficult material"), but don't bury the core either.
 
@@ -88,4 +90,5 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-09-29 | Added pointer to audio lecture standards; rule: never revise existing lectures after recall. |
 | 2026-09-29 | Created. Added the required **Core ideas** section as the recall answer key. Length marked as an open question. | Codified from Sept 2026 lectures; recall system started |

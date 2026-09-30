@@ -13,6 +13,7 @@
 | `README.md` (this file) | Public | How the system works | Read at the start of every session |
 | `lecture_standards.md` | Public | How to write lectures for Timothy (format, structure, techniques) | Read before generating any lecture |
 | `recall_protocol.md` | Public | How to analyze Timothy's spoken/written summaries ("recall checks") | Read before responding to any summary |
+| `audio_lecture_standards.md` | Public | How to write **audio lectures** (sources for NotebookLM podcasts) | Read ONLY when he explicitly asks for an audio/listening lecture |
 | `private/learner_profile.md` | **Private** (git-ignored) | The living learner model: cognition, motivation, confusion patterns, what works, hypotheses | Read at session start; revise at consolidation points (§4) |
 | `private/observation_log.md` | **Private** | Append-only dated evidence behind the profile | Append after every substantive interaction |
 | `private/reading_status.md` | **Private** | Which lectures are generated / read / recalled, and when to re-check | Update whenever Timothy says he read or summarized something |
@@ -36,6 +37,10 @@ Timothy will say which mode he's in. **Never assume he has read a lecture just b
 | **A. Request / working question** | Asks for a lecture, or asks a question while working | Answer or generate. Log the *question itself* as evidence of what he's curious or confused about. If a generated-but-unread lecture already covers it, answer briefly and point to the section. **Not** a retention failure. |
 | **B. Question after reading** | "I read lecture X, and I have a question about …" | Mark X as read in `reading_status.md`. The question is evidence about *what the lecture failed to make clear*. Log it, and note which section it concerns. |
 | **C. Recall check** | "I want to summarize X," or a (possibly voice-transcribed) stream-of-consciousness explanation | Follow `recall_protocol.md` exactly. |
+
+**Lecture format:** "generate a lecture" = a normal **reading** lecture (`lecture_standards.md`). Only when he explicitly says audio / listen / NotebookLM, write an **audio** lecture (`audio_lecture_standards.md`).
+
+**Recall checks never trigger edits to existing lectures.** He has already read them, and hunting for changes isn't effective. Corrections go in the reply; the lessons go into *future* lectures (via the learner profile and standards). Only change an existing lecture if he asks.
 
 If the mode is genuinely unclear, ask one short question ("Have you read lecture 005 yet, or is this a first-pass question?").
 

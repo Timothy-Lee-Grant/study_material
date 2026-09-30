@@ -66,6 +66,9 @@ Tone: he responds to honesty paired with respect. Lead with what's solid, but do
 
 ## 4. After replying
 
+**Do not edit the lecture that was recalled** (or any existing lecture) based on the findings. Timothy has already read it, and diffing for changes wastes his time. The purpose of a recall check is to improve *how future lectures are written*. If you find a factual error in a lecture, tell him in the reply and fix the file only if he asks.
+
+
 1. Save `private/recall_checks/YYYY-MM-DD_<lecture-id>.md` using the template in `private/recall_checks/README.md`.
 2. Update `private/reading_status.md`: status **recalled**, score, and the next spaced check dates (**+2 days, +1 week, +1 month** from this check; reset to +2 days after a check that scores under 60%).
 3. Append to `private/observation_log.md`: learning-process observations (not just content). For example: "Explained bottom-up again, starting from the socket call," or "Used a firmware analogy unprompted."
