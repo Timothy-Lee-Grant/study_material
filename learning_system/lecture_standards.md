@@ -42,8 +42,8 @@ When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §2
 | # | Technique | How | Status (see experiments file) |
 |---|---|---|---|
 | T1 | **Top-down order** | Map → components → contracts → control flow → implementation → edge cases. Never open with code. | Stated preference; untested by recall |
-| T2 | **Personified cast of characters** | Name each component ("the Staffing Agency" = DI container), with its job, wants, and who it talks to | Stated preference; untested |
-| T3 | **Firmware twins** | Tie each new concept to embedded C/firmware he already knows (ISR ↔ callback, ring buffer ↔ `Channel<T>`, I2C framing ↔ TCP framing) | Stated preference; untested |
+| T2 | ~~Personified cast of characters~~ | **DO NOT USE** (2026-10-04: "I want to avoid… always trying to fit things into characters") | Retired by his explicit request |
+| T3 | ~~Firmware twins~~ | **DO NOT USE** as a teaching device (2026-10-04: "I want to avoid analogies with firmware"). Teach concepts directly: definitions, tests, tables, traces of his own code | Retired by his explicit request |
 | T4 | **Black-box tags** | 🟢 OWN IT / 🔵 CONTRACT / ⚫ BLACK BOX (for now): explicit permission to stop digging | Designed for his bottom-up instinct; untested |
 | T5 | **Altitude discipline** | Show answers at rung 1–6 (purpose → component → contract → flow → implementation → runtime); rung 3 is usually the answer | Addresses a documented weakness; untested |
 | T6 | **Direct answers first** | For long multi-part questions, open with short numbered answers, then teach | Seemed to land (he built on the answers in follow-ups); weak evidence |
@@ -51,6 +51,7 @@ When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §2
 | T8 | **Decision tables + a recommendation** | When he's weighing options, give a scored table *and* make the call ("you asked me to decide, so here's one") | He delegates decisions when overloaded; untested |
 | T9 | **Hands-on lab with predictions** | Small runnable lab; "predict before you run"; results table for him to fill in | He ran the YARP repro (2026-09-27); positive signal |
 | T10 | **Self-check with hidden answers** | 10–15 questions with `<details>` answers | Untested |
+| T15 | **Lectures built from his own attempts** | Run his code, show real outputs and traces, "you thought X → reality Y", then derive the fix | Strong behavioral signal (leetcode/001: 8 → 1 bugs same evening; he said it "really helped") |
 
 ## 4. Content rules
 
@@ -90,5 +91,6 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-10-04 | Retired T2 (personified characters) and T3 (firmware analogies) at Timothy's explicit request. Added T15: build lectures from his own failed attempts (forensics of his code). | His statement 2026-10-04; leetcode/001 → 8→1 bugs same evening |
 | 2026-09-29 | Added pointer to audio lecture standards; rule: never revise existing lectures after recall. |
 | 2026-09-29 | Created. Added the required **Core ideas** section as the recall answer key. Length marked as an open question. | Codified from Sept 2026 lectures; recall system started |
