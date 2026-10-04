@@ -121,3 +121,47 @@ class Solution:
                 left += 1
         
         return answer
+
+# October 4, 2026
+class Solution:
+    def spiralOrder(self, matrix: list[list[int]]) -> list[int]:
+        # Today is a fresh day. I did this problem yesterday and read the lecture document and tried again, but that time it failed again. Now I will try to do this problem again today to revisit and force into my muscle memory.
+
+        # the first thing that I remember is that I need to create that over arching loop that will keep going until the problem is solved. I remember (just because of memory) that the lecture docs told me yesterday that I need to use the and condition, and I also remember it said that if we don't have a row or if we don't have a column that it is over, but I am thinking that is it possible that we don't have a row but we do have a column? I don't think so, because that would not make sense. So then why can't I use an or? because wouldn't it be that if one condition is false that the other one will also be false?
+        
+        left = 0
+        right = len(matrix[0])-1 # This will be the closed form of the bound on the columns
+        top = 0
+        bottom = len(matrix)
+        answer = []
+        while left<=right and top<=bottom:
+            # now I want to traverse through each of the index of the columns. So the row will stay constant, and the thing which changes will be the index of the column over the matix. So I need to itterate over the valid index. I chose the closed form of boundaries, so all of those are valid. The range will use the half-open form, so I will need to account for that by putting a +1 or a -1 to ensure that the range gives me that last index element
+
+            # along top, left to right
+            for i in range(left, right+1):
+                answer.append(matrix[top][i])
+            top += 1
+
+            # along right, top to bottom
+            if top<=bottom:
+                for i in range(top, bottom+1):
+                    answer.append(matrix[i][right])
+                right -= 1
+        
+            # along bottom, right to left
+            # Is it guaranteed that we have a row at this point? the origional while loop gave the guarantee that left<=right and top<=bottom , so worst case scenario is that top==bottom, then we did the first itteration of `along top, left to right` and now our top (the only remaining valid row has been elemenated). So here I need to do a check to see if I still have a valid row. But what about the other one above. I think I remember from yesteday that I did need to do a check on that one as well. But am I now able to think up the reason right now today?
+            # I think the reason might be that I know that the first thing did change the bounds. top was increased, and so my question would be, for the `along right, top to bottom` is there a situation in which the origional while loop contition was valid, but then going along and using up all of the items in a row made me no longer allowed to go and do the `along right, top to bottom`? (this also goes to my origional question when I was doing the while loop of how is it possible that we would have a row but not a column?). I guess in this case because we only changed the bound of top, we have not checked or moved the bound of the columns. This would indicate to me that I should provide a blocking condition on the second one which will make sure that we will have a valid row (because top was just increased.)
+            if top<=bottom:
+                # I know that I do have a row along which I can itterate through
+                # along bottom, right to left
+                # so if the left is an index that I want to include in the numbers returned by the range, then I know that now I need to do a change. But let me think about what it would be. I am going from a larger number (right) and going to a smaller number (left). I am decrementing by 1 each time. So it would make sense to me that I would make the stopping conidition even smaller if I wanted to include that number in the half-open converion of the range method. So I will make left smaller by subtracting 1
+                for i in range(right, left-1, -1):
+                    answer.append(matrix[bottom][i])
+                bottom -= 1
+            
+            if left<=right:
+                # along left, bottom to top
+                for i in range(bottom, top, -1):
+                    answer.append(matrix[i][left])
+                left += 1
+        return answer
