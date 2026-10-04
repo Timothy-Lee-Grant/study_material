@@ -84,3 +84,40 @@ class Solution:
         # I now need to try to map through on test cases. But this is something that I don't really know how to go through a test case.
         # I pressed submit to see if I got the right answer, so I know that this is wrong, but I should be able to do those walk through of a test case to see what is wrong.
         return answer
+
+# I immediately attempted to follow up the problem after I pressed submit by not looking at the answer and seeing if I could trace through with an example. The trace through took a really long time (like 20 mins, so I have no idea how I would ever do that in an actual interview). Then I still get the wrong answer even though I thought I have it correct now.
+class Solution:
+    def spiralOrder(self, matrix: list[list[int]]) -> list[int]:
+        top = 0
+        bottom = len(matrix) - 1
+        left = 0
+        right = len(matrix[0]) - 1 
+        answer = []
+
+        # matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+        # answer = [1,2,3,4, 8, 12,11,10,9,5,6,7,]
+        # left: 1   right: 2    top: 2  bottom: 1
+        # itteration range: [1, 2]
+        while top<=bottom and left<=right:
+            for i in range(left, right+1):
+                answer.append(matrix[top][i])
+            top += 1
+
+            # At this point we are actually done, but I didn't put a check on it.... But I think it will be the case because we will generate a range which is top:2  bottom:1  so [2,2] this means that it is invalid, but we will still be trying to add this index of row index 2? So we will add to answer, 11? 
+            # Let me see if I can put a guard against it. Because I walked though and unless I made a mistake in my walk though, I think I got the right solution so far, I just erroniously enter into this for loop
+            if top<=bottom: # This should tell me that I have a row which is still valid, if not it will not attempt to add any more elements to answer
+                for i in range(top, bottom+1):
+                    answer.append(matrix[i][right])
+                right -= 1
+        
+            if top<=bottom:
+                for i in range(right, left-1, -1):
+                    answer.append(matrix[bottom][i])
+                bottom -= 1
+            
+            if left<=right:
+                for i in range(bottom, top+1):
+                    answer.append(matrix[i][left])
+                left += 1
+        
+        return answer
