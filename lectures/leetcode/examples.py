@@ -1,3 +1,6 @@
+
+# 2 October, 2026:
+
 class Solution:
     def spiralOrder(self, matrix: list[list[int]]) -> list[int]:
         # I want the outter loop to keep going until everything is completely done. So this should check to make sure that all of the conditions are satisfied, then inside of this loop I should keep track to the valid top, bottom, left and right. Then I can go along each of those directions. 
@@ -35,3 +38,49 @@ class Solution:
         return answer
 
 
+
+# 3 October, 2026:
+class Solution:
+    def spiralOrder(self, matrix: list[list[int]]) -> list[int]:
+        # This is my second attempt after reading the lecture notes, I am tired, but I want to push myself to apply what I read.
+        # The ideas that I remember are to think about closed vs half-open indexes, the loop invariant which describes the state which MUST be true at every instance which we hit the start of a loop.
+
+        # I want to have these closed. This means that I want my four bounds to be valid for all within that range, including the number which is contained in the bottom and the right. This means that I will apply the -1 right now.
+        # Now what does this mean for the invariant? I know that I will want to have the invariant of the outer loop to say that at the point where we are at the top of the loop, then all four of these coordinates block off the unvisited and remaining valid rows/columns. So I will just need to keep in mind that bottom and right are both valid.
+        top = 0
+        bottom = len(matrix) - 1
+        left = 0
+        right = len(matrix[0]) - 1 
+        answer = []
+
+        # all four coordinates contain valid rows or columns, and answer contains all the visited nodes in the spiral order.
+        # Whith that invariant, what is the conditions which my loop will need to run, and at this point, is my system set up such that the invariant is satisfied to start the first loop?
+        while top<=bottom and left<=right:
+            # I now want to go along the valid top. This means that I will be be traversing in the same row, but moving through different columns. matrix[(constant row value)][(changing value)] . So I want to think about and articulate what this will look like. There will be a value which will be held constant. This will be the row which I want to go along, then there will be a value which is the index of the column. The row will be given by top. Now I will need to create a for loop which will generate the range which will itterate through the valid columns such that it will go from the first (left most) valid column, to the right most valid column. 
+            # I know that because left and right are closed, it means that I need to create a for loop which will start (including) the value of left, and I will need to include the value of right. Because for loop range will not include the stop element (this means that for loop range follows the half-open convention), I will need to add one in this loop to adhear to this. Although this feels like what the lecture notes were warning be regarding doing hand changes to switch domains. But I can not change range's convention, so I will either need to change the convention I am using for left right, top bottom, or I do this.
+            for i in range(left, right+1):
+                answer.append(matrix[top][i])
+            # Now I have gone along this row, it is no longer a valid unvisited row
+            top += 1
+
+            # I now want to go down along the right most valid column. So the column will remain constand (and it is targeted with the index at right. Because we chose the closed convention, right will be valid as an index). Then I need to generate a for loop which will produce indexes for which will be valid rows, going from the top down to the bottom.
+            for i in range(top,bottom+1):
+                answer.append(matrix[i][right])
+            right -= 1
+        
+            # I remember seeing in the answer that we needed to do a guard here. But let me think about why and what it would indicate. We have now changed top and right such that 'the walls are closing in'. I am about to run a loop that must go over a valid row. I am going to be attempting to traverse in reverse order from the right most valid column to the left most valid column, along the bottom most valid row. But it could be the case the when we itterated over top, that we actually went over the last valid row and now we have no valid row. So I should check to see if there are any valid rows left.
+            if top<=bottom:
+                # Now I can go through and itterate through all of the valid indexes which will be from the rightmost to the left most. Then I will have the index of bottom to be the constant which tells me which row I want to keep constant as I do the traversal over the changing columns.
+                # Now here is where I need to think of convention again. right by the closed convention is valid, and left is also valid. But because range uses half-open convention, it will not count left, so when it generates the indexes which should be the valid inices of all the columns I want to itterate over, it will not include the valid index of left. I need to account for this by subtracting one.
+                for i in range(right, left-1, -1):
+                    answer.append(matrix[bottom][i])
+                bottom -= 1
+            
+            if left<=right:
+                for i in range(bottom, top+1):
+                    answer.append(matrix[i][left])
+                left += 1
+        
+        # I now need to try to map through on test cases. But this is something that I don't really know how to go through a test case.
+        # I pressed submit to see if I got the right answer, so I know that this is wrong, but I should be able to do those walk through of a test case to see what is wrong.
+        return answer
