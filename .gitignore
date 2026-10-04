@@ -22,3 +22,6 @@ lectures/open_source/private/
 
 # Learning system: candid learner model, recall transcripts (never pushed)
 learning_system/private/
+
+# LeetCode weakness tracker: candid evaluation (never pushed)
+lectures/leetcode/private/

@@ -853,3 +853,212 @@ The number of steps is known exactly. A counted loop can't run forever or stop e
 - Companion lecture: `lectures/carreer_path/002-the-leetcode-diagnosis-and-the-solving-protocol.md` (the general Solve Protocol, invariants, trace tables, and the redo rule).
 
 **Next lecture in this folder (when you want it):** grid-as-graph in depth (BFS/DFS on grids, including 0-1 matrix, surrounded regions, shortest path in a binary matrix), or grid DP. Ask for whichever you hit next.
+
+
+---
+---
+
+# Addendum A (2026-10-03): What your two re-attempts showed
+
+> **Context:** after reading this lecture, you redid Spiral Matrix twice the same evening (`lectures/leetcode/examples.py`, "3 October" attempts). Both failed on submit. This addendum is about those two attempts. Nothing above was changed.
+> **Verification:** I ran both attempts on every grid from 1×1 to 7×7. I also traced them with the exact table format recommended below, and applied the one-line fix to both to confirm it fixes everything.
+
+## Core ideas for this addendum
+
+1. **You went from 8 bugs to 1.** Every rule in the lecture that you applied, you applied correctly.
+2. **The one bug is a backward loop written with the forward template:** `range(bottom, top + 1)` should be `range(bottom, top - 1, -1)`.
+3. **The real rule for a closed range is `range(first, last + step, step)`:** "stop one step past the last value, *in the direction you're walking*." It's one formula for every loop, not a separate ±1 decision each time.
+4. **The loops you explained in a comment were correct. The one loop you didn't explain was wrong.** Make every `range` carry a `# first → last, step` comment.
+5. **Your trace went wrong at three specific places:** you evaluated `range(2, 2)` as `[2]` (it's empty), you stopped tracing mid-iteration, and you patched a loop you suspected without confirming it.
+6. **Trace one row per *side*, not one row per cell, and write every `range` call out with real numbers and its literal output list.** A 1×3 grid finds this bug in three rows.
+7. **A loop that runs only once can't show a direction bug.** Choose a trace input where every loop runs at least twice.
+
+---
+
+## A.1 The scoreboard
+
+| Rule from the lecture | Attempt on 10-02 | Attempts on 10-03 |
+|---|---|---|
+| One convention (closed) for all four walls | ❌ `right` was half-open | ✅ chosen *and justified in a comment* |
+| Init derived from the invariant | ❌ | ✅ you wrote the invariant first and derived init from it |
+| `and` in the loop condition | ❌ `or` | ✅ |
+| Walls only move inward | ❌ `bottom += 1` twice | ✅ all four |
+| Column walk fixes the column (`matrix[r][left]`) | ❌ | ✅ |
+| Guard before the backward passes, *with the reason* | ❌ guards without reasons | ✅ your line-71 explanation is exactly right |
+| Forward `range` conversion (`+1`) | ❌ | ✅ |
+| Backward `range` conversion | ❌ `range(bottom, top-1)` | ✅ bottom row / ❌ **left column** |
+
+That last row is the whole story. One bug survived, and it's **the same bug in the same loop** as on 10-02: the upward walk on the left column.
+
+## A.2 The one remaining bug
+
+```python
+if left <= right:
+    for i in range(bottom, top + 1):      # ❌ counts UP from bottom
+        answer.append(matrix[i][left])
+    left += 1
+```
+
+You meant "from `bottom` up to `top`." But `range` with no step always counts **up** (+1). So `range(bottom, top + 1)` means "from `bottom` upward until just before `top + 1`." This one mistake produces **two different symptoms**, depending on which wall is bigger:
+
+| Situation | `range(bottom, top + 1)` gives | Effect |
+|---|---|---|
+| `bottom > top` (a real column of 2+ cells is left) | **empty** (it can't count up from a bigger number) | cells **missing**: on 4×4 you lose `9, 5` |
+| `bottom == top` (one cell left) | `[bottom]` | **correct by coincidence** |
+| `bottom < top` (no rows left) | **non-empty** | **extra** cells re-read (`6, 10` on 3×4), or an `IndexError` on 1×n |
+
+The correct loop is `range(bottom, top - 1, -1)`. Replacing that one line in either of your 10-03 attempts makes them pass on every grid from 1×1 to 7×7.
+
+Notice the third row of the table. With the correct backward range, `bottom < top` makes the range **empty on its own**, so even when the `left <= right` guard passes, nothing is read. The right formula handles the empty case for free. The wrong one turns "empty" into "garbage."
+
+## A.3 The rule: `range(first, last + step, step)`
+
+On line 60 you worried, very reasonably:
+
+> *"this feels like what the lecture notes were warning me regarding doing hand changes to switch domains. But I can not change range's convention…"*
+
+Your doubt was justified, and here's the resolution. The lecture warned against **ad-hoc** corrections, where each loop gets its own ±1 judgment. Converting closed to half-open is fine as long as it's **one formula you apply identically every time**:
+
+> **To walk a closed range from `first` to `last` (both included): `range(first, last + step, step)`**
+> where `step` is `+1` if you're walking toward bigger indices, `-1` if toward smaller ones.
+
+"Stop one step past the last value, in the direction you're walking." That's all there is to it. Here are all four sides in that exact form:
+
+```python
+for c in range(left,   right  + 1,  1):   # top row:     left  → right,  step +1
+for r in range(top,    bottom + 1,  1):   # right col:   top   → bottom, step +1
+for c in range(right,  left   - 1, -1):   # bottom row:  right → left,   step -1
+for r in range(bottom, top    - 1, -1):   # left col:    bottom → top,   step -1
+```
+
+Read the pattern down the columns: **first, last ± 1, step**, and the sign of the `±1` always matches the sign of the step. If a backward loop has `+1` in it, that's a bug you can see without running anything. Add it to the "walls only move inward" scan: **check that the sign of the ±1 matches the sign of the step.**
+
+You learned the forward case as "add 1 to the stop." That's a correct *instance* of the rule, not the rule itself, which is why it broke the moment the direction flipped. (You got the bottom row right because you reasoned it out in a comment. More on that next.)
+
+## A.4 The loops you explained were right
+
+Look at your 10-03 attempt, loop by loop:
+
+| Loop | Did you write a reasoning comment for it? | Correct? |
+|---|---|---|
+| top row → | ✅ long comment: constant row, changing column, closed → `+1` | ✅ |
+| right col ↓ | ✅ "the column will remain constant… going from the top down to the bottom" | ✅ |
+| bottom row ← | ✅ "range uses half-open… it will not count left… subtracting one" | ✅ |
+| left col ↑ | ❌ **no comment** | ❌ |
+
+On 10-02 it was the same loop: the fourth side was the one that got copy-pasted. The fourth side comes last, when you're most tired and most tempted to pattern-match off the loop above instead of deriving it. Your reasoning works when you actually do it. The failures come from the loops you *skipped* reasoning about.
+
+**The rule:** every `range` gets a short comment saying `first → last, step`, like the four lines in A.3. That takes about five seconds per loop, and in an interview you say it out loud instead ("left column, from bottom up to top, so step minus one, stop at top minus one"). Interviewers *want* to hear that sentence. And if you can't say it, you've found the bug before writing it.
+
+## A.5 Why the trace took 20 minutes and still missed the bug
+
+You said you don't really know how to trace a test case. That's the most important thing you wrote, because **tracing is the skill that converts "I think it's right" into "it's right,"** and nobody ever taught you a procedure for it. Here it is.
+
+### What went wrong in your trace
+
+Your notes in the third attempt show you traced 3×4 correctly up to `left: 1, right: 2, top: 2, bottom: 1`. That's row 5 of the table below, so good work up to there. Then three things went wrong:
+
+1. **You evaluated `range(2, 1 + 1)` as containing 2** ("so [2,2]… we will add 11?"). It's `range(2, 2)`, which is **empty**. Half-open: start at 2, stop *before* 2, so nothing. **A forward `range(a, b)` is empty whenever `a >= b`.**
+2. **You stopped tracing because "at this point we are actually done."** But the `while` condition is only checked **at the top of the loop**. Once inside, all four sides run, and only their own `if` guards can stop them. The real bug was two steps further on, in the left-column loop, in the same pass.
+3. **You patched the loop you suspected** (you added a guard around the right column) **without confirming it was the cause.** On 3×4 the output didn't change at all, because that loop was already harmless. And because the patch moved `right -= 1` inside the guard, `[[1]]` now crashes. (Verified: your third attempt throws `IndexError` on `[[1]]`; your second doesn't.) A patch without a confirmed cause usually does nothing or breaks something else. This one managed both.
+
+### The side-level trace table
+
+Don't trace element by element. Trace **one row per side**, and make the `range` column do the work: **write the call with real numbers plugged in, then write its literal output list.** Here's your second attempt on the 3×4, exactly as the code runs it:
+
+| # | Side | top | bottom | left | right | `range(...)` with numbers → literal list | Cells read |
+|---|---|---|---|---|---|---|---|
+| — | *while check* | 0 | 2 | 0 | 3 | `0<=2 and 0<=3` → True | |
+| 1 | top → | 0 | 2 | 0 | 3 | `range(0, 4)` → `[0,1,2,3]` | 1 2 3 4 |
+| 2 | right ↓ | 1 | 2 | 0 | 3 | `range(1, 3)` → `[1,2]` | 8 12 |
+| 3 | bottom ← | 1 | 2 | 0 | 2 | `range(2, -1, -1)` → `[2,1,0]` | 11 10 9 |
+| 4 | left ↑ | 1 | 1 | 0 | 2 | `range(1, 2)` → `[1]` | 5 ← right by coincidence |
+| — | *while check* | 1 | 1 | 1 | 2 | `1<=1 and 1<=2` → True | |
+| 5 | top → | 1 | 1 | 1 | 2 | `range(1, 3)` → `[1,2]` | 6 7 |
+| 6 | right ↓ | 2 | 1 | 1 | 2 | `range(2, 2)` → **`[]`** | (nothing) |
+| | bottom ← | | | | | guard `2<=1` → False, skip | |
+| 7 | left ↑ | 2 | 1 | 1 | 1 | guard `1<=1` True; `range(1, 3)` → **`[1,2]`** | **6 10 ❌ extra** |
+
+Row 7 is the bug: the left column read two cells when there were *zero* rows left (`top > bottom`). Once you write `range(1, 3) → [1, 2]` and see `top=2 > bottom=1` in the same row, the contradiction is right there on the page. And row 4 shows why you didn't catch it earlier: **a loop that runs once gives the same result forwards or backwards.**
+
+### How to make it fast (about 3 minutes, not 20)
+
+1. **Trace the smallest input that can break things first: 1×3.** Your attempt fails it in three rows:
+
+   | # | Side | top | bottom | left | right | `range` → list | Cells |
+   |---|---|---|---|---|---|---|---|
+   | 1 | top → | 0 | 0 | 0 | 2 | `range(0, 3)` → `[0,1,2]` | 1 2 3 |
+   | 2 | right ↓ | 1 | 0 | 0 | 2 | `range(1, 1)` → `[]` | — |
+   | | bottom ← | | | | | guard `1<=0` False, skip | |
+   | 3 | left ↑ | 1 | 0 | 0 | 1 | `range(0, 2)` → `[0,1]` | `matrix[1]` → **IndexError** |
+
+2. **Then trace one input where every loop runs at least twice.** 4×4 works: its first left-column pass should read two cells (9, 5). Your code reads none, so you see the bug in row 4. (The 3×4 I recommended in §9 does catch it, but only on the *last* pass, and only if you trace all the way to the end. 1×3 and 4×4 find it sooner.)
+3. **Columns are walls, not cells.** You're tracking 4 numbers per row, not 12 array values.
+4. **The `range` column is the only place you think.** Plug in the numbers, write the literal list. If you're not sure what a `range` produces, that's a stop signal. In practice, check it in a Python REPL until evaluating `range` is automatic (drill below).
+5. **Trace the full pass, all four sides, before checking the `while`.** The `while` only gets a row at the top of each pass.
+6. **When a submit fails, LeetCode shows you the failing input. Trace that one,** or a smaller version of it, instead of an example you picked yourself.
+7. **Find the first wrong row, then fix that row's line, and only that.** That's the evidence-based version of what you did with the guard.
+
+## A.6 Drill: evaluate `range` instantly
+
+Do these from your head, then check in a REPL. Do them again in two days. The goal is *zero hesitation*.
+
+| # | Expression | Your answer |
+|---|---|---|
+| 1 | `list(range(2, 2))` | |
+| 2 | `list(range(3, 1))` | |
+| 3 | `list(range(3, 1, -1))` | |
+| 4 | `list(range(1, 3, -1))` | |
+| 5 | `list(range(0, -1, -1))` | |
+| 6 | `list(range(4, 4 - 1, -1))` | |
+| 7 | Closed range bottom=3 → top=1, walking up. Write the `range`. | |
+| 8 | Closed range left=0 → right=0. Write the `range`. | |
+| 9 | Closed range right=2 → left=3 (already crossed). Write the `range` with the formula. What does it produce? | |
+| 10 | Why does #9's answer mean you don't need a guard for *emptiness*, only for *re-reading a consumed row*? | |
+
+<details><summary>Answers</summary>
+
+1. `[]` (start 2, stop before 2)
+2. `[]` (can't count up from 3 to 1)
+3. `[3, 2]`
+4. `[]` (can't count down from 1 to 3)
+5. `[0]`
+6. `[4]`
+7. `range(3, 1 - 1, -1)` = `range(3, 0, -1)` → `[3, 2, 1]`
+8. `range(0, 0 + 1)` → `[0]`
+9. `range(2, 3 - 1, -1)` = `range(2, 2, -1)` → `[]`
+10. With the correct formula, a crossed range is empty on its own, so it reads nothing. The guards in the spiral exist for a different reason: when the walls *haven't* crossed in the loop's own dimension but the row or column was already consumed in the other dimension (`[[1,2,3]]`: the bottom row is the top row).
+</details>
+
+## A.7 What to do next
+
+1. **Range drill (A.6), today or tomorrow.** 5 minutes.
+2. **Spiral Matrix, blank page, around 2026-10-05.** Same four-walls version. Write the `# first → last, step` comment above every loop. Trace 1×3 and 4×4 with the side table **before** pressing Submit. Note how long the trace takes.
+3. **Then 59. Spiral Matrix II with Cursor + Compass (§5.3).** That version has no backward `range` at all, so it avoids this whole bug class. On a tired evening it's the safer choice, and knowing when to pick the safer tool is a skill too.
+4. **Redo Spiral Matrix again around 2026-10-13** (the +10-day redo).
+
+## A.8 Self-check
+
+1. Write the closed-range walk formula from memory, and say it in one sentence.
+<details><summary>Answer</summary>
+
+`range(first, last + step, step)`: stop one step past the last value, in the direction you're walking.
+</details>
+
+2. Why did your left-column bug produce *missing* cells on 4×4 but *extra* cells on 3×4?
+<details><summary>Answer</summary>
+
+`range(bottom, top + 1)` counts upward. On the 4×4's first pass, `bottom (2) > top (1)`, so counting up from 2 to before 2 gives nothing, and 9 and 5 go missing. On the 3×4's last pass, `bottom (1) < top (2)`, so it counts up 1, 2 and re-reads cells that were already visited.
+</details>
+
+3. You're tracing and reach a point where `top > bottom`. Is the `while` loop over?
+<details><summary>Answer</summary>
+
+Not yet. The `while` condition is only checked at the top of the next pass. The remaining sides of the current pass still run, and only their own guards (or an empty `range`) stop them. Keep tracing to the end of the pass.
+</details>
+
+4. In a trace table, what goes in the `range` column, and why is that column the important one?
+<details><summary>Answer</summary>
+
+The `range` call with real numbers plugged in, then its literal output list. That's where almost every grid bug lives, and writing the literal list keeps you from reading the code as what you *meant* instead of what it *does*.
+</details>
