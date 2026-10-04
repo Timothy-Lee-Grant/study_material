@@ -125,7 +125,7 @@ class Solution:
 # October 4, 2026
 class Solution:
     def spiralOrder(self, matrix: list[list[int]]) -> list[int]:
-        # Today is a fresh day. I did this problem yesterday and read the lecture document and tried again, but that time it failed again. Now I will try to do this problem again today to revisit and force into my muscle memory.
+        # Today is a fresh day. I did this problem yesterday and read the lecture document and tried again, but that time it failed again. Now I will try to do this problem again today to revisit and force into my muscle memory. (I did not read the appendium in the lecture document yet.)
 
         # the first thing that I remember is that I need to create that over arching loop that will keep going until the problem is solved. I remember (just because of memory) that the lecture docs told me yesterday that I need to use the and condition, and I also remember it said that if we don't have a row or if we don't have a column that it is over, but I am thinking that is it possible that we don't have a row but we do have a column? I don't think so, because that would not make sense. So then why can't I use an or? because wouldn't it be that if one condition is false that the other one will also be false?
         
@@ -165,3 +165,25 @@ class Solution:
                     answer.append(matrix[i][left])
                 left += 1
         return answer
+
+
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        # doing this before I read the lecture
+        # I know that I have n steps, and I am asked to count how many distinct ways I can climb to the top. I know that this will be a backtracking problem. (then from there I should also be able to simplify it to be dynamic programming because at a particular step, the answer should always be the same for that step). That brings me to the fundamental question that I should always ask myself when I do these recursion problems, what does the recursion function answer: `for this step, this is the number of ways that you can climb to the top`
+
+        def bt(i):
+            # base cases, but lets return to the base cases after we do the steps that we can take
+
+            # from this step we are either allowed to take one step or two steps.
+            # should I do my validation here? I know that one of the base cases will be if I reach the last step, so at this point I should have a guarantee that I am not at the last step, so I should be able to take one step, but if I am at the second to last step, then I can not take two steps (that step would not exist).
+            one_step_ways = bt(i+1)
+            two_step_ways = 0
+
+            # here is another question. What should my blocking condition be? I am starting at step 0 or step 1? So if n is 1, then it means that I need to take 1 step to get to the top, that means that when my number of steps (which in this case is represented by i) is equal to n, then I am at the top. So I can expand this, I can say that if I want to find the
+            if i _:
+                two_step_ways = bt(i+2)
+
+            return one_step_ways + two_step_ways
+        
+        return bt(0)
