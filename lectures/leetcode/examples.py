@@ -172,18 +172,30 @@ class Solution:
         # doing this before I read the lecture
         # I know that I have n steps, and I am asked to count how many distinct ways I can climb to the top. I know that this will be a backtracking problem. (then from there I should also be able to simplify it to be dynamic programming because at a particular step, the answer should always be the same for that step). That brings me to the fundamental question that I should always ask myself when I do these recursion problems, what does the recursion function answer: `for this step, this is the number of ways that you can climb to the top`
 
+        dp = [-1 for _ in range(n)]
         def bt(i):
             # base cases, but lets return to the base cases after we do the steps that we can take
+            # If I am at the last step, then this is a valid way to which I just took, so I should return 1
+            if i == n:
+                return 1
+            
+            # Because we are blocking in the below calls (ie we do not go down and take a two step if we are walking off the edge, there should never be a case where we are having i>n).
+
+            # Now thinking about how to save the answer, if I have previously found the answer for how many ways there are at a given step i, then I should not try to recalculate it.
+            if dp[i] != -1:
+                return dp[i]
 
             # from this step we are either allowed to take one step or two steps.
             # should I do my validation here? I know that one of the base cases will be if I reach the last step, so at this point I should have a guarantee that I am not at the last step, so I should be able to take one step, but if I am at the second to last step, then I can not take two steps (that step would not exist).
             one_step_ways = bt(i+1)
             two_step_ways = 0
 
-            # here is another question. What should my blocking condition be? I am starting at step 0 or step 1? So if n is 1, then it means that I need to take 1 step to get to the top, that means that when my number of steps (which in this case is represented by i) is equal to n, then I am at the top. So I can expand this, I can say that if I want to find the
-            if i _:
+            # here is another question. What should my blocking condition be? I am starting at step 0 or step 1? So if n is 1, then it means that I need to take 1 step to get to the top, that means that when my number of steps (which in this case is represented by i) is equal to n, then I am at the top. So I can expand this, I can say that if I want to find the number which will block this. I should block when I would otherwise 'walk off the edge' that is when (I am always so bad at these things.....). If n is the last step, my current index is i, and I am at the last step when i==n, then the bad condition will be i<n (but equal is alright). So now in the case here when I am attempting to take two steps, what will this means??? i+2<n this is the case that is invalid. Why did it take me so long to come up with that, and it seems that no matter how many times I do Leetcode, I still cant think of this quickly
+            if not i+2<n:
                 two_step_ways = bt(i+2)
 
+            dp[i] = one_step_ways + two_step_ways
+            
             return one_step_ways + two_step_ways
         
         return bt(0)
