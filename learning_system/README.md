@@ -18,6 +18,7 @@
 | `private/observation_log.md` | **Private** | Append-only dated evidence behind the profile | Append after every substantive interaction |
 | `private/reading_status.md` | **Private** | Which lectures are generated / read / recalled, and when to re-check | Update whenever Timothy says he read or summarized something |
 | `private/technique_experiments.md` | **Private** | Teaching techniques treated as hypotheses, with evidence for or against | Update when recall data bears on a technique |
+| `private/clicks_log.md` | **Private** | Explanations that made something click for Timothy, why they worked, and the resulting patterns | Read before writing any lecture; add an entry whenever he reports a click |
 | `private/recall_checks/` | **Private** | One file per recall check: transcript, claim map, scores, feedback given | Create one per summary Timothy gives |
 
 Related, older material (read, don't duplicate):

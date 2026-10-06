@@ -1,6 +1,6 @@
 # Lecture Standards — how to write lectures for Timothy
 
-> Read before generating any lecture. These standards are **evidence-driven**: each technique has a status in `private/technique_experiments.md`. When recall data supports or refutes a technique, update this file and its changelog (§9).
+> Read before generating any lecture, together with `private/clicks_log.md` (what has clicked for him, and why). These standards are **evidence-driven**: each technique has a status in `private/technique_experiments.md`. When recall data supports or refutes a technique, update this file and its changelog (§9).
 > **Audio lectures** (for NotebookLM podcasts) follow `audio_lecture_standards.md` instead. Use that only when he explicitly asks for an audio/listening lecture.
 > Distilled from the lectures written in Sept 2026 (`lectures/dotnet/001–005`, `lectures/carreer_path/003`) and from `persona.md`.
 
@@ -51,6 +51,8 @@ When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §2
 | T8 | **Decision tables + a recommendation** | When he's weighing options, give a scored table *and* make the call ("you asked me to decide, so here's one") | He delegates decisions when overloaded; untested |
 | T9 | **Hands-on lab with predictions** | Small runnable lab; "predict before you run"; results table for him to fill in | He ran the YARP repro (2026-09-27); positive signal |
 | T10 | **Self-check with hidden answers** | 10–15 questions with `<details>` answers | Untested |
+| T16 | **Name → valid set → membership test** | For any boundary/index/guard: give the quantity a name (`next_pos`, `nr`, `window_start`), write its valid range explicitly, then test membership positively (no `not`). Teach it as a numbered derivation, then verify with an edge plug-in | His reported click (2026-10-05, private/clicks_log.md C1) |
+| T17 | **Derivations in small numbered steps** | Show how to *produce* the answer as a sequence of one-transformation steps, not just a rule to remember or a check to run afterwards | Clicks log P4; leetcode/001 tables |
 | T15 | **Lectures built from his own attempts** | Run his code, show real outputs and traces, "you thought X → reality Y", then derive the fix | Strong behavioral signal (leetcode/001: 8 → 1 bugs same evening; he said it "really helped") |
 
 ## 4. Content rules
@@ -91,6 +93,7 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-10-05 | Added T16 (name → valid set → membership) and T17 (numbered derivations). Before writing any lecture, also read `private/clicks_log.md`. | His first reported click (C1) |
 | 2026-10-04 | Retired T2 (personified characters) and T3 (firmware analogies) at Timothy's explicit request. Added T15: build lectures from his own failed attempts (forensics of his code). | His statement 2026-10-04; leetcode/001 → 8→1 bugs same evening |
 | 2026-09-29 | Added pointer to audio lecture standards; rule: never revise existing lectures after recall. |
 | 2026-09-29 | Created. Added the required **Core ideas** section as the recall answer key. Length marked as an open question. | Codified from Sept 2026 lectures; recall system started |

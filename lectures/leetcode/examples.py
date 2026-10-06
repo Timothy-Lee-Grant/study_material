@@ -132,7 +132,7 @@ class Solution:
         left = 0
         right = len(matrix[0])-1 # This will be the closed form of the bound on the columns
         top = 0
-        bottom = len(matrix)
+        bottom = len(matrix)-1
         answer = []
         while left<=right and top<=bottom:
             # now I want to traverse through each of the index of the columns. So the row will stay constant, and the thing which changes will be the index of the column over the matix. So I need to itterate over the valid index. I chose the closed form of boundaries, so all of those are valid. The range will use the half-open form, so I will need to account for that by putting a +1 or a -1 to ensure that the range gives me that last index element
@@ -199,3 +199,102 @@ class Solution:
             return one_step_ways + two_step_ways
         
         return bt(0)
+
+# Oct 5, 2026
+
+# I attempted to do Spiral Matrix II today, and I got this as my answer, but I have not submitted the code yet, and I really don't know how I should go about verifying this, and I really want to practice learning how to actually walk through things.
+class Solution:
+    def generateMatrix(self, n: int) -> list[list[int]]:
+        # Fill out a blank nxn matrix
+        # I will want n number of indexes. So this means that I want the range function to trigger once is n=1. range starts at 0 and is non-inclusive (half-open). So if I put 1 in range, it will give me back a single element (0), and that is what I am looking for, I want the range to fire once (I don't care which element it gives me).
+        matrix = [[-1 for _ in range(n)] for _ in range(n)]
+
+
+        # Start at index (0,0) and then as we move through the input (in this case the number line), we will place that input in it's associated location.
+        row = col = 0
+
+        # I want to keep going until I have reach the end of filling out. But in this case I will not be able to see that I no longer have any rows or columns, here I should stop when my number is passed the final number to be place
+        left = top = 0
+        right = bottom = n-1 # Here will it be n or n-1? I want to say that my right and bottom should be valid indexs, so I should say n-1
+        number = 1 # I am noticing that this 'number' is going to be starting at 1, so this might effect the way I interact with (not the right and botom because those will be checked by row and column), but number will impact the stopping condition
+
+        # Thinking of the smallest case (n=0) and (n=1) if it is 0, I want my while loop to not trigger (the matrix will have had both range function not triggered, so it will be a [[]] and I want to just return that). number starts at 1, so 1<=0*0 will be false. In the case that it is n=1, I want it to fire once. which is what it does (so it is having the equal sign)
+        while number <= n*n:
+            # Along top, left to right
+            for i in range(left, right+1):
+                matrix[top][i] = number
+                number += 1
+            # Just went along the top row, so I need to invalidate that row because it is already filled out.
+            top += 1
+
+            # Along right, top to bottom
+            # because this is an nxn matrix, and I will hit the stopping (oh no!) I just looked at the example picture and realized that I was wrong. I was about to say that I thought that I might have a guarantee that I will have a place to put the values in this situation. But the example show that I will actually only do the 'top' movement in the second run and will not do the others, so I still need to do the blocking.
+            if top<=bottom: # I still have a row left, so I did not just get rid of my final row in the last operation
+                for i in range(top, bottom+1):
+                    matrix[i][right] = number
+                    number += 1
+                right -= 1
+            
+            #I am still having trouble thinking of the guard because is it that I want to see if I still have the thing which I just went through (like the previous operation elemenated a column) so I want to see if I still have an existing column, or is it that I want to see if I still have the thing which I will be attempting to itterate over (in this case I am about to try to itterate over a row)? My guess is that I would want to check the thing which I just shrunk because the thing which I am about to itterate over has not changed yet, but the previous operation might have made it such that the walls closed from the other direction. But in this location, actually there were two previous operations, closing in a row and then closing in a column, so should I guard by checking the rows or the columns? Or do I need both? I remember in the Spiral 1 that I did yesterday, I only did one guard, so I know that it will probably be the same here, but I can't reason through the logic of which one it should be. (I do think that in this case it should be the case that if I am to do this operation, that both should be valid, so to be safe I can just put the guard as both)
+            if top<=bottom and left<=right:
+                for i in range(right, left-1, -1):
+                    matrix[bottom][i] = number
+                    number += 1
+                bottom -= 1
+            
+            if top<=bottom and left<=right:
+                for i in range(bottom, top-1, -1):
+                    matrix[left][i] = number
+                    number += 1
+                left += 1
+        return matrix
+
+
+# I was able to walk through the problem. I then was able to catch the error which I previously had which was the `matrix[left][i] = number` had the wrong row and columns.
+class Solution:
+    def generateMatrix(self, n: int) -> list[list[int]]:
+        matrix = [[-1 for _ in range(n)] for _ in range(n)]
+        row = col = 0
+        left = top = 0
+        right = bottom = n-1 
+        number = 1 
+
+        # input: n = 3 (n*n=9)
+
+        #   1   2   3
+        #   8   9   4
+        #   7   6   5
+
+        # number = 9
+        # left = 1
+        # right = 1
+        # top = 2
+        # bottom = 1
+        # loop interval [1, 1]
+
+        while number <= n*n:
+            # Along top, left to right
+            for i in range(left, right+1):
+                matrix[top][i] = number
+                number += 1
+            top += 1
+
+            # Along right, top to bottom
+            if top<=bottom: 
+                for i in range(top, bottom+1):
+                    matrix[i][right] = number
+                    number += 1
+                right -= 1
+            
+            if top<=bottom and left<=right:
+                for i in range(right, left-1, -1):
+                    matrix[bottom][i] = number
+                    number += 1
+                bottom -= 1
+            
+            if top<=bottom and left<=right:
+                for i in range(bottom, top-1, -1):
+                    matrix[i][left] = number
+                    number += 1
+                left += 1
+        return matrix
