@@ -41,7 +41,7 @@ Timothy will say which mode he's in. **Never assume he has read a lecture just b
 
 **Lecture format:** "generate a lecture" = a normal **reading** lecture (`lecture_standards.md`). Only when he explicitly says audio / listen / NotebookLM, write an **audio** lecture (`audio_lecture_standards.md`).
 
-**Recall checks never trigger edits to existing lectures.** He has already read them, and hunting for changes isn't effective. Corrections go in the reply; the lessons go into *future* lectures (via the learner profile and standards). Only change an existing lecture if he asks.
+**Recall checks never trigger edits to existing lectures.** For LeetCode, what a recall shows he still needs goes into that week's recap (`lectures/leetcode/recaps/`, see `lecture_standards.md` §1). He has already read them, and hunting for changes isn't effective. Corrections go in the reply; the lessons go into *future* lectures (via the learner profile and standards). Only change an existing lecture if he asks.
 
 If the mode is genuinely unclear, ask one short question ("Have you read lecture 005 yet, or is this a first-pass question?").
 

@@ -13,6 +13,7 @@
 | Domain lecture (a subject, not a codebase) | `lectures/<domain>/` (e.g. `dotnet`, `carreer_path`, `firmware`) | `NNN-title.md` (match the folder's existing style: underscores in `dotnet`, hyphens in `carreer_path`) |
 | Project lecture | `lectures/<project>/` | same |
 | Project idea | `project_ideas/` | same |
+| **Weekly recap** (LeetCode) | `lectures/leetcode/recaps/YYYY-MM-DD_week_recap.md` (week starts Monday) | After each recall check that week, **append** an entry with only what his recall shows he needs (gaps, misconceptions, flagged doubts, deeper derivations). Never edit read lectures. Don't pad: a solid topic gets one line. He reads it at the end of the week |
 | Short issue-focused Q&A | `lectures/open_source/concept_notes/` | append to the current Q&A file (see CLAUDE.md) |
 
 When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §23), **update the roadmap and the "next lecture" lines** of neighboring lectures.
@@ -64,6 +65,9 @@ When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §2
 - **Distinguish the layers** (hardware / kernel / library / runtime / framework / app) whenever responsibility is in question. Misplacing responsibility across layers is one of his recurring confusions (see the private profile).
 - **Keep work details generic; keep his fears private.** Lectures may reference his public persona, but not private observations.
 
+- **Every example problem must include the full problem** (paraphrased in your own words, plus examples and constraints), so he can work it without opening LeetCode (his request, 2026-10-06).
+- **Never leave a step justified only as "the convention."** Derive it (clicks log P4; the floor-division gap, 2026-10-06).
+
 ## 5. Length (open question, under test)
 
 Recent lectures run 600–3,000 lines. There's **no evidence yet** on how much he reads or retains from lectures this long. Until recall data exists:
@@ -93,6 +97,7 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-10-06 | Added the weekly recap mechanism (§1), the full-problem-statement rule and the no-underived-conventions rule (§4). | His requests + recall check 2026-10-06 |
 | 2026-10-05 | Added T16 (name → valid set → membership) and T17 (numbered derivations). Before writing any lecture, also read `private/clicks_log.md`. | His first reported click (C1) |
 | 2026-10-04 | Retired T2 (personified characters) and T3 (firmware analogies) at Timothy's explicit request. Added T15: build lectures from his own failed attempts (forensics of his code). | His statement 2026-10-04; leetcode/001 → 8→1 bugs same evening |
 | 2026-09-29 | Added pointer to audio lecture standards; rule: never revise existing lectures after recall. |
