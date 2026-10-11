@@ -298,3 +298,92 @@ class Solution:
                     number += 1
                 left += 1
         return matrix
+
+
+# Oct 10, 2026
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    # Walk through
+    # (seems that different types of problems need to have different representation. In this problem, we have a tree, so I need to see how and what the best method of representation will be to perform the walkthrough)
+    #
+    # root = [3,9,20,null,null,15,7]
+    #           3
+    #   9           20
+    # (.)(.)    15      7
+    #
+    # Node 3:   return value: 3      left:  1      right: 2
+    # Node 9:   return value: 1      left:  0      right: 0
+    # Node 20:  return value: 2      left:  1      right: 1
+    # Node 15:  return value: 1      left:  0      right: 0
+    # Node 7:   return value: 1      left:  0      right: 0
+    def maxDepth(self, root: TreeNode | None) -> int:
+        
+        # This should tell me the maximum depth at node
+        def dfs(node):
+            if not node:
+                return 0
+            
+            left = dfs(node.left)
+            right = dfs(node.right)
+            return max(left, right) + 1
+        
+        return dfs(root)
+
+
+
+class Solution:
+    def carFleet(self, target: int, position: list[int], speed: list[int]) -> int:
+        # I know that there is a trick that I should look at the arrival time of each of the cars, I want to see if I can take that info that I was given already, and come up with an answer.
+        # I know that I care about the arrival time of each car. I can create an array for this which describes which hour that that particular car arrives where 0 means that it will arrive at the very start, and 1 means that it will arrive in one hour, etc.
+        # From that how can I determine fleet? I think that this feels like a monotonic stack type of prolem, but actually it also might just be as simple as walking through the array backwards and seeing if the hour of arrival is larger then the current arrival hour time. I will keep track of that arrival time, and the invariant to this will be that at every point this current_arival will be 
+        # current_arrival: the hour at which cars to the left will be limited by. 
+        # Finding a car which has a larger arrival time (I realized that it is not strictly even integer hours, but the idea extends seemlessly to floating arrival times), than the current limiting value (current_arrival), I know that this is a new fleet. I will need to update my current_arrival because now this car is the one blocking other which come after it, and I will need to increase the total fleets because this is a new fleet.
+        # Initial Conditions:
+        # I will start at 0 fleets because at this point I have not found any fleets. This number wil be updated once I found a single car. This initial condition works because if there are 0 cars, there will be 0 fleets (as my loop will not run). If there is a single car, then I will need to make my initial condition such that this car will be definately counted. If I set my current_arrival to be 0, then any car that has a positive arrival time (all of them). If a car has a 0 arrival time, then I guess I would not count it as a fleet. But those would be edge cases which I would bring up to the interviewer.
+
+        current_arrival = 0
+        fleets = 0
+
+        # Create an array for each car
+        # Bringing in the lecture for array indexing and slices. I want to have car number of elements in this array times. I will use the range method to get the cuts will have 0 as the cut before the first box, and n as the cut after the last box. len(array) gives n which is the last cut. Then range will take all of the elements which are in between those cuts. So it will give the 0th element because cut 0 startes before the box 0, and it will also include the last element because the cut which is n, is after the last element which lives at box n-1 index. 
+        # I am wanting to get a for loop that will have n elements. 
+        times = [None for _ in range(len(position))]
+
+        # Now go through each of the cars and place their arrival time (assuming no blocking)
+        # I am now noticing that position is not in sorted order. I thought that position was going to be in the order which the car were physically at (meaning that the cars would be sorted as either increasing or decreacing). To do this method, I will need to have them sorted. So I need to come up with a way to sort the position array, but keep the associated speed. As of right now, the index of position aligns with the index of the speed. So maybe I can just itterate through the array of position, and then place in as the element a tuple of the position and the speed, then I can sort (because I will put position as the first element in the tuple), then I can finally go through and create this times array.
+        sort_array = []
+        for i in range(len(position)):
+            sort_array.append((position[i], i))
+        # In place, assending order. 
+        sort_array.sort()
+
+        # Now I am realizing that I sill need the information about the index because I will need to use that information to find who is blocking. So I will change the second parameter from speed[i] to i in my sort_array because if I know i, I will be able to find the associated speed.
+        # On second thought I just realized I don't need to do that because THE ENTIRE reason I am doing all of this sorting is the change the positions so I know who is blocking, I don't care about the initial index position. But I will keep it this way with i just because I can still get the speed anyways. But it does show that I am stubling around.
+        # Because the sort_array is in assending order, it means that the cars who are closest to the starting line. So the cars in the back are actually going to be the ones who are blocking.
+        for i in range(len(sort_array)):
+            position, input_index = sort_array[i]
+            # finish_time = (total more miles) / time to do one mile
+            finish_time = (target - position) / speed[input_index]
+
+            # How do I want to store this into my times array? Do I want to place them from the back or from the start? I will also need to think about how (in which order) I need to go through the list.
+            # Cars who are at a larger position will be the ones which are blocking the latter ones. So I will want to itterate through my times array in a way that sees cars who are closest to the finish line first. I can store them in either way.
+            # So here I decided smaller positions first (meaning I will need to itterate from the back)
+            times[i] = finish_time
+        
+        # Oh, here we go again with the ranges, and the cuts / boxes. I know from that spiral matrix problem that the correct answer is for i in range(len(times)-1 , -1, -1) but can I think of why that would be the case here using todays lecture of the indexs? There is no -1 cut because the cut represents the start before the element. So how does that make sense here? I know we are going backwards so the rules are different. But anyway, I have spent too much time on this problem, I will just accept this form because I already know it from the spiral matrix.
+        for i in range(len(times)-1 , -1, -1):
+            # I want to find those cars which would catch up to the other ahead of it, so I will want to see if my current car (at i) is finishing faster then the current limiting time.
+            if times[i] < current_arrival:
+                # Now I will need to do nothing
+                continue
+            if times[i] > current_arrival:
+                fleets += 1
+                current_arrival = times[i]
+        
+        return fleets
