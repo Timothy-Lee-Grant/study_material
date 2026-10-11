@@ -338,6 +338,12 @@ class Solution:
 
 
 class Solution:
+        # To do the walk through, I think that I will need to go through each 'step' where a step is defined by each of my for loops
+        # Or maybe I can just skip to the two for loops which are actually doing 'real work' the others I should be able to just explain in one go what they are doing.
+        # sort_array (before): [(10,0),(8,1),(0,2),(5,3),(3,4)]
+        # sort_array (after):[(0,2),(3,4),(5,3),(8,1),(10,0)]
+        # finish_time:      position:       input_index:
+        # (I got too lazy and just submitted it. It passed, so I did it correct, but my way of tracking might not be the best if I am taking so long that I just give up.)
     def carFleet(self, target: int, position: list[int], speed: list[int]) -> int:
         # I know that there is a trick that I should look at the arrival time of each of the cars, I want to see if I can take that info that I was given already, and come up with an answer.
         # I know that I care about the arrival time of each car. I can create an array for this which describes which hour that that particular car arrives where 0 means that it will arrive at the very start, and 1 means that it will arrive in one hour, etc.

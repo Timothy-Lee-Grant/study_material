@@ -2,7 +2,7 @@
 
 > **What this is:** a running document for this week. Each time you explain a concept back to me (a recall), I add what you're still missing, any misconceptions, or extra depth you asked for. **Your earlier lectures stay untouched.** Read this at the end of the week.
 > **Rules I follow when adding here:** only add what your explanation shows you need. If a topic came through solid, it gets one line saying so, not filler. Every example problem includes the full problem (paraphrased), examples and constraints, so you don't need to open LeetCode to follow along. No firmware analogies, no characters.
-> **Entries this week:** 4
+> **Entries this week:** 5
 
 ---
 
@@ -12,6 +12,7 @@
 - [Entry 2 (Oct 9): Prefix sums (from your recall of lecture 005)](#entry-2-oct-9-prefix-sums-from-your-recall-of-lecture-005)
 - [Entry 3 (Oct 9): Two pointers and sliding windows (from your recall of lecture 006)](#entry-3-oct-9-two-pointers-and-sliding-windows-from-your-recall-of-lecture-006)
 - [Entry 4 (Oct 10): Counting elements in a range, and the merge-sort pair count](#entry-4-oct-10-counting-elements-in-a-range-and-the-merge-sort-pair-count)
+- [Entry 5 (Oct 11): Your Max Depth and Car Fleet attempts](#entry-5-oct-11-your-max-depth-and-car-fleet-attempts)
 
 ---
 
@@ -392,6 +393,51 @@ That's true for almost everyone the first time, and it isn't the skill being tes
 > **Trigger:** "count pairs `i < j` where `nums[i]` ___ `nums[j]`" + `n` too large for O(n²) → **divide and conquer: count cross pairs while merging sorted halves.**
 
 What *is* derivable, and what you did derive, is the counting step inside the merge. That's the part this entry is about. The roadmap now lists divide-and-conquer counting as a later topic, so you'll get a proper lecture on recognizing it.
+
+---
+
+## Entry 5 (Oct 11): Your Max Depth and Car Fleet attempts
+
+> From `examples.py` (Oct 10). I ran both. **Max Depth is correct, and Car Fleet is correct**: it matched a reference solution on 5,000 random inputs. Both passed on your first submission.
+
+### What went well
+
+- **Max Depth:** you chose a trace format that fits the problem: one row per node, with its left result, right result and return value. That's lecture 003 §5.5 and lecture 007 §9, picked by you without prompting ("different types of problems need different representation"). Correct contract, correct base case.
+- **Car Fleet:** you found the arrival-time idea and stated an **invariant** before coding ("`current_arrival`: the hour at which cars to the left will be limited by"). You reasoned about initial conditions (0 fleets, 0 cars) and asked whether `current_arrival = 0` could be wrong for a car that's already at the target. Good instinct, and the constraints say `position < target`, so it can't happen. You also used the cuts picture from lecture 008 to justify `range(len(position))`.
+
+### 5.1 Your question: "There is no −1 cut, so why is it `range(len(times) - 1, -1, -1)`?"
+
+You're right that `-1` isn't a cut. In a backward `range`, the stop isn't a cut either. It's just the formula `range(first, last + step, step)` from lecture 001 Addendum A.3: first = `n - 1`, last = `0`, step = `-1`, so stop = `0 + (-1)` = `-1`. The cut picture describes *forward* slices. Going backward, the `range` arguments are a different convention, which is why it felt wrong.
+
+**The easier way, which keeps the cut picture:**
+
+```python
+for i in reversed(range(n)):     # n-1, n-2, ..., 0
+```
+
+`range(n)` is the cut range you already trust (`0 … n-1`), and `reversed` walks it backwards. No `-1` to work out. Both forms are standard in interviews. Use whichever one you can write without hesitating.
+
+### 5.2 A small simplification in Car Fleet
+
+You sorted ascending and then walked the `times` array backwards. Sorting **descending** by position (`sort_array.sort(reverse=True)`) lets you walk forwards, from the car closest to the target. That removes the backward loop entirely:
+
+```python
+cars = sorted(zip(position, speed), reverse=True)   # closest to the target first
+fleets = 0
+slowest_ahead = 0.0                                  # arrival time of the fleet just ahead
+for pos, spd in cars:
+    t = (target - pos) / spd
+    if t > slowest_ahead:                            # can't catch the fleet ahead -> new fleet
+        fleets += 1
+        slowest_ahead = t
+return fleets
+```
+
+Same algorithm, fewer moving parts. Also note your `if times[i] < current_arrival: continue` branch: `times[i] == current_arrival` falls through both `if`s and isn't counted, which is the correct behaviour (a car that arrives exactly when the fleet ahead does joins it). It's correct, but by accident of structure. A single `if t > slowest_ahead` states it on purpose.
+
+### 5.3 On "I got too lazy and just submitted it"
+
+That's a reasonable call on a problem this size, but it's worth noting why the trace felt too costly. You started tracing **every** loop. Lecture 003 §3.1's rule is to trace only the step that can go wrong. Here, the sort and the `times` array are straightforward, so a 4-row table of just the final loop (`i`, `times[i]`, `current_arrival`, `fleets`) on the example would have taken about 2 minutes.
 
 ---
 
