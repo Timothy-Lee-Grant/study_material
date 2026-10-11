@@ -393,3 +393,26 @@ class Solution:
                 current_arrival = times[i]
         
         return fleets
+
+
+# Oct 11, 2026
+
+class Solution:
+    def searchInsert(self, nums: list[int], target: int) -> int:
+        # Can I think about which slice this target should to? It is not simply asking me to find the target, but rather to identify the index where it would have been found. So does this break any guarantees? If I find my midpoint to be larger than the target, I might want to move it to say that the target cannot be in that range, and when I do so, I still leave the possibility of having the target at the last slice (so after the final item box). At that point it would have been found to be that the next value after my last element was bigger, but the element immediate to the right was smaller. This satisfies the condition.
+        # The smaller case is similar. If I find mid to be smaller than target, I know that I could put the item at the slice 0 and that would be a valid condition
+        # This is interesting, I am noticing that I never want to index on right because it is actually outside the bounds of the array. So I think that this is actually why I need to do all of those design decisions which I was feeling as arbitrary when reading the lecture document. The lecture talked about needing to do // on the creation of mid as to round down mid. The reason for this is that we want to ensure that mid will never actually become the number 'right' otherwise it will be out of bounds when we attempt to index it. We also want to look at this in terms of the slice. right is the slice which appears after the last element. The idea was the there are one more slices than there are boxes in these kinds of problems. But we index on boxes.
+        l, r = 0, len(nums)
+
+        while l<r:
+            mid = (l+r) // 2
+            if nums[mid] == target:
+                return mid
+            if nums[mid] < target: 
+                # I remember that from the lecture I need to apply a +1 to the left (but not the right). I know that this will help to prevent an infinate loop, but what does this actually do? Like what does it imply about the actual problem, the state of everything, the contract? I think this will mean that left is always going to be pointing to the next element that it could be (which actually I think is the entire point of this problem, but I still feel unsure about doing this).
+                l = mid + 1
+            if nums[mid] > target:
+                r = mid
+        
+        # I think at this point if we encountered a situation where l and r have converged, then we are standing at the point where the index should be. 
+        return l
