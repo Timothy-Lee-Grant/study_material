@@ -416,3 +416,31 @@ class Solution:
         
         # I think at this point if we encountered a situation where l and r have converged, then we are standing at the point where the index should be. 
         return l
+
+
+class Solution:
+    def minEatingSpeed(self, piles: list[int], h: int) -> int:
+        # I know that this is binary search because there is going to be some number which lives between 0 and max(piles) which is the speed k which koko needs to eat to satisfy the requirement that koko is able to finish all piles of bananas in the alloted hour h. Although this does assume that h >= len(piles), because koko is limited to only being able to eat one pile per hour, regardless of the eating speed which koko eats at, the maximum number of piles eatten will be equal to (following with a 1-to-1 relationship) the hour which has passed. Koko can only possibly eat at most h piles. But it is possible that koko eats less than h piles. This is the case where koko will not finish one pile within the hour and will then wait for the next hour to finish the pile. This causes hours to increase while piles eaten does not increase. So piles eaten is bound by hours, but hours is not bound by piles eaten. Therefore my previous statement of a 1-to-1 relationship is not true. Maybe I should say that piles eaten is bounded at the top by the linearly increasing function of hours.
+        # Anyways, the reason that I know that this is a valid binary search problem is because it will follow the shape of FFFFF...FFFTT....T we will start at an eating speed of 0, and then we have a max eating speed of max(piles). (we are assuming that there will be a valid solution, and we can make that assumption because the constraints say `piles.length <= h <= 109`). So at some eating speed k, we will transition from the false case (of the eating speed does not satisfy the minimum requirement to finish all bananas) to the True state which koko was able to finish all bananas. Now once the true state has been reached, it will remain true until the end. Increasing the eating speed will always still result in koko being able to finish all piles in the alloted time. This problem asks to find the minimum speed which koko needs to eat. So it means that it wants to find the first transition between false to true.
+        # Also I can practice thinking about this in terms of the slices and boxes. What is this asking me? I have the boxes which will contain the potential eating speed k. So the box contains a number, and that number is a potential answer. When I am doing binary search, I am trying to find the boundary or the box? The number in the box will result in the state (which in this case is the state of true). Then if I am asked to find the boundary, that will be between the two states of true and false, and because cuts are before the box, the cut which seperates the boundary between the states of False and the states of True, will be before the box of the first element which invokes the state of True. The index of the cut is assocaited with the index of the box it comes before. So in the problem I am asked to find the speed k (the number in the box) which is the first k that produces a state of True, therefore by giving the cut between the boundary, (or giving the indexed box which I found to be equal to target? I'm not so sure about this second one. If I consider the case of repeated values in an array, I can find a target, but it might not be the first one. target=10 nums=[2,3,7.6,7,7,10,10,10,23,23,24,55,87] I could look at my box and find it gives the target (10) but it is not the boundary. Only the boundary gives the first box which transitions from the boxes which contain items that will cause a false state to be a true state).
+
+        # all of this said, lets actually do the problem.
+        # I need a list of elements which will be the potential k answers.
+
+        # potential_speeds = [] (on second thought, do I actually need this, or is this one of those problems which is actually using those implicit methods of where a number is of itself indicating the information?)
+
+        l, r = 0, max(piles)
+
+        # so l will be the bound which we know does not contain the answer. All items in the array between speeds[0:l] are all boxes which result in the state of False. Notice this is a slice, l means the index of the cut before the box at index l, so that box at index l might be valid.
+        # r will be the cut which I know all all elements from speeds[r:n] will be boxes that result in True. The slice r will means that I already know that the box at index r will result in true. This also has implications on how I select my r at first. r needs to be the cut which is after the last box (because I don't know that the last box is or is not resulting in a state of True). This is also why I never want to attempt to index r.
+        # when l==r, this means I have converged on one single location (one single cut). So this means that I know that all values between speeds[0:l] are False, and all values speeds[r:n] are true. So the value which lives at box l (the converged index) must be the first box which contains the first True.
+        # but notice what happens if there are no boxes that return the state of True, it will 'at the box' which is past  the last box, so I want to make sure that I don't actually attempt to index it, I just say that this is the cut, or say that because I find the cut, the box which would contain the first true is at the index associated with the cut.
+        while l<r:
+            mid = (l+r) // 2
+            condition = find_true_false_condition(mid)
+            if condition:
+                # The box which lives at mid makes the state True
+                l = mid+1
+            else:
+                r = mid
+        return l
