@@ -1,6 +1,7 @@
 # LeetCode Gradient Roadmap
 
 > **What this is:** the plan for which topics come next, and why, kept in one place so it can't get lost again. Updated 2026-10-11 (added: kinds of problems; LeetCode vs HackerRank vs interviews; design problems moved to lecture 012).
+> **Order (Oct 12):** lectures may be written out of numerical order. On weekdays the focus is lectures (concepts); practice problems for each lecture get done later, mostly on weekends. A topic still only counts as *done* once its problems are passed (see the bottom of this file).
 > **How the plan works:** "gradient" order. Each step targets whatever is currently the most expensive weakness, while also filling the biggest gaps in topic coverage. The order below is a default, not a schedule. If practice shows a new weakness, it jumps the queue.
 > **Language:** Python. **Free problems only** (no Premium). Every lecture includes full problem statements (paraphrased), derivations rather than conventions, and no firmware analogies.
 
@@ -20,6 +21,7 @@
 | 007 | `007-binary_trees_contracts_on_a_tree.md` | Trees: answer up, context down, global best, BFS levels, LCA | not yet |
 | 008 | `008-indices_and_bounds_toolkit.md` | Indices and bounds: boxes vs cuts, counting rules, valid sets, two-point checks, drills (your request, Oct 10) | applied (Car Fleet `range` reasoning, Oct 10) |
 | 009 | `009-graphs_traversal_and_ordering.md` | Graphs: traversal template, components, BFS shortest steps, 3-state cycles, Kahn's topological order, clone | not yet |
+| 010 | `010-linked_lists_pointers_and_sentinels.md` | Linked lists: landing, save-before-overwrite, reverse, dummy nodes, fast/slow, doubly linked lists + sentinels, LRU Cache | not yet |
 
 ---
 
@@ -40,7 +42,7 @@ Four topics have been read in five days, with almost no problems attempted. The 
 | # | Planned lecture | Why it's next |
 |---|---|---|
 | ~~009~~ | ~~Graphs~~ | **Done Oct 11** (see the table above) |
-| 010 | **Linked lists: dummy heads, reversing, merging, fast/slow, "where does the pointer land?"** (206, 21, 19, 141, 143, 61) | Targets the "pointer lands one node off" bug (Rotate List). Reorder List was blocked in July by not knowing how to reverse a list. Needed for LRU Cache |
+| ~~010~~ | ~~Linked lists~~ | **Done Oct 12** (see the table above) |
 | 011 | **Backtracking in depth: choose / explore / un-choose, pruning, subsets vs permutations vs combinations** (78, 46, 39, 40, 79, 131) | Completes the recursion family (the "accumulate down" style). Targets the missing un-choose (Word Search) and the end-of-function steps that tend to get dropped |
 
 ## Group 3: design problems, ordering and selection
@@ -48,7 +50,7 @@ Four topics have been read in five days, with almost no problems attempted. The 
 | # | Planned lecture | Why |
 |---|---|---|
 | 012 | **Data-structure design problems** (146 LRU Cache redo, 155 Min Stack, 981 Time Based Key-Value Store, 380 Insert Delete GetRandom O(1), 933 Number of Recent Calls → your rate limiter) | You've already faced one in a real Microsoft interview. Comes right after linked lists because LRU needs a doubly linked list. See "Kinds of problems" below for what makes these different |
-| 013 | Stacks and monotonic stacks (20, 155, 739, 84) | You derived Basic Calculator's stack in July; a monotonic stack is the next step |
+| 013 | Stacks and monotonic stacks (20, 150, 739, 84) | You derived Basic Calculator's stack in July; a monotonic stack is the next step |
 | 014 | Heaps / priority queues (215, 347, 23, 295) | Zero attempts so far; Python `heapq` fluency |
 | 015 | Intervals and greedy (56, 57, 435, 55, 45) | The July Merge Intervals `max` bug; greedy needs an argument for why it's correct |
 
@@ -143,7 +145,7 @@ def main():
     data = sys.stdin.read().split()      # every whitespace-separated token, as strings
     n = int(data[0])
     nums = list(map(int, data[1:1 + n])) # the next n tokens: slice from cut 1 to cut 1+n
-    print(solve(nums))
+    print(solve(nums))                   # solve() = your function for the actual problem
 
 main()
 ```
