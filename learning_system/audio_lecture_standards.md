@@ -19,8 +19,8 @@ NotebookLM's hosts summarize and discuss the source; they don't read it verbatim
 |---|---|
 | Flowing prose paragraphs with clear topic sentences | Tables, ASCII diagrams, box drawings: they can't be heard. Describe them in words. |
 | **Describe code in words** ("a loop that keeps reading until the read returns zero, which means the other side hung up") | Code blocks. Allow at most one tiny snippet if the exact name is the point, and explain it in prose too. |
-| Stories, scenarios, and **personified characters** ("the Doorman, Kestrel, accepts the connection…"). Audio thrives on narrative. | Dense lists of settings, defaults, and API members |
-| Firmware analogies, stated explicitly ("For a firmware engineer, this is exactly an interrupt handler pushing into a ring buffer") | Emoji, 🟢/🔵/⚫ tags, `<details>` blocks, footnote-style references |
+| Stories and concrete scenarios (his own systems, real situations). Audio thrives on narrative. | Dense lists of settings, defaults, and API members. **Personified characters (retired 2026-10-04 at his request)** |
+| Direct definitions, the mechanism step by step, and what each term stands for | Emoji, 🟢/🔵/⚫ tags, `<details>` blocks, footnote-style references. **Firmware analogies (retired 2026-10-04 at his request)** |
 | **Signposting**: "There are three reasons. First… Second… Third…" | Nested bullet hierarchies |
 | **Deliberate repetition** of the core ideas: state them early, use them in the middle, recap at the end | Assuming the listener can scroll back |
 | Pronunciation help on first use: "YARP, said like 'yarp'", "C sharp", "P-invoke", "E-poll", "S-Q-L" | Unexplained acronyms, or symbols like `->`, `::`, `=>` |
@@ -40,7 +40,6 @@ The core ideas, stated up front in plain sentences (5–8 of them). This doubles
 Body: 3–6 sections, each built around ONE idea:
   - a concrete scenario or story
   - the mechanism, explained step by step in words
-  - the firmware/hardware analogy
   - a common misconception, and why it's wrong
   - a "pause and predict" question
 
@@ -61,7 +60,7 @@ Walk questions: 3 questions for him to answer out loud on his next walk (these f
 
 NotebookLM lets you "customize" an Audio Overview with instructions. Write 3–6 sentences, for example:
 
-> The listener is a firmware engineer transitioning into .NET backend engineering, who prefers top-down explanations and firmware analogies. Focus on the core ideas listed at the start of the source, and make sure each one is explained with its mechanism, not just named. Spend the most time on [the key section]. Include the misconceptions and why they're wrong. End by restating the core ideas and posing the three walk questions.
+> The listener is a firmware engineer transitioning into .NET backend engineering, who prefers top-down, direct explanations (no firmware analogies, no personified characters). Focus on the core ideas listed at the start of the source, and make sure each one is explained with its mechanism, not just named. Spend the most time on [the key section]. Include the misconceptions and why they're wrong. End by restating the core ideas and posing the three walk questions.
 
 ## 6. Verification
 
@@ -72,3 +71,4 @@ The same standards apply as for reading lectures: research present-day facts fir
 | Date | Change |
 |---|---|
 | 2026-09-29 | Created at Timothy's request (audio lectures for NotebookLM, only when explicitly asked). |
+| 2026-10-15 | Brought into line with lecture_standards T2/T3: removed personified characters and firmware analogies (retired 2026-10-04 at his request) from the Do column, the required structure, and the example prompt. |
