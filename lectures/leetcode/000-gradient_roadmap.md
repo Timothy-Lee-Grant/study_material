@@ -1,6 +1,6 @@
 # LeetCode Gradient Roadmap
 
-> **What this is:** the plan for which topics come next, and why, kept in one place so it can't get lost again. Updated 2026-10-11 (added: kinds of problems; LeetCode vs HackerRank vs interviews; design problems moved to lecture 012).
+> **What this is:** the plan for which topics come next, and why, kept in one place so it can't get lost again. Updated 2026-10-17 (013 stacks done; 012 restructured to hide answers; combining-structures lecture planned). Earlier: 2026-10-11 (kinds of problems; LeetCode vs HackerRank vs interviews; design problems moved to lecture 012).
 > **Order (Oct 12):** lectures may be written out of numerical order. On weekdays the focus is lectures (concepts); practice problems for each lecture get done later, mostly on weekends. A topic still only counts as *done* once its problems are passed (see the bottom of this file).
 > **How the plan works:** "gradient" order. Each step targets whatever is currently the most expensive weakness, while also filling the biggest gaps in topic coverage. The order below is a default, not a schedule. If practice shows a new weakness, it jumps the queue.
 > **Language:** Python. **Free problems only** (no Premium). Every lecture includes full problem statements (paraphrased), derivations rather than conventions, and no firmware analogies.
@@ -22,6 +22,8 @@
 | 008 | `008-indices_and_bounds_toolkit.md` | Indices and bounds: boxes vs cuts, counting rules, valid sets, two-point checks, drills (your request, Oct 10) | applied (Car Fleet `range` reasoning, Oct 10) |
 | 009 | `009-graphs_traversal_and_ordering.md` | Graphs: traversal template, components, BFS shortest steps, 3-state cycles, Kahn's topological order, clone | not yet |
 | 010 | `010-linked_lists_pointers_and_sentinels.md` | Linked lists: landing, save-before-overwrite, reverse, dummy nodes, fast/slow, doubly linked lists + sentinels, LRU Cache | not yet |
+| 012 | `012-data_structure_design_problems.md` | Design problems: the 8-step method, 8 problems incl. your rate limiter. **Oct 17:** restructured so each problem shows only its title and statement; the structures are revealed in §4 after a divider | not yet (Browser History attempted Oct 17) |
+| 013 | `013-stacks_and_monotonic_stacks.md` | Stacks: unresolved items, two-stack machines (your Browser History vs the queue: tops vs bottoms facing each other), invariants for any call order, saved state (RPN, Simplify Path, Decode String), monotonic stacks (Daily Temperatures, Car Fleet) | not yet |
 
 ---
 
@@ -50,8 +52,9 @@ Four topics have been read in five days, with almost no problems attempted. The 
 | # | Planned lecture | Why |
 |---|---|---|
 | 012 | **Data-structure design problems** (146 LRU Cache redo, 155 Min Stack, 981 Time Based Key-Value Store, 380 Insert Delete GetRandom O(1), 933 Number of Recent Calls → your rate limiter) | You've already faced one in a real Microsoft interview. Comes right after linked lists because LRU needs a doubly linked list. See "Kinds of problems" below for what makes these different |
-| 013 | Stacks and monotonic stacks (20, 150, 739, 84) | You derived Basic Calculator's stack in July; a monotonic stack is the next step |
+| ~~013~~ | ~~Stacks and monotonic stacks~~ | **Done Oct 17** (see the table above). 84 Largest Rectangle is a stretch problem there |
 | 014 | Heaps / priority queues (215, 347, 23, 295) | Zero attempts so far; Python `heapq` fluency |
+| (after 014) | **Choosing and combining data structures** (number assigned when written) | Added Oct 17 from your Browser History work (three designs: linked list, array, two stacks), which raised the question of how to compare and merge candidate designs. This lecture turns "compare designs, find the bottleneck operation, fix exactly that one" into a procedure, using blind problems. Comes after heaps so two-heap designs are available |
 | 015 | Intervals and greedy (56, 57, 435, 55, 45) | The July Merge Intervals `max` bug; greedy needs an argument for why it's correct |
 
 ## Group 4: dynamic programming II

@@ -3,9 +3,9 @@
 > **For:** Timothy · **Date:** 2026-10-12
 > **Prerequisites:** lecture 010 (linked lists; §8–9 doubly linked lists, sentinels, LRU Cache), lecture 005 (dictionaries), lecture 004 (binary search). The roadmap's "Kinds of problems" §2 introduced what design problems are.
 > **Why this lecture:** you asked for an in-depth lecture because these problems "threw you off": *"not only do you need to figure out what data structure to use, but also how to combine things together."* You're also right that they matter for you specifically. Your one in-person Microsoft interview question so far was one (design a rate limiter), and mid-level loops use them often.
-> **What makes this lecture different:** design problems aren't solved by recognizing one pattern. They're solved by a **method**: list the operations, ask what question each must answer quickly, pick the structure that answers it, and if no single structure answers all of them, combine two and write down the rule that keeps them in sync. §1 is that method. Everything after it is the method applied to the problems you're most likely to meet, including your rate limiter, designed properly in §3.7.
+> **What makes this lecture different:** design problems aren't solved by recognizing one pattern. They're solved by a **method**: list the operations, ask what question each must answer quickly, pick the structure that answers it, and if no single structure answers all of them, combine two and write down the rule that keeps them in sync. §1 is that method. Everything after it is the method applied to the problems you're most likely to meet, including your rate limiter, designed properly in §4.7.
 > **Format notes:** every problem has its full statement (paraphrased), examples and constraints; every structure's *role* is named before it's used (your Oct 11 rule: say what each thing stands for); no firmware analogies.
-> **Verification:** every class here was checked against a brute-force reference on 2,000 random sequences of 20–40 calls. The rate limiter and RandomizedSet were also checked against their **invariants** after every single call (§4). `getRandom` was sampled 40,000 times to confirm it's uniform. Traces were produced by running the code.
+> **Verification:** every class here was checked against a brute-force reference on 2,000 random sequences of 20–40 calls. The rate limiter and RandomizedSet were also checked against their **invariants** after every single call (§5). `getRandom` was sampled 40,000 times to confirm it's uniform. Traces were produced by running the code.
 
 ---
 
@@ -14,11 +14,11 @@
 1. **A design problem is a class whose state persists between calls.** You're judged on every method's complexity, on correctness across *any* sequence of calls, and on how you clarify, explain and test.
 2. **Start from an operations table:** each method, what it must answer, and its required complexity. The data structures come *after* the table.
 3. **For each operation, ask "what question must be answered fast?"** ("where is key k?", "what's the minimum?", "which is the oldest?") and pick the structure that answers that question in the required time.
-4. **If one structure can't answer every question, combine two**, each covering the other's weakness: dict + doubly linked list (LRU), dict + array (RandomizedSet), dict + sorted lists (TimeMap), queue + dict (rate limiter).
+4. **If one structure can't answer every question, combine two**, each covering the other's weakness (§4 shows which combination each problem in §3 needs).
 5. **Name each structure's role.** One is the **source of truth** (the real data); the others are **indexes** (shortcuts to find things in it). Write one **invariant** sentence that links them, e.g. "the dict has exactly the keys in the list, and maps each to its node."
 6. **Every method that changes one structure changes all of them, in the same method,** usually through small helpers (`_remove`, `_add_front`). Most design bugs are structures drifting out of sync.
-7. **Store derived answers next to the data they come from** when they can't be recomputed cheaply (Min Stack stores the minimum with each entry).
-8. **Amortized O(1) is a legitimate answer:** if each item is moved at most a constant number of times over its whole life, the average cost per call is O(1), even if one call occasionally does a lot of work (two-stack queue, rate-limiter cleanup).
+7. **Store derived answers next to the data they come from** when they can't be recomputed cheaply.
+8. **Amortized O(1) is a legitimate answer:** if each item is moved at most a constant number of times over its whole life, the average cost per call is O(1), even if one call occasionally does a lot of work.
 9. **Clarifying questions are part of the answer:** capacity, duplicates, what "the last N seconds" includes, whether timestamps only increase, what to return when empty, single-threaded or not.
 10. **Test with a call-sequence trace:** one row per call, a column per structure, plus the return value, and check the invariant on every row.
 
@@ -29,20 +29,21 @@
 - [0. What you're actually being asked to do](#0-what-youre-actually-being-asked-to-do)
 - [1. The design method (use it every time)](#1-the-design-method-use-it-every-time)
 - [2. The toolbox: what each structure answers quickly](#2-the-toolbox-what-each-structure-answers-quickly)
-- [3. The combination patterns, one problem each](#3-the-combination-patterns-one-problem-each)
-  - [3.1 Store the derived answer with each entry: Min Stack (155)](#31-store-the-derived-answer-with-each-entry-min-stack-155)
-  - [3.2 Amortized O(1): Queue using two stacks (232)](#32-amortized-o1-queue-using-two-stacks-232)
-  - [3.3 An array plus a cursor: Browser History (1472)](#33-an-array-plus-a-cursor-browser-history-1472)
-  - [3.4 Dict + array, swap with last: Insert Delete GetRandom O(1) (380)](#34-dict--array-swap-with-last-insert-delete-getrandom-o1-380)
-  - [3.5 Dict of sorted lists + binary search: Time Based Key-Value Store (981)](#35-dict-of-sorted-lists--binary-search-time-based-key-value-store-981)
-  - [3.6 A queue as a sliding window over time: Number of Recent Calls (933)](#36-a-queue-as-a-sliding-window-over-time-number-of-recent-calls-933)
-  - [3.7 Your interview question: the rate limiter, designed step by step](#37-your-interview-question-the-rate-limiter-designed-step-by-step)
-  - [3.8 Dict + doubly linked list: LRU Cache (146), as a design story](#38-dict--doubly-linked-list-lru-cache-146-as-a-design-story)
-- [4. Invariants and consistency: the core skill](#4-invariants-and-consistency-the-core-skill)
-- [5. Testing a design: the call-sequence trace](#5-testing-a-design-the-call-sequence-trace)
-- [6. The interview: what to say, in what order](#6-the-interview-what-to-say-in-what-order)
-- [7. Recognizing which structures a requirement needs](#7-recognizing-which-structures-a-requirement-needs)
-- [8. Practice ladder](#8-practice-ladder)
+- [3. The problems (statements only)](#3-the-problems-statements-only)
+  - [3.1 Min Stack (155)](#31-min-stack-155)
+  - [3.2 Implement Queue using Stacks (232)](#32-implement-queue-using-stacks-232)
+  - [3.3 Design Browser History (1472)](#33-design-browser-history-1472)
+  - [3.4 Insert Delete GetRandom O(1) (380)](#34-insert-delete-getrandom-o1-380)
+  - [3.5 Time Based Key-Value Store (981)](#35-time-based-key-value-store-981)
+  - [3.6 Number of Recent Calls (933)](#36-number-of-recent-calls-933)
+  - [3.7 Rate limiter (your Microsoft interview question)](#37-rate-limiter-your-microsoft-interview-question)
+  - [3.8 LRU Cache (146)](#38-lru-cache-146)
+- [4. Solutions: the structures, invariants and code](#4-solutions-the-structures-invariants-and-code) (answers; subsections not listed here so the headings don't give them away)
+- [5. Invariants and consistency: the core skill](#5-invariants-and-consistency-the-core-skill)
+- [6. Testing a design: the call-sequence trace](#6-testing-a-design-the-call-sequence-trace)
+- [7. The interview: what to say, in what order](#7-the-interview-what-to-say-in-what-order)
+- [8. Recognizing which structures a requirement needs](#8-recognizing-which-structures-a-requirement-needs)
+- [9. Practice ladder](#9-practice-ladder)
 - [Common mistakes](#common-mistakes)
 - [Self-check questions](#self-check-questions)
 - [Sources](#sources)
@@ -77,7 +78,7 @@ Three things follow from that:
 
 Eight steps. In an interview, steps 1–4 are spoken and written as comments before any real code.
 
-**Step 1: Clarify the API and its meaning.** Write the method signatures and what each returns. Then ask the questions that decide the design (§6.2 has a full list). Examples: Can keys repeat? What's returned when it's empty? Do timestamps only increase? Does "the last 10 seconds" include the boundary?
+**Step 1: Clarify the API and its meaning.** Write the method signatures and what each returns. Then ask the questions that decide the design (§7.2 has a full list). Examples: Can keys repeat? What's returned when it's empty? Do timestamps only increase? Does "the last 10 seconds" include the boundary?
 
 **Step 2: Write the operations table.**
 
@@ -95,7 +96,7 @@ put(key, value)  | insert/update; mark most recent; evict LRU | O(1)
 
 **Step 6: Write helpers that preserve the invariant.** Each helper does one change to *all* structures (`_add`, `_remove`, `_move_to_front`). The public methods call helpers, so there's no other way to change state.
 
-**Step 7: Trace a call sequence** (§5): empty, one item, at capacity, a repeated key, the boundary case from your clarifying questions.
+**Step 7: Trace a call sequence** (§6): empty, one item, at capacity, a repeated key, the boundary case from your clarifying questions.
 
 **Step 8: State the complexities and the follow-ups:** per-operation time, total space, and what changes for concurrency or scale.
 
@@ -124,15 +125,98 @@ The point of this table is **questions**, not structures. In step 4 you look up 
 
 ---
 
-## 3. The combination patterns, one problem each
+## 3. The problems (statements only)
 
-Each pattern follows the same order: **problem → operations table → why one structure isn't enough → the combination and its invariant → code → trace → complexity → follow-ups.**
+Each problem below is what you'd get in an interview: a title and a statement, with no hint about which structures to use. Work each one with the §1 method before looking at the answer. The solutions are in §4, after the line below.
 
-### 3.1 Store the derived answer with each entry: Min Stack (155)
+### 3.1 Min Stack (155)
 
 **Problem (paraphrased).** Design a stack that supports `push(val)`, `pop()`, `top()` and `getMin()` (the minimum element currently in the stack), **all in O(1)**. `pop`, `top` and `getMin` are only called on a non-empty stack.
 Example: `push(-2), push(0), push(-3), getMin() → -3, pop(), top() → 0, getMin() → -2`.
 Constraints: values fit in 32 bits; up to 3·10⁴ calls.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.1.*
+
+### 3.2 Implement Queue using Stacks (232)
+
+**Problem (paraphrased).** Implement a first-in-first-out queue using only two stacks (push to top, pop from top, peek top, size/empty). Support `push(x)`, `pop()` (remove and return the front), `peek()` (return the front) and `empty()`. Calls to `pop`/`peek` are always valid.
+Example: `push(1), push(2), peek() → 1, pop() → 1, empty() → False`.
+Constraints: `1 <= x <= 9`; up to 100 calls. Follow-up: amortized O(1) per operation.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.2.*
+
+### 3.3 Design Browser History (1472)
+
+**Problem (paraphrased).** A browser with one tab starts on `homepage`. Implement:
+- `visit(url)`: go to `url` from the current page. **All forward history is cleared.**
+- `back(steps)`: move back up to `steps` pages (stop at the first page); return the current URL.
+- `forward(steps)`: move forward up to `steps` pages (stop at the last page that exists); return the current URL.
+
+Example: start at `"leetcode.com"`; visit `"google.com"`, `"facebook.com"`, `"youtube.com"`; `back(1)` → `"facebook.com"`; `back(1)` → `"google.com"`; `forward(1)` → `"facebook.com"`; visit `"linkedin.com"` (clears youtube); `forward(2)` → `"linkedin.com"`; `back(2)` → `"google.com"`; `back(7)` → `"leetcode.com"`.
+Constraints: `1 <= steps <= 100`; up to 5000 calls.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.3.*
+
+### 3.4 Insert Delete GetRandom O(1) (380)
+
+**Problem (paraphrased).** Implement a set with `insert(val)` (add if absent, return whether it was added), `remove(val)` (remove if present, return whether it was removed) and `getRandom()` (return a uniformly random current element; only called when non-empty). **Each in O(1) average time.**
+Example: `insert(1) → True, remove(2) → False, insert(2) → True, getRandom() → 1 or 2, remove(1) → True, insert(2) → False, getRandom() → 2`.
+Constraints: values fit in 32 bits; up to 2·10⁵ calls.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.4.*
+
+### 3.5 Time Based Key-Value Store (981)
+
+**Problem (paraphrased).** Store values for keys at different times. `set(key, value, timestamp)` records `value` for `key` at `timestamp`. `get(key, timestamp)` returns the value set for `key` at the **largest timestamp ≤ `timestamp`**, or `""` if there is none.
+Example: `set("foo","bar",1)`, `get("foo",1) → "bar"`, `get("foo",3) → "bar"`, `set("foo","bar2",4)`, `get("foo",4) → "bar2"`, `get("foo",5) → "bar2"`. Also `get("foo",0) → ""`.
+Constraints: **timestamps passed to `set` are strictly increasing**; up to 2·10⁵ calls.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.5.*
+
+### 3.6 Number of Recent Calls (933)
+
+**Problem (paraphrased).** `RecentCounter` has `ping(t)`: record a request at time `t` (milliseconds) and return how many requests happened in the inclusive range `[t - 3000, t]`. Every call uses a **strictly larger** `t` than the previous one.
+Example: `ping(1) → 1`, `ping(100) → 2`, `ping(3001) → 3`, `ping(3002) → 3` (the request at 1 is now outside `[2, 3002]`).
+Constraints: `1 <= t <= 10^9`; up to 10⁴ calls.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.6.*
+
+### 3.7 Rate limiter (your Microsoft interview question)
+
+You were asked this in person at Microsoft. In the real interview most details weren't given: asking for them was part of the problem.
+
+**Problem (as you remembered it).** Design a rate limiter with two methods:
+- `request(userId, timestamp)`: should this request be allowed? Each user may make at most some number of requests within a time window.
+- `clearAllOld(...)`: throw away stored requests that no longer matter.
+
+Interviewer's follow-up: `clearAllOld` must **only touch the requests that are actually expired**, not do work for every user.
+
+No examples or constraints were given. Write your clarifying questions first (what the limit is, what the window includes, and so on), then design.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.7.*
+
+### 3.8 LRU Cache (146)
+
+**Problem (paraphrased).** Design a cache with a fixed `capacity`:
+- `get(key)`: return the key's value if it's in the cache, otherwise `-1`.
+- `put(key, value)`: set the key's value (update it if the key exists, insert it otherwise). If inserting makes the number of keys exceed `capacity`, evict the **least recently used** key. Both a `get` and a `put` of a key count as "using" it.
+
+`get` and `put` must each run in **O(1) average time**.
+
+Example (capacity 2): `put(1,1)`, `put(2,2)`, `get(1) → 1`, `put(3,3)` (evicts key 2), `get(2) → -1`, `put(4,4)` (evicts key 1), `get(1) → -1`, `get(3) → 3`, `get(4) → 4`.
+Constraints: `1 <= capacity <= 3000`; `0 <= key <= 10^4`; `0 <= value <= 10^5`; up to 2·10⁵ calls.
+
+*Before scrolling: write the operations table, the question behind each operation, your structures and an invariant sentence. Then compare with §4.8.*
+
+---
+
+> **Answers start here.** Everything below this line names the structures for the problems in §3.
+
+## 4. Solutions: the structures, invariants and code
+
+Each solution follows the same order: **operations table → why one structure isn't enough → the combination and its invariant → code → trace → complexity → follow-ups.**
+
+### 4.1 Store the derived answer with each entry: Min Stack (155)
 
 | operation | question | plain stack alone? |
 |---|---|---|
@@ -175,13 +259,9 @@ Trace: push 5, 3, 7, 3, 1, then pop (from running it):
 | push 1 | … (3,3) (1,1) | 1 |
 | pop | (5,5) (3,3) (7,3) (3,3) | **3**: restored with no scan |
 
-**All O(1); O(n) space.** **Generalizes to:** any "aggregate of everything so far" that must survive removals from one end: max stack, a stack's running sum, "minimum in the queue" (with two such stacks, §3.2).
+**All O(1); O(n) space.** **Generalizes to:** any "aggregate of everything so far" that must survive removals from one end: max stack, a stack's running sum, "minimum in the queue" (with two such stacks, §4.2).
 
-### 3.2 Amortized O(1): Queue using two stacks (232)
-
-**Problem (paraphrased).** Implement a first-in-first-out queue using only two stacks (push to top, pop from top, peek top, size/empty). Support `push(x)`, `pop()` (remove and return the front), `peek()` (return the front) and `empty()`. Calls to `pop`/`peek` are always valid.
-Example: `push(1), push(2), peek() → 1, pop() → 1, empty() → False`.
-Constraints: `1 <= x <= 9`; up to 100 calls. Follow-up: amortized O(1) per operation.
+### 4.2 Amortized O(1): Queue using two stacks (232)
 
 **Name the two roles:** `inbox` receives new items (newest on top). `outbox` holds items **in removal order** (oldest on top). Moving everything from `inbox` to `outbox` reverses it, so the oldest ends up on top.
 
@@ -213,17 +293,9 @@ class MyQueue:
         return not self.inbox and not self.outbox
 ```
 
-**Why it's O(1) amortized** (core idea 8): one `pop` can move n items, which is O(n) for that call. But follow a single item through its life: pushed onto `inbox` once, moved to `outbox` once, popped once. **At most 3 operations per item, ever.** Over m calls, total work ≤ 3m, so the average per call is O(1). That's the same counting argument as the sliding window in lecture 006 §8 ("each element moves at most once"), and the rate limiter in §3.7 uses it too.
+**Why it's O(1) amortized** (core idea 8): one `pop` can move n items, which is O(n) for that call. But follow a single item through its life: pushed onto `inbox` once, moved to `outbox` once, popped once. **At most 3 operations per item, ever.** Over m calls, total work ≤ 3m, so the average per call is O(1). That's the same counting argument as the sliding window in lecture 006 §8 ("each element moves at most once"), and the rate limiter in §4.7 uses it too.
 
-### 3.3 An array plus a cursor: Browser History (1472)
-
-**Problem (paraphrased).** A browser with one tab starts on `homepage`. Implement:
-- `visit(url)`: go to `url` from the current page. **All forward history is cleared.**
-- `back(steps)`: move back up to `steps` pages (stop at the first page); return the current URL.
-- `forward(steps)`: move forward up to `steps` pages (stop at the last page that exists); return the current URL.
-
-Example: start at `"leetcode.com"`; visit `"google.com"`, `"facebook.com"`, `"youtube.com"`; `back(1)` → `"facebook.com"`; `back(1)` → `"google.com"`; `forward(1)` → `"facebook.com"`; visit `"linkedin.com"` (clears youtube); `forward(2)` → `"linkedin.com"`; `back(2)` → `"google.com"`; `back(7)` → `"leetcode.com"`.
-Constraints: `1 <= steps <= 100`; up to 5000 calls.
+### 4.3 An array plus a cursor: Browser History (1472)
 
 This one is mostly an **index problem**, and that's why it's here: it's lecture 008's name → valid set → test, inside a design.
 
@@ -263,11 +335,7 @@ class BrowserHistory:
 
 **Design point:** "clear forward history" doesn't delete anything. It just moves `last`. Entries beyond `last` are stale and get overwritten later. That makes `visit` O(1) instead of O(n) for slicing. **Changing what a boundary means is often cheaper than changing the data.** (Two stacks, back and forward, is the other standard answer, also O(1) per step.)
 
-### 3.4 Dict + array, swap with last: Insert Delete GetRandom O(1) (380)
-
-**Problem (paraphrased).** Implement a set with `insert(val)` (add if absent, return whether it was added), `remove(val)` (remove if present, return whether it was removed) and `getRandom()` (return a uniformly random current element; only called when non-empty). **Each in O(1) average time.**
-Example: `insert(1) → True, remove(2) → False, insert(2) → True, getRandom() → 1 or 2, remove(1) → True, insert(2) → False, getRandom() → 2`.
-Constraints: values fit in 32 bits; up to 2·10⁵ calls.
+### 4.4 Dict + array, swap with last: Insert Delete GetRandom O(1) (380)
 
 | operation | question | dict/set | list |
 |---|---|---|---|
@@ -323,11 +391,7 @@ after:   items = [10, 40, 30]       index_of = {10:0, 30:2, 40:1}
 
 **Order matters in `remove`:** if `val` is the last element, then `last == val`, and the code writes `index_of[val] = i` and then deletes it, so it ends up correctly absent. Deleting first and updating `last` second would re-insert `val`. Trace the "remove the last element" case every time you write this. It's the edge case for this pattern.
 
-### 3.5 Dict of sorted lists + binary search: Time Based Key-Value Store (981)
-
-**Problem (paraphrased).** Store values for keys at different times. `set(key, value, timestamp)` records `value` for `key` at `timestamp`. `get(key, timestamp)` returns the value set for `key` at the **largest timestamp ≤ `timestamp`**, or `""` if there is none.
-Example: `set("foo","bar",1)`, `get("foo",1) → "bar"`, `get("foo",3) → "bar"`, `set("foo","bar2",4)`, `get("foo",4) → "bar2"`, `get("foo",5) → "bar2"`. Also `get("foo",0) → ""`.
-Constraints: **timestamps passed to `set` are strictly increasing**; up to 2·10⁵ calls.
+### 4.5 Dict of sorted lists + binary search: Time Based Key-Value Store (981)
 
 | operation | question | structure |
 |---|---|---|
@@ -365,11 +429,7 @@ The index logic is lecture 008 exactly: `i` is a **cut** (valid set `0 … n`); 
 
 **Follow-up:** "what if timestamps aren't increasing?" Then append no longer keeps the list sorted. You'd insert with `bisect.insort` (O(n) per set) or use a balanced tree / sorted container. Asking about the timestamp order in step 1 is what makes this design O(1) / O(log n).
 
-### 3.6 A queue as a sliding window over time: Number of Recent Calls (933)
-
-**Problem (paraphrased).** `RecentCounter` has `ping(t)`: record a request at time `t` (milliseconds) and return how many requests happened in the inclusive range `[t - 3000, t]`. Every call uses a **strictly larger** `t` than the previous one.
-Example: `ping(1) → 1`, `ping(100) → 2`, `ping(3001) → 3`, `ping(3002) → 3` (the request at 1 is now outside `[2, 3002]`).
-Constraints: `1 <= t <= 10^9`; up to 10⁴ calls.
+### 4.6 A queue as a sliding window over time: Number of Recent Calls (933)
 
 This is the sliding window from lecture 006, measured in **time** instead of array positions: new pings join at the back, and old pings leave from the front. A `deque` is exactly that.
 
@@ -390,9 +450,9 @@ class RecentCounter:
         return len(self.recent)
 ```
 
-Amortized O(1): each ping is appended once and removed at most once (§3.2's argument). Space: at most the number of pings in a 3000 ms window. This is the core of the rate limiter.
+Amortized O(1): each ping is appended once and removed at most once (§4.2's argument). Space: at most the number of pings in a 3000 ms window. This is the core of the rate limiter.
 
-### 3.7 Your interview question: the rate limiter, designed step by step
+### 4.7 Your interview question: the rate limiter, designed step by step
 
 You were asked this in person at Microsoft. Here it is again, the way you'd want to run it in an interview, using the method from §1.
 
@@ -425,7 +485,7 @@ clear_all_old(now)   | which requests (of ANY user) are now expired?       | O(n
 
 | Question | Best structure |
 |---|---|
-| "How many of user u's requests are in the window?" | per-user `deque` of timestamps (oldest at the front): a RecentCounter per user (§3.6) |
+| "How many of user u's requests are in the window?" | per-user `deque` of timestamps (oldest at the front): a RecentCounter per user (§4.6) |
 | "Which requests, across all users, are expired?" | **one global `deque`** of `(timestamp, user)`, oldest at the front: expired requests are exactly a prefix of it |
 
 Your first design had only the per-user deques. Then `clearAllOld` has to visit every user, even users with nothing expired. The interviewer's requirement ("only touch expired requests") is a question that only a **global, time-ordered** structure can answer. That's the moment a design problem turns into a combination problem.
@@ -492,7 +552,7 @@ Check the invariant on every row: the global queue's pairs are exactly the per-u
 
 #### Step 8: Complexity and follow-ups
 
-- **Time:** `clear_all_old` costs O(number of requests it removes). Each stored request is added once and removed once, so **`request` is O(1) amortized** (§3.2).
+- **Time:** `clear_all_old` costs O(number of requests it removes). Each stored request is added once and removed once, so **`request` is O(1) amortized** (§4.2).
 - **Space:** O(number of allowed requests inside the current window), never more.
 
 | Follow-up | Answer |
@@ -502,9 +562,9 @@ Check the invariant on every row: the global queue's pairs are exactly the per-u
 | "Many servers" | the state moves to a shared store (commonly Redis with atomic increments or sorted sets), which is the step into system design |
 | "Timestamps can arrive out of order" | the global queue is no longer sorted by append; you'd need a heap keyed by timestamp (pop expired from the top), at O(log n) per operation |
 
-What happened in the interview, in this lecture's terms: you reached step 5 live (the global queue) and saw the consistency hazard on your own. What was missing was the **rule that removes the hazard** ("only one method removes, and it removes from both") plus the **invariant sentence**. That rule is a skill you can practise, and §4 is about it.
+What happened in the interview, in this lecture's terms: you reached step 5 live (the global queue) and saw the consistency hazard on your own. What was missing was the **rule that removes the hazard** ("only one method removes, and it removes from both") plus the **invariant sentence**. That rule is a skill you can practise, and §5 is about it.
 
-### 3.8 Dict + doubly linked list: LRU Cache (146), as a design story
+### 4.8 Dict + doubly linked list: LRU Cache (146), as a design story
 
 The full code and the "why a doubly linked list" explanation are in lecture 010 §8–9. Here it is in the §1 method, to show the same reasoning applies:
 
@@ -524,7 +584,7 @@ The full code and the "why a doubly linked list" explanation are in lecture 010 
 
 ---
 
-## 4. Invariants and consistency: the core skill
+## 5. Invariants and consistency: the core skill
 
 Every combination above has the same shape: **one source of truth, one or more indexes, one invariant sentence, and helpers that update everything together.** Most bugs in design problems are violations of that:
 
@@ -535,14 +595,14 @@ Every combination above has the same shape: **one source of truth, one or more i
 | Removing a request from a user's deque in `request` but leaving it in the global queue (your first rate limiter) | two structures disagree; later cleanup removes the wrong thing |
 | A separate `size` counter that isn't updated on every path (your August LRU kept one) | a derived value drifts from the data |
 
-### 4.1 Four rules
+### 5.1 Four rules
 
 1. **Write the invariant as a comment at the top of the class.** One or two sentences: what each structure stands for and how they relate.
 2. **Prefer computing over storing.** `len(self.node_of)` can't drift; a `self.size` counter can. Store a derived value only when recomputing it is too slow (Min Stack is the case where it is).
 3. **Only helpers mutate.** Public methods call `_add`/`_remove`-style helpers that change all structures together. Then there are only one or two places to get right.
 4. **Order of updates inside a helper matters.** Use save-before-overwrite (lecture 010 §2) and trace the edge cases: remove the only item, remove the last item (RandomizedSet), evict when capacity is 1.
 
-### 4.2 A practice-only tool: `_check()`
+### 5.2 A practice-only tool: `_check()`
 
 While practising (not in the interview), add a method that asserts the invariant, and call it after every operation in your local tests:
 
@@ -557,7 +617,7 @@ If a bug breaks the invariant, the assertion fails **on the call that broke it**
 
 ---
 
-## 5. Testing a design: the call-sequence trace
+## 6. Testing a design: the call-sequence trace
 
 The lecture 003 protocol, adapted: **one row per call**, a column per structure, the return value, and an invariant ✓.
 
@@ -581,20 +641,20 @@ In an interview, trace 5–8 calls out loud with the structures drawn. That's us
 
 ---
 
-## 6. The interview: what to say, in what order
+## 7. The interview: what to say, in what order
 
-### 6.1 A 45-minute shape
+### 7.1 A 45-minute shape
 
 | Time | You do | What it shows |
 |---|---|---|
-| 0–5 | Restate the problem; ask clarifying questions (§6.2); confirm the API | you don't build the wrong thing |
+| 0–5 | Restate the problem; ask clarifying questions (§7.2); confirm the API | you don't build the wrong thing |
 | 5–10 | Operations table; the question behind each; name candidate structures and why one isn't enough | reasoning, not recall |
 | 10–12 | State the combination, the roles (truth vs index) and the invariant | design maturity |
 | 12–30 | Write the class: invariant comment, helpers first, then the public methods | clean code |
 | 30–38 | Trace a call sequence covering the edge cases | verification |
 | 38–45 | Complexity per method; follow-ups (concurrency, scale, alternative designs) | depth |
 
-### 6.2 Clarifying questions that come up again and again
+### 7.2 Clarifying questions that come up again and again
 
 - **Keys/values:** can keys repeat? Is `put` on an existing key an update? What types and ranges?
 - **Capacity:** fixed? can it be 0? what happens when full?
@@ -604,7 +664,7 @@ In an interview, trace 5–8 calls out loud with the structures drawn. That's us
 - **Counting:** do rejected/failed operations count?
 - **Scale & concurrency:** roughly how many calls? single-threaded?
 
-### 6.3 Phrases worth having ready
+### 7.3 Phrases worth having ready
 
 - "Let me list the operations and what each one needs to answer quickly."
 - "A dictionary gives me lookup but not order; a doubly linked list gives me order with O(1) moves, but not lookup. So I'll combine them."
@@ -615,42 +675,42 @@ In an interview, trace 5–8 calls out loud with the structures drawn. That's us
 
 ---
 
-## 7. Recognizing which structures a requirement needs
+## 8. Recognizing which structures a requirement needs
 
 | Requirement in the problem | Reach for |
 |---|---|
 | "O(1) lookup by key" | dict |
-| "…and evict least recently used / move to front" | + doubly linked list with sentinels (§3.8) |
-| "…and get a random element" | + array, swap-with-last removal (§3.4) |
-| "…and the value at time t / latest version ≤ t" | + per-key sorted list + `bisect` (§3.5) |
-| "min / max of the current contents, with removal from one end" | store the aggregate with each entry (§3.1) |
+| "…and evict least recently used / move to front" | + doubly linked list with sentinels (§4.8) |
+| "…and get a random element" | + array, swap-with-last removal (§4.4) |
+| "…and the value at time t / latest version ≤ t" | + per-key sorted list + `bisect` (§4.5) |
+| "min / max of the current contents, with removal from one end" | store the aggregate with each entry (§4.1) |
 | "min / max of a changing set, any removals" | heap (with lazy deletion) or a sorted structure (lecture 014) |
-| "count of events in the last T" | deque as a time window (§3.6) |
-| "…per user, and clean up only expired" | per-user deques + a global time-ordered deque (§3.7) |
-| "FIFO using only stacks" / "undo + redo" | two stacks (§3.2, §3.3) |
-| "back / forward through history" | array + cursor + boundary, or two stacks (§3.3) |
+| "count of events in the last T" | deque as a time window (§4.6) |
+| "…per user, and clean up only expired" | per-user deques + a global time-ordered deque (§4.7) |
+| "FIFO using only stacks" / "undo + redo" | two stacks (§4.2, §4.3) |
+| "back / forward through history" | array + cursor + boundary, or two stacks (§4.3) |
 | "least *frequently* used" | dict + frequency → list + `min_freq` (LFU) |
 | "median of a stream" | two heaps (lecture 014) |
 
 ---
 
-## 8. Practice ladder
+## 9. Practice ladder
 
-Do them in order. Each one adds one idea, and every problem's full statement is above. For each: write the operations table and the invariant **before** coding, use helpers, add a `_check()` while testing locally, and trace a call sequence that hits §5's edge cases.
+Do them in order. Each one adds one idea, and every problem's full statement is above. For each: write the operations table and the invariant **before** coding, use helpers, add a `_check()` while testing locally, and trace a call sequence that hits §6's edge cases.
 
 | # | Problem | Pattern | Section |
 |---|---|---|---|
-| 1 | 155 Min Stack | derived answer per entry | §3.1 |
-| 2 | 232 Implement Queue using Stacks | amortized O(1) | §3.2 |
-| 3 | 933 Number of Recent Calls | deque as a time window | §3.6 |
-| 4 | 1472 Design Browser History | array + cursor + boundary | §3.3 |
-| 5 | 981 Time Based Key-Value Store | dict + sorted list + bisect | §3.5 |
-| 6 | 380 Insert Delete GetRandom O(1) | dict + array, swap with last | §3.4 |
-| 7 | 146 LRU Cache (redo) | dict + doubly linked list | §3.8, lecture 010 §9 |
-| 8 | Rate limiter (your interview question) | per-user + global deques, invariant | §3.7 |
+| 1 | 155 Min Stack | derived answer per entry | §4.1 |
+| 2 | 232 Implement Queue using Stacks | amortized O(1) | §4.2 |
+| 3 | 933 Number of Recent Calls | deque as a time window | §4.6 |
+| 4 | 1472 Design Browser History | array + cursor + boundary | §4.3 |
+| 5 | 981 Time Based Key-Value Store | dict + sorted list + bisect | §4.5 |
+| 6 | 380 Insert Delete GetRandom O(1) | dict + array, swap with last | §4.4 |
+| 7 | 146 LRU Cache (redo) | dict + doubly linked list | §4.8, lecture 010 §9 |
+| 8 | Rate limiter (your interview question) | per-user + global deques, invariant | §4.7 |
 | stretch | 460 LFU Cache, 355 Design Twitter, 295 Find Median from Data Stream (after the heap lecture) | | |
 
-For the rate limiter, do it as a **mock interview**: set a 45-minute timer, say the clarifying questions out loud, and write it without looking at §3.7. Then compare.
+For the rate limiter, do it as a **mock interview**: set a 45-minute timer, say the clarifying questions out loud, and write it without looking at §4.7. Then compare.
 
 ---
 
@@ -660,13 +720,13 @@ For the rate limiter, do it as a **mock interview**: set a 45-minute timer, say 
 |---|---|
 | Choosing structures before listing the operations | operations table first (§1 step 2) |
 | Using one structure and accepting an O(n) operation without saying so | name every operation's cost; combine when one misses its target |
-| Two structures updated in different methods | only helpers mutate; each helper updates everything (§4.1) |
+| Two structures updated in different methods | only helpers mutate; each helper updates everything (§5.1) |
 | Separate counters (`size`) that can drift | compute from the data (`len(...)`) |
 | Not storing the key in the node (LRU) | eviction can't update the dict without it |
 | RandomizedSet: forgetting `index_of[last] = i`, or deleting before updating | update the moved element, then delete; trace "remove the last element" |
 | `list.pop(0)` / `list.insert(0, x)` as "O(1)" | they're O(n): use `deque` |
 | TimeMap: `bisect_left` instead of `bisect_right`, or no `i == 0` check | "last time ≤ t" = `bisect_right(...) - 1`, valid only when the cut is ≥ 1 |
-| Window boundary guessed (`<` vs `<=`) | name `cutoff`, write the valid set (§3.6, §3.7) |
+| Window boundary guessed (`<` vs `<=`) | name `cutoff`, write the valid set (§4.6, §4.7) |
 | No clarifying questions | the interviewer often holds back a constraint that makes the problem simpler |
 | Silent coding | narrate roles, invariant and complexity: it's half the score |
 
