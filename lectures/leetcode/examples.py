@@ -523,3 +523,57 @@ class Solution:
             i+=1
         
         return result
+
+
+# (submitted it and it was correct)
+class Solution:
+    def findRepeatedDnaSequences(self, s: str) -> list[str]:
+
+        seen = set()
+        already_added = set()
+        result = []
+        i = 0
+
+        # s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+        # window = ""
+        # seen = ()
+        # already_added = ()
+        # result = []
+
+
+        # I am thinking that the way I have it above is not a good way to represent it because the lecture documents talk about being able to go and add a new row each itteration. So I will try to represent it in that way.
+
+        # s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+        #   i   window          seen                        already_seen            result
+        #   0   "AAAAACCCCC"    ("AAAAACCCCC")
+        #   1   "AAAACCCCCA"    ("AAAAACCCCC","AAAACCCCCA")
+
+        # Here we go, I am seeing that this is going to take a long long time before I would be able to go through each of these letters for the entire string. This would take up way too much time in an interview. I would also get lost in terms of each time I need to refind the 'ending' of the last letter that I was looking at. This is making me think that maybe I should use ( ... ) to represent the window. I am also seeing that seen and already_seen are going to explode in terms of length and it will be impossible to show them cleanly.
+
+        # s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+        #   i   window                                      result
+        #   0   "(AAAAACCCCC)AAAAACCCCCCAAAAAGGGTTT"
+        #   1   "A(AAAACCCCCA)AAAACCCCCCAAAAAGGGTTT"
+        # ...
+        #   11  "AAAAACCCCC(AAAAACCCCCC)AAAAAGGGTTT"        ["AAAAACCCCCC"]
+
+        # But at this point I am just 'looking at it' and jumping to the index I see has a repeat. This isn't really what I should actually be doing.
+
+        # I guess for now I have documented my struggle and thought process with the walkthrough portion. I will now attempt to see about the window length and what my bounds should be for while i+10 < len(s): (to see if this was actually correct or not).
+        # s[i:i+10] is the range, it means that I will want to be able to have my last cut at i+10. It does not mean that I want to index this i+10 element. I only want to index the (i+10)-1 element (box). len(s) will tell me how many elements which are in s. I will want to think about how len(x) corresponds to the final index. Normally I want to stop when i == len(s) (this means I DON'T want to run that loop, which is why I do while i<len(s). ) So now applying this here. It should just be the same thing but I can 'group' this i as the exact same type of thing. I can conceptulaize it as 'the element which I want to be able to grab and index'. So I will ask myself which is the element which I am wanting to grab and index? It will be i+10-1.
+        # So let me apply the same rules here. while i<len(s): => while (i+10-1)<len(s)
+        # But once again, this just does not feel right. Because I know that I am doing the < and not <=
+        # but I have spent too much time on this problem. I will submit it anyways and see what is happening.
+
+
+        while i+9 < len(s):
+            window = s[i:i+10]
+
+            if window in seen and window not in already_added:
+                already_added.add(window)
+                result.append(window)
+            
+            seen.add(window)
+            i+=1
+        
+        return result
