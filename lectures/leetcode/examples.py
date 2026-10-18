@@ -488,3 +488,38 @@ class Solution:
         # And I will need to actually have two kinds of loops. The first loop will be for moving once each time I want to slide my 'current window' and the inner loop will be for that current window, I will want to build (or maybe slide my window over again?)
 
         # I have no idea
+
+
+# This is my first attempt after looking at the 'idea' from ChatGPT. I didn't look at the code yet. I also have not ran the code. I will put this here with all of my comments, then I will delete the comments and attempt to do a walk through and see if I can catch my errors.
+class Solution:
+    def findRepeatedDnaSequences(self, s: str) -> list[str]:
+        # I looked at ChatGPT and will now re-attempt to do this problem.
+        # It told me the idea of using a seen and slicing the string s
+        # Although I did not look at the code which ChatGPT generated, because I will first try it here.
+
+        seen = set()
+        already_added = set()
+        result = []
+
+        # I will want to stop when I no longer have a valid window in s to look into. I want 10 elements to the right of my current index
+        i = 0
+        # while i < len(s):     This would be the normal way to block for index of i. But I want to ask for the window of i, and I want to take 10 elements. s[i:i+10] will be my range, so I need to stop when? Thinking about this in term of cuts and boxes, i will be the index of the element I want to place into my window. It will be a box. But in the context of this range, i is actually the starting cut which encloses the 10 elements that I want to capture, and so that means that the last element which I want to validly capture will be at (i+10)-1 index (I mean that will be the box which I will try to index). This will need to be valid and once i get to be one more and that is outside of the length of s, that is when I want to stop
+
+        # This is my first 'gut feeling' after writing that logic above, but I will need to do so tracing and think about it more before I submit.
+        while i+10 < len(s):
+            # Grab the window
+            window = s[i:i+10]
+
+            # if window in seen:
+            #     # I am realizing if I do it this way, then I will append each time that I see a repeat, but I should only append one single time. So to fix this I will add another see to show already added elements to my result.
+            #     result.append(window)
+
+            if window in seen and window not in already_added:
+                already_added.add(window)
+                result.append(window)
+            
+            # sets can add elements again so I can add window here regardless of if it is already in seen or not
+            seen.add(window)
+            i+=1
+        
+        return result
