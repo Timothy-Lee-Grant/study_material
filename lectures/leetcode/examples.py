@@ -444,3 +444,47 @@ class Solution:
             else:
                 r = mid
         return l
+
+
+# October 8, 2026
+
+class Solution:
+    def hasPathSum(self, root: TreeNode | None, targetSum: int) -> bool:
+        
+        # I can not calculate the sum at the invalid (when Ireach an invalid because that will not tell me if the parent is a leaf.) I will only be able to check if the node I am currently on is a leaf node if both of my childern are empty
+        def traverse(node, passed_in):
+            if not node:
+                return False
+            
+            current_sum = passed_in + node.val
+
+            if not node.left and not node.right:
+                if current_sum == targetSum:
+                    return True
+                return False
+            
+            return traverse(node.left, current_sum) or traverse(node.right, current_sum)
+        
+        return traverse(root, 0)
+
+
+
+class Solution:
+    def findRepeatedDnaSequences(self, s: str) -> list[str]:
+        # The first idea that I had was to have a set which each time I moved my window over by one, I would add a count of how many of each letters I had. then as I keep sliding my window, I will need to check to see if there is already a combination of that type. But I am also seeing that I will need to keep track of the order that these appear in as well. So that method will not work.
+        # The Brute Force approach would be to: Let me think about this, I actually don't quite know what the brute force approach would be here. I want to find an indefinate (oh wait, no it is definate. it is 10 units long). So maybe I could look at a 10 element window, then for each ten element window, I would look one unit to the right and see if that is a repeated of my 'current window'. Then I would need to do that for all windows to the right for my 'current window'. Only then could I slide my current window over by one.
+        # I need to think about what even makes this problem hard.
+
+        # I will attempt to build a window
+        window = []
+        i = 0
+        while i < len(s):
+            if len(window) == 10:
+                break
+            window.append(s[i])
+            i+=1
+        
+        # I want to be able to slide this window, so now I am thinking that I need a queue (so in python a deque)
+        # And I will need to actually have two kinds of loops. The first loop will be for moving once each time I want to slide my 'current window' and the inner loop will be for that current window, I will want to build (or maybe slide my window over again?)
+
+        # I have no idea
