@@ -3,6 +3,7 @@
 > **What this is:** the plan for which topics come next, and why, kept in one place so it can't get lost again. Updated 2026-10-17 (013 stacks done; 012 restructured to hide answers; combining-structures lecture planned). Earlier: 2026-10-11 (kinds of problems; LeetCode vs HackerRank vs interviews; design problems moved to lecture 012).
 > **Order (Oct 12):** lectures may be written out of numerical order. On weekdays the focus is lectures (concepts); practice problems for each lecture get done later, mostly on weekends. A topic still only counts as *done* once its problems are passed (see the bottom of this file).
 > **How the plan works:** "gradient" order. Each step targets whatever is currently the most expensive weakness, while also filling the biggest gaps in topic coverage. The order below is a default, not a schedule. If practice shows a new weakness, it jumps the queue.
+> **What to practise:** see `000-practice_queue.md`, a short pick-one list plus an attempt log (added Oct 17).
 > **Language:** Python. **Free problems only** (no Premium). Every lecture includes full problem statements (paraphrased), derivations rather than conventions, and no firmware analogies.
 
 ---
