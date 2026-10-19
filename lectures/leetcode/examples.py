@@ -577,3 +577,40 @@ class Solution:
             i+=1
         
         return result
+
+class Solution:
+    def findMaxAverage(self, nums: list[int], k: int) -> float:
+        # Standard fixed size window, objective is to maximize total sum within window, where window is of length k.
+
+        total = 0
+        current_max = 0
+        i=0
+        # Once i is equal to len(nums) this will be out of bounds.
+        while i < len(nums):
+            # We are still in the process of building our window
+            # I want to think about this bound a little bit. i is my current index (the element that I am including). i will be the frounteer, meaning that my window will be backwards looking. I also know that I want k elements in this window. But because i in this context is the element (box) which I am attempting to add (not the slice/cut which appears before the box element), I will actually say that i is inclusive because I am including this i element. So the cut of the range would actually be at i+1 (because that is the cut which encloses the final element, which will be element i). So now the range I am looking at is range(x:i+1) and I want this to have k elements. (I need to find the x).
+            # This means that I want to take k steps, from the i+1 cut. (i+1)-steps => (i+1)-k
+            # That will represent the cut which is at the front of the first element which I want to enclose for my window. 
+            # But how does that translate into this 'if i < k:' expression which I am attempting to build to check if my window is fully built? 
+            # I might be able to think about it in simplified terms. if my k is 2 it means that I want two elements. Then if I am at index 0, it means that during this loop I will be including index 0. So my cut will be 0+1=>1. Now my window has not yet been built. So I need to increase my window size. I will then have my index go to be 1, which will result in the cut of 2 (because that is the cut which encloses the inclusive element of 1). That means that this particular loop will be the loop which my window will be fully built (I am just noticinging right now that actually I don't want to go to my else statement in this type because I don't want my last element to drop off...). So that means that I still want to run this 'building my window' section when I am at this step. That means that this itteration I am still building my window, and I can think of it at 'placing the final block'.
+            # Now when i goes to the next one i will be 2 (so i==k) This is the time which I don't want to run the 'building the window' block. So my initial guess of 'if i < k:' was correct. But this took way too long to reason through and I feel this shows that I still have some things that I need to work on here! 
+            if i < k:
+                total += nums[i]
+
+                # I am also noticing here that once I build my first 'valid window' I will want to put it in as my current max because it is a valid window.
+                if i == k-1:
+                    current_max = total
+            
+            # This means that we already had our full window built
+            else:
+                # kick out element that dropped off
+                # Which index should I kick off? I want to add element i so it means that I want to kick off the element which will be k steps from i? If i is 0, then it means I want 0 elements, so I would kick off i itself (with no steps) Good. Then if k is 1, I will move over one element and kick that off. Good
+                total -= nums[i-k]
+
+                # add element at index i
+                total += nums[i]
+
+                # check to see if we have a new max
+                current_max = max(current_max, total)
+        
+        return current_max
