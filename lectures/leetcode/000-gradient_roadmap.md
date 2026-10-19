@@ -25,6 +25,7 @@
 | 010 | `010-linked_lists_pointers_and_sentinels.md` | Linked lists: landing, save-before-overwrite, reverse, dummy nodes, fast/slow, doubly linked lists + sentinels, LRU Cache | not yet |
 | 012 | `012-data_structure_design_problems.md` | Design problems: the 8-step method, 8 problems incl. your rate limiter. **Oct 17:** restructured so each problem shows only its title and statement; the structures are revealed in §4 after a divider | not yet (Browser History attempted Oct 17) |
 | 013 | `013-stacks_and_monotonic_stacks.md` | Stacks: unresolved items, two-stack machines (your Browser History vs the queue: tops vs bottoms facing each other), invariants for any call order, saved state (RPN, Simplify Path, Decode String), monotonic stacks (Daily Temperatures, Car Fleet) | not yet |
+| 015 | `015-intervals_and_greedy.md` | Intervals and greedy: the overlap condition derived, touching rules, sort by start (merge/insert) vs end (435/452) with counterexamples + exchange argument, sweep for overlaps (2406), a test for when greedy is safe, Jump Game I/II (written out of order, Oct 19) | not yet |
 
 ---
 
@@ -56,7 +57,7 @@ Four topics have been read in five days, with almost no problems attempted. The 
 | ~~013~~ | ~~Stacks and monotonic stacks~~ | **Done Oct 17** (see the table above). 84 Largest Rectangle is a stretch problem there |
 | 014 | Heaps / priority queues (215, 347, 23, 295) | Zero attempts so far; Python `heapq` fluency |
 | (after 014) | **Choosing and combining data structures** (number assigned when written) | Added Oct 17 from your Browser History work (three designs: linked list, array, two stacks), which raised the question of how to compare and merge candidate designs. This lecture turns "compare designs, find the bottleneck operation, fix exactly that one" into a procedure, using blind problems. Comes after heaps so two-heap designs are available |
-| 015 | Intervals and greedy (56, 57, 435, 55, 45) | The July Merge Intervals `max` bug; greedy needs an argument for why it's correct |
+| ~~015~~ | ~~Intervals and greedy~~ | **Done Oct 19** (see the table above) |
 
 ## Group 4: dynamic programming II
 

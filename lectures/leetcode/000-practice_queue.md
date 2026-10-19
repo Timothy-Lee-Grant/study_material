@@ -232,6 +232,22 @@ Do these **blind**: read only the statement in §3, and write the operations tab
 | [853 Car Fleet](https://leetcode.com/problems/car-fleet/) | Medium | ✅ |
 | [84 Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/) (stretch) | Hard | ⬜ |
 
+### Intervals and greedy (lecture 015)
+
+| Problem | Level | Status |
+|---|---|---|
+| [56 Merge Intervals](https://leetcode.com/problems/merge-intervals/) | Medium | 🟡 redo (July) |
+| [57 Insert Interval](https://leetcode.com/problems/insert-interval/) | Medium | ⬜ |
+| [435 Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/) | Medium | ⬜ |
+| [452 Minimum Number of Arrows to Burst Balloons](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/) | Medium | ⬜ |
+| [986 Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/) | Medium | ⬜ |
+| [2406 Divide Intervals Into Minimum Number of Groups](https://leetcode.com/problems/divide-intervals-into-minimum-number-of-groups/) | Medium | ⬜ |
+| [1094 Car Pooling](https://leetcode.com/problems/car-pooling/) | Medium | ⬜ |
+| [55 Jump Game](https://leetcode.com/problems/jump-game/) | Medium | ⬜ |
+| [45 Jump Game II](https://leetcode.com/problems/jump-game-ii/) | Medium | ⬜ |
+| [763 Partition Labels](https://leetcode.com/problems/partition-labels/) | Medium | ⬜ |
+| [134 Gas Station](https://leetcode.com/problems/gas-station/) (stretch) | Medium | ⬜ |
+
 ---
 
 ## Attempt log
