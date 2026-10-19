@@ -599,7 +599,8 @@ class Solution:
 
                 # I am also noticing here that once I build my first 'valid window' I will want to put it in as my current max because it is a valid window.
                 if i == k-1:
-                    current_max = total
+                    # Also realized that it said to have it as the average
+                    current_max = total / k
             
             # This means that we already had our full window built
             else:
@@ -611,6 +612,8 @@ class Solution:
                 total += nums[i]
 
                 # check to see if we have a new max
-                current_max = max(current_max, total)
+                current_max = max(current_max, total/k)
+            
+            i += 1
         
         return current_max
