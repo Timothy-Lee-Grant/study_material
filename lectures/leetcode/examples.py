@@ -619,6 +619,7 @@ class Solution:
         return current_max
 
 
+# I think this one will be a good problem to go over in the future for 'walking through'. Right now I was trying to go through a bunch of problems today, and so I did not do a full walk through. But I looked at my error and now I see that my k is counting the number of duplicates instead of the number of valid elements. But I should do a walk through of this code in the future and see that I can catch this error.
 class Solution:
     def removeDuplicates(self, nums: list[int]) -> int:
         # because I know that this is a sliding window problem my brain will look there. But from immediate reading of the problem, I don't think I would have guessed that this is a sliding window problem.
@@ -661,3 +662,35 @@ class Solution:
                 writer += 1
                 
         return k
+
+
+class Solution:
+    def search(self, nums: list[int], target: int) -> int:
+        # I remember hating this problem a long time ago.
+        # I see that this is a search problem. I also know that for binary search it has that mononic (so something) property where it is FFFF...FTTTT...T shape. But now that this is rotated, the shape is no longer there. 
+        # Is it that I will need to adjust my definition of what True and False is?
+
+        # Let me just see if I can start writing something before I really think of a full solution....
+        l = 0
+        # r will be out of the bound, but that is OK because these binary search problems have l and r, encompasing the range of possible valid ranges (so it is a range, not the box index).
+        r = len(nums)   
+        while l<r:
+            # I guess I still find a mid index,
+            mid = (l+r)//2
+
+            # because all elements are distinct, I know that if I am at the target value, this is the index I am looking for.
+            if nums[mid] == target:
+                return mid
+            
+            # Now for the hard part. I need to try to adjust my bounds. (Notice that right now I am 'making it up as I go', this would be really bad for an interview).
+            # I know that left element is no longer guaranteed to be the smallest element. I also know that at some point there will be a pivot. I know that from left to pivot, all points will increase. I also know from pivot to right, all elements will increase. The pivot could be on either ends as well.
+            # But I don't know pivot.
+            # Ok, I think I see. I have my mid point and this is the thing which I want to cut my range in half with. I know that the element (if it exists) is in range(l:r). 
+            # So this means that my goal will be to determine which side of mid that I want to cut off.
+            # I should check if my mid is larger than my right. If that is the case, then I think it should be that I will be able to say that my target is in the left half range(l:mid) (and because we already checked that mid is not the answer, we want to exclude it from the range, and because in here mid will be a cut, this does exclude the element at index mid).
+            if mid > nums[r-1]:
+                r = mid
+                continue
+            
+            # Now what if 'mid < nums[r-1]' is this guaranteed to be that we are looking in the other half?
+            # I don't know. I am too tired right now to think. I will come back to this problem later. As of now, I have not looked at the solution, I have not ran the code, and when I come back I will attempt to solve it, and then see if I can do a walk through before I run my code, or look at hints / answers.
