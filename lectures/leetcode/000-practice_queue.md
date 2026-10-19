@@ -9,22 +9,43 @@
 
 ## Pick one now (top 12)
 
-Six of these are two-pointer / sliding-window problems (marked 🪟). The full window ladder is in the next section.
+Titles only, so you have to work out the technique yourself. Any order is fine. Two things to avoid looking at before an attempt:
+- the collapsed **"Why these problems"** notes right below the table;
+- the sections further down, which group problems by technique. Everything you need for an attempt is in this table.
 
-| # | Problem | Level | Lecture | ~Time | Why this one |
-|---|---|---|---|---|---|
-| 1 | 🪟 [26 Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) (finish) | Easy | 006 | 10 | Your array part is right; the returned number isn't. See its log row |
-| 2 | 🪟 [283 Move Zeroes](https://leetcode.com/problems/move-zeroes/) | Easy | 006 | 15 | Reader/writer again, from a blank page. Write what `nums[:writer]` holds first |
-| 3 | 🪟 [1456 Maximum Number of Vowels in a Substring of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | Medium | 006 | 20 | Fixed window again, for speed: use the window facts card below instead of re-deriving |
-| 4 | [232 Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/) | Easy | 013 §2.2 | 20 | The two-stack question you asked about. Write what each top stands for first |
-| 5 | 🪟 [125 Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | 006 | 15 | Inward pointers. Say what's ruled out after each move |
-| 6 | 🪟 [3 Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | 006 | 35 | Variable window, longest. Write the "window is valid when…" sentence first |
-| 7 | [20 Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | Easy | 013 §1 | 15 | Your "unresolved items" model. Test all three ways to fail |
-| 8 | 🪟 [11 Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | 006 | 30 | Inward pointers where the "ruled out because…" sentence is the whole solution |
-| 9 | [1472 Design Browser History](https://leetcode.com/problems/design-browser-history/), **array version** | Medium | 012 §3.3 | 30 | Make `visit` O(1) with no deleting. You've done the two-stack version |
-| 10 | [739 Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | 013 §6.1 | 30 | First monotonic stack. Name what `waiting` holds |
-| 11 | [875 Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) (finish it) | Medium | 004 | 25 | Your attempt is in `examples.py`; see its log row for a failing input to start from |
-| 12 | [54 Spiral Matrix](https://leetcode.com/problems/spiral-matrix/) (redo) | Medium | 001 | 30 | Overdue redo. Comment every range; trace a 1×3 |
+| # | Problem | Level | ~Time |
+|---|---|---|---|
+| 1 | [26 Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) (finish) | Easy | 10 |
+| 2 | [283 Move Zeroes](https://leetcode.com/problems/move-zeroes/) | Easy | 15 |
+| 3 | [1456 Maximum Number of Vowels in a Substring of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | Medium | 20 |
+| 4 | [232 Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/) | Easy | 20 |
+| 5 | [125 Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | 15 |
+| 6 | [3 Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | 35 |
+| 7 | [20 Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | Easy | 15 |
+| 8 | [11 Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | 30 |
+| 9 | [1472 Design Browser History](https://leetcode.com/problems/design-browser-history/) (a different design from your first one) | Medium | 30 |
+| 10 | [739 Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | 30 |
+| 11 | [875 Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) (finish it) | Medium | 25 |
+| 12 | [54 Spiral Matrix](https://leetcode.com/problems/spiral-matrix/) (redo) | Medium | 30 |
+
+<details><summary>Why these problems (open after attempting)</summary>
+
+| # | Problem | Group | Lecture | Why this one |
+|---|---|---|---|---|
+| 1 | 26 Remove Duplicates from Sorted Array (finish) | two pointers / window | 006 | Your array part is right; the returned number isn't. See its log row |
+| 2 | 283 Move Zeroes | two pointers / window | 006 | Reader/writer again, from a blank page. Write what `nums[:writer]` holds first |
+| 3 | 1456 Maximum Number of Vowels in a Substring of Given Length | two pointers / window | 006 | Fixed window again, for speed: use the window facts card below instead of re-deriving |
+| 4 | 232 Implement Queue using Stacks | stacks / design | 013 §2.2 | The two-stack question you asked about. Write what each top stands for first |
+| 5 | 125 Valid Palindrome | two pointers / window | 006 | Inward pointers. Say what's ruled out after each move |
+| 6 | 3 Longest Substring Without Repeating Characters | two pointers / window | 006 | Variable window, longest. Write the "window is valid when…" sentence first |
+| 7 | 20 Valid Parentheses | stacks | 013 §1 | Your "unresolved items" model. Test all three ways to fail |
+| 8 | 11 Container With Most Water | two pointers / window | 006 | Inward pointers where the "ruled out because…" sentence is the whole solution |
+| 9 | 1472 Design Browser History (a different design from your first one) | design | 012 §3.3 | Make `visit` O(1) with no deleting. You've done the two-stack version |
+| 10 | 739 Daily Temperatures | monotonic stack | 013 §6.1 | First monotonic stack. Name what `waiting` holds |
+| 11 | 875 Koko Eating Bananas (finish it) | binary search | 004 | Your attempt is in `examples.py`; see its log row for a failing input to start from |
+| 12 | 54 Spiral Matrix (redo) | matrix / simulation | 001 | Overdue redo. Comment every range; trace a 1×3 |
+
+</details>
 
 ---
 
