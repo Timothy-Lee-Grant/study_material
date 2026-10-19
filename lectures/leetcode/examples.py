@@ -617,3 +617,47 @@ class Solution:
             i += 1
         
         return current_max
+
+
+class Solution:
+    def removeDuplicates(self, nums: list[int]) -> int:
+        # because I know that this is a sliding window problem my brain will look there. But from immediate reading of the problem, I don't think I would have guessed that this is a sliding window problem.
+        # I have a sorted array (increasing), I want to remove the duplicates. I do not want to create a new data structure, all operations should be done to the origional nums array.
+        # The problem talks about k, but this is not a passed in parameter. This is the answer that we need to find. We need to find how many unique elements that are within the sorted array. 
+        # My first idea is that I might be able to keep going through my array and I also know that as I go through my array, all of the duplicates will be the immediate neighbors of my element, because the array is sorted.
+        # So now I will need a way to move over those elements? (or do I just need to return k and I can leave the actual array alone?). Looks like we do need to change the array itself, but the examples show that I can place anything in the back (after this k elements). 
+        # So how will I want to do this operation? I will have my pointer i, and I will be able to keep going until I reach a new value. OH! This is that reader writer method!!! This is different than the fixed window I was initially thinking because of the previous problems which I was doing. 
+
+        # Let me recall this reader/writer strategy
+        # reader: goes ahead. Looks for first valid element
+        # writer: Is at index which will be written to. 'Place next valid element here'
+
+        # I like having names to associate with strategies!!!! 
+
+        reader = 0
+        writer = 0
+        k = 0 
+        while reader < len(nums):
+            # I think I might need a special case for the first time, because I want to check the previous value
+            if reader != 0 and nums[reader] == nums[reader-1]:
+                # In this case, go to the next element because reader is currently pointing to an invalid element. keep writer where it is.
+                reader += 1
+                k += 1
+                continue
+            
+            elif reader == 0:
+                # this will be guaranteed to be unique because there have not been any elements in the array
+                # maybe I could have just changed my initial conditions for reader and writer
+                reader += 1
+                writer += 1
+
+                # yeah, I should have just had reader and writer as starting at 1. but this shouls work as well.
+                continue
+            
+            else:
+                # This is the case where reader is pointing to a valid index, and my writer needs to write this value into it.
+                nums[writer] = nums[reader]
+                reader += 1
+                writer += 1
+                
+        return k
