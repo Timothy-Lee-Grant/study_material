@@ -764,6 +764,7 @@ class Solution:
                     vowels -= 1
                 
                 res = max(res, vowels)
+            i+=1
         return res
 
         # Walk through
@@ -831,3 +832,23 @@ class Solution:
         #   8       -           [(76,7), (73,8)]            [1,2,1,3,2,1,1,0,0]
 
         # I then submitted my code and it passed.
+
+
+# First attempt to do the merge two sorted arrays. This is before I read the lecture document on linked lists.
+class Solution:
+    def mergeTwoLists(self, list1: ListNode | None, list2: ListNode | None) -> ListNode | None:
+        dummy = ListNode(-1,None)
+        curr1 = list1
+        curr2 = list2
+        if curr1:
+            dummy.next = curr1
+        elif curr2:
+            dummy.next = curr2
+
+        while curr1 and curr2:
+            if curr1.val > curr2.val:
+                temp_next = curr2.next
+                curr2.next = curr1
+                other_temp = curr1.next
+                curr1.next = temp_next
+                curr1 = other_temp

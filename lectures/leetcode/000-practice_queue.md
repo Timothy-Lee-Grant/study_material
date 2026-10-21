@@ -3,7 +3,7 @@
 > **How to use this:** when you have time, pick **any one** problem from "Pick one now" (the top is the most useful, but any is fine). Solve it from a blank page, trace before submitting, then add a row to the **Attempt log** at the bottom. That's all you need to write. Claude reads the log, updates your notes, and re-ranks the list.
 > **Times** are rough targets for a first attempt: Easy ≈ 20 min, Medium ≈ 30–45 min. Going over is fine; just write down how long it took.
 > **Free problems only.** Each one links to its lecture section in case you get stuck (read it *after* a real attempt).
-> Last re-ranked: 2026-10-18, evening (after 112, 187, 643, 26).
+> Last re-ranked: 2026-10-20 (after 11, 1456, 739).
 
 ---
 
@@ -17,14 +17,14 @@ Titles only, so you have to work out the technique yourself. Any order is fine. 
 |---|---|---|---|
 | 1 | [26 Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) (finish) | Easy | 10 |
 | 2 | [283 Move Zeroes](https://leetcode.com/problems/move-zeroes/) | Easy | 15 |
-| 3 | [1456 Maximum Number of Vowels in a Substring of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | Medium | 20 |
-| 4 | [232 Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/) | Easy | 20 |
-| 5 | [125 Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | 15 |
-| 6 | [3 Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | 35 |
-| 7 | [20 Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | Easy | 15 |
-| 8 | [11 Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | 30 |
+| 3 | [56 Merge Intervals](https://leetcode.com/problems/merge-intervals/) (redo) | Medium | 30 |
+| 4 | [125 Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | 15 |
+| 5 | [3 Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | 35 |
+| 6 | [232 Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks/) | Easy | 20 |
+| 7 | [435 Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/) | Medium | 30 |
+| 8 | [20 Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | Easy | 15 |
 | 9 | [1472 Design Browser History](https://leetcode.com/problems/design-browser-history/) (a different design from your first one) | Medium | 30 |
-| 10 | [739 Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | 30 |
+| 10 | [55 Jump Game](https://leetcode.com/problems/jump-game/) | Medium | 25 |
 | 11 | [875 Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) (finish it) | Medium | 25 |
 | 12 | [54 Spiral Matrix](https://leetcode.com/problems/spiral-matrix/) (redo) | Medium | 30 |
 
@@ -32,18 +32,18 @@ Titles only, so you have to work out the technique yourself. Any order is fine. 
 
 | # | Problem | Group | Lecture | Why this one |
 |---|---|---|---|---|
-| 1 | 26 Remove Duplicates from Sorted Array (finish) | two pointers / window | 006 | Your array part is right; the returned number isn't. See its log row |
-| 2 | 283 Move Zeroes | two pointers / window | 006 | Reader/writer again, from a blank page. Write what `nums[:writer]` holds first |
-| 3 | 1456 Maximum Number of Vowels in a Substring of Given Length | two pointers / window | 006 | Fixed window again, for speed: use the window facts card below instead of re-deriving |
-| 4 | 232 Implement Queue using Stacks | stacks / design | 013 §2.2 | The two-stack question you asked about. Write what each top stands for first |
-| 5 | 125 Valid Palindrome | two pointers / window | 006 | Inward pointers. Say what's ruled out after each move |
-| 6 | 3 Longest Substring Without Repeating Characters | two pointers / window | 006 | Variable window, longest. Write the "window is valid when…" sentence first |
-| 7 | 20 Valid Parentheses | stacks | 013 §1 | Your "unresolved items" model. Test all three ways to fail |
-| 8 | 11 Container With Most Water | two pointers / window | 006 | Inward pointers where the "ruled out because…" sentence is the whole solution |
-| 9 | 1472 Design Browser History (a different design from your first one) | design | 012 §3.3 | Make `visit` O(1) with no deleting. You've done the two-stack version |
-| 10 | 739 Daily Temperatures | monotonic stack | 013 §6.1 | First monotonic stack. Name what `waiting` holds |
-| 11 | 875 Koko Eating Bananas (finish it) | binary search | 004 | Your attempt is in `examples.py`; see its log row for a failing input to start from |
-| 12 | 54 Spiral Matrix (redo) | matrix / simulation | 001 | Overdue redo. Comment every range; trace a 1×3 |
+| 1 | 26 Remove Duplicates from Sorted Array (finish) | two pointers / window | 006 / review 001 §4 | Array part right, return value wrong; do the walk-through in attempt review 001 §4 first |
+| 2 | 283 Move Zeroes | two pointers / window | 006 | Reader/writer from a blank page; write what nums[:writer] holds first |
+| 3 | 56 Merge Intervals (redo) | intervals | 015 §3 | July redo; the nested-interval case. Write the touching rule from the examples first |
+| 4 | 125 Valid Palindrome | two pointers / window | 006 | Inward pointers; the 'ruled out because' sentence each move |
+| 5 | 3 Longest Substring Without Repeating Characters | two pointers / window | 006 | First variable window: 'the window is valid when…' sentence first |
+| 6 | 232 Implement Queue using Stacks | stacks / design | 013 §2.2 | The two-stack question you asked about; what each top stands for |
+| 7 | 435 Non-overlapping Intervals | intervals / greedy | 015 §5 | Try to break 2–3 greedy choices with tiny inputs before choosing a sort key |
+| 8 | 20 Valid Parentheses | stacks | 013 §1 | Unresolved items; test all three ways to fail |
+| 9 | 1472 Design Browser History (a different design from your first one) | design | 012 §3.3 | Array + cursor + boundary: visit in O(1) without deleting |
+| 10 | 55 Jump Game | greedy | 015 §7 | Name what one variable must stand for; why one number is enough |
+| 11 | 875 Koko Eating Bananas (finish it) | binary search | 004 | Your attempt is in examples.py; see its log row for a failing input |
+| 12 | 54 Spiral Matrix (redo) | matrix / simulation | 001 | Overdue redo; comment every range; trace a 1×3 |
 
 </details>
 
@@ -84,7 +84,7 @@ Work down each group; you don't need to finish one group before starting the nex
 | [125 Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | ⬜ |
 | [977 Squares of a Sorted Array](https://leetcode.com/problems/squares-of-a-sorted-array/) | Easy | ⬜ |
 | [167 Two Sum II](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | Medium | ⬜ |
-| [11 Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | ⬜ |
+| [11 Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | ✅ 2026-10-20 |
 | [881 Boats to Save People](https://leetcode.com/problems/boats-to-save-people/) | Medium | ⬜ |
 | [15 3Sum](https://leetcode.com/problems/3sum/) | Medium | 🟡 redo (July) |
 
@@ -103,7 +103,7 @@ Work down each group; you don't need to finish one group before starting the nex
 |---|---|---|
 | [643 Maximum Average Subarray I](https://leetcode.com/problems/maximum-average-subarray-i/) | Easy | ✅ 2026-10-18 |
 | [187 Repeated DNA Sequences](https://leetcode.com/problems/repeated-dna-sequences/) | Medium | ✅ 2026-10-18 |
-| [1456 Maximum Number of Vowels in a Substring of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | Medium | ⬜ |
+| [1456 Maximum Number of Vowels in a Substring of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | Medium | ✅ 2026-10-20 |
 | [567 Permutation in String](https://leetcode.com/problems/permutation-in-string/) | Medium | ⬜ |
 | [438 Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/) | Medium | ⬜ |
 
@@ -227,7 +227,7 @@ Do these **blind**: read only the statement in §3, and write the operations tab
 | [150 Evaluate Reverse Polish Notation](https://leetcode.com/problems/evaluate-reverse-polish-notation/) | Medium | ⬜ |
 | [71 Simplify Path](https://leetcode.com/problems/simplify-path/) | Medium | ⬜ |
 | [394 Decode String](https://leetcode.com/problems/decode-string/) | Medium | ⬜ |
-| [739 Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | ⬜ |
+| [739 Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | ✅ 2026-10-20 |
 | [496 Next Greater Element I](https://leetcode.com/problems/next-greater-element-i/) | Easy | ⬜ |
 | [853 Car Fleet](https://leetcode.com/problems/car-fleet/) | Medium | ✅ |
 | [84 Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram/) (stretch) | Hard | ⬜ |
@@ -268,4 +268,7 @@ Add one row per attempt, newest at the bottom. Short is fine. Put your code in `
 | 2026-10-18 | 187 Repeated DNA Sequences | ✅ (after ChatGPT's idea) | long | started a trace; it got too big | First try stuck on the idea. Then `i+10 < len(s)` missed the last window; `i+9 < len(s)` passed. Your reasoning ("the last box I index is i+9") was right | examples.py |
 | 2026-10-18 | 643 Maximum Average Subarray I | ✅ (checked on 3,000 random arrays) | — | reasoned with k = 2 | All three bounds right (`i < k`, `i == k-1`, `nums[i-k]`). Slow: "took way too long to reason through" → use the window facts card | examples.py |
 | 2026-10-18 | 26 Remove Duplicates | 🟡 | — | — | The array part is always right. But `return k` returns the number of **duplicates** (`k` goes up in the duplicate branch), so `[1,1,2]` returns 1, expected 2. Example 2 passes only by coincidence (5 duplicates, 5 unique values). What does `nums[:writer]` hold, and how many boxes is that? | examples.py |
+| 2026-10-20 | 11 Container With Most Water | ✅ | — | yes (2 inputs) | Seen before. Correct (checked on 3,000 random inputs). Your "why move the lower wall" comment stops mid-sentence; finish it as a "ruled out because…" sentence | examples.py |
+| 2026-10-20 | 1456 Maximum Number of Vowels | ✅ | — | yes | Logic correct, but the version in `examples.py` has no `i += 1` (it would loop forever), so it isn't the version you submitted | examples.py |
+| 2026-10-20 | 739 Daily Temperatures | ✅ | — | yes | Solved **without reading lecture 013**: stack of unresolved days, the decreasing shape, and the equal-temperature case all derived; caught the index-vs-distance bug while tracing, before submitting. The code is right but the trace slipped at day 6 (see notes in chat) | examples.py |
 | | | | | | | |
