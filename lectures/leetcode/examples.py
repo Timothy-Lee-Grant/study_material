@@ -801,7 +801,9 @@ class Solution:
                 # the element at the top of the stack is smaller than my current day. I will need to fill out my answer array for this day.
                 prev_temp, prev_index = mystack.pop()
                 # answer array will need to place the index of the next higher temperature in it. This means that it is the index of our current day.
-                answer[prev_index] = i
+                #answer[prev_index] = i
+                # During the walk through I noticed that actually the problem wanted me to find the days I need to wait, not the index of the next hotter day
+                answer[prev_index] = i - prev_index
 
                 # We want to keep doing this until my entire stack is out of elements (mystack returns false), after which we have found the highest temperature day which has been seen so far and we have resolved all elements that we have seen so far. Under this case, we need to place our current day in the empty stack (which I have the outline for below). If our stack is not empty, but we encounter a day which is either larger (or equal to), because the problem question says that we need to find the next higher day, an equal day is not a valid resolution. So we need to stop popping elements from the stack and we need to place the current day in the stack (also the same thing which I have scaffolded out below).
 
@@ -814,3 +816,18 @@ class Solution:
         # because I filled out the answer array with all 0s, I can just return answer array here. The elements remaining in our stack were unresolved. This means that we placed them into our stack because we were waiting until we found a larger element, the remaining elements in our stack represent the days which we have not found any larger elements in their future. So those elements need to have their index in the answer array be 0, but because the only time that I touch the answer array is when I am resolving a day, if that day was not resolved, then it will still be 0.
 
         return answer
+
+        # Walk through
+        # temperatures = [73,74,74,75,71,69,72,76,73]
+        #   i       prev_tuple       mystack             answer
+        #   0       -                [(73,0)]            [0,0,0,0,0,0,0,0,0]
+        #   1       (73,0)           [(74,1)]            [1,0,0,0,0,0,0,0,0]
+        #   2       -           [(74,1),(74,2)]            [1,0,0,0,0,0,0,0,0]
+        #   3       (74,1)           [(75,3)]            [1,2,1,0,0,0,0,0,0]
+        #   4       -           [(75,3), (71,4)]            [1,2,1,0,0,0,0,0,0]
+        #   5       -           [(75,3), (71,4), (69,5)]            [1,2,1,0,0,0,0,0,0]
+        #   6       -           [(72,6)]            [1,2,1,3,2,1,0,0,0]
+        #   7       -           [(76,7)]            [1,2,1,3,2,1,1,0,0]
+        #   8       -           [(76,7), (73,8)]            [1,2,1,3,2,1,1,0,0]
+
+        # I then submitted my code and it passed.
