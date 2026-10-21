@@ -779,3 +779,38 @@ class Solution:
         # returns: 2
 
         # I then submitted the code and it passed.
+
+class Solution:
+    def dailyTemperatures(self, temperatures: list[int]) -> list[int]:
+        # I know from past, that this was the monotonic increasing or decreasing stack. I have not read the lecture document on stacks yet. I will see if I can figure out how this idea will be able to help me in this situation.
+
+        # I am looking to find the next warmer day (so the next day with a larger temp). Therefore if I encounter a day, I will need to put it in my stack and wait until I find a next element which is 'resolving it' meaning an element that is larger. 
+
+        # I see how I can 'find the next larger element', but this wants to know how many days appart those elements are. I guess I could actually store a tuple where each time I put an element into the stack, I will also add the index which that element appeared. This will also help me to build the answer array
+
+        answer = [0 for _ in range(len(temperatures))]
+        mystack = []
+        i=0
+        while i < len(temperatures):
+            # Here I will need to have my element (which is the temperature of the particular day that I am looking at right now.). This will be temperatures[i]
+            # I can not assume that I do have elements in my stack, or that I don't. But for each day, I know that I will want to go back and ask the question, did this day resolve any of the elements in the stack (which the stack represents all of the elements which are currently waiting to be resolved. They want to find a day in the future which will be larger. Here I am, a day in the future, and I am going to see if I am larger. If I am larger, then I have satisfied the condition and I can resolve that past element.).
+            # Thinking about the shape, I will keep removing the smaller elements, then I will place my current element into the stack at the top. This means that I have removed all of the smaller elements from my stack, which are smaller than my current element, and now I place my current element as the smallest element in the stack at the top. This means that my stack will have the absolute largest element seen so far at the very bottom of the stack. So the stack shape will be largest to smallest (where largest is at the deepest parts of the stack). This means that the elements are decreasing in the stack. As I pop, I will continually get larger and larger values. So this is a monotomically decreasing stack.
+
+            # Resolve previous days
+            while mystack and mystack[-1][0] < temperatures[i]:
+                # the element at the top of the stack is smaller than my current day. I will need to fill out my answer array for this day.
+                prev_temp, prev_index = mystack.pop()
+                # answer array will need to place the index of the next higher temperature in it. This means that it is the index of our current day.
+                answer[prev_index] = i
+
+                # We want to keep doing this until my entire stack is out of elements (mystack returns false), after which we have found the highest temperature day which has been seen so far and we have resolved all elements that we have seen so far. Under this case, we need to place our current day in the empty stack (which I have the outline for below). If our stack is not empty, but we encounter a day which is either larger (or equal to), because the problem question says that we need to find the next higher day, an equal day is not a valid resolution. So we need to stop popping elements from the stack and we need to place the current day in the stack (also the same thing which I have scaffolded out below).
+
+
+            # Add current day into stack.
+            mystack.append((temperatures[i], i))
+
+            i+=1
+        
+        # because I filled out the answer array with all 0s, I can just return answer array here. The elements remaining in our stack were unresolved. This means that we placed them into our stack because we were waiting until we found a larger element, the remaining elements in our stack represent the days which we have not found any larger elements in their future. So those elements need to have their index in the answer array be 0, but because the only time that I touch the answer array is when I am resolving a day, if that day was not resolved, then it will still be 0.
+
+        return answer
