@@ -694,3 +694,88 @@ class Solution:
             
             # Now what if 'mid < nums[r-1]' is this guaranteed to be that we are looking in the other half?
             # I don't know. I am too tired right now to think. I will come back to this problem later. As of now, I have not looked at the solution, I have not ran the code, and when I come back I will attempt to solve it, and then see if I can do a walk through before I run my code, or look at hints / answers.
+
+
+
+# Oct 20, 2026
+
+# First attempt done without thinking much
+class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        # I have already done this problem before so I know that I need to use that trick of my two pointers seperated and move inward.
+        # I am noticing that water is actually allowed to 'go through' walls in this problem. So walls which are part of the items in the place in between the two walls that I am looking at are almost like they are not there.
+
+        l = 0
+        r = len(height)-1
+        result = 0
+        while l<r:
+            volume = min(height[l], height[r]) * (r-l)
+            result = max(result, volume)
+            if height[l] > height[r]:
+                r-=1
+            else:
+                l+=1
+        return result
+
+        # I want r to be initialized to len(height)-1 because it is not a cut. In the binary search problems, right was set to len(array) because actually that last cut was indicating that the number was not in the array. But here, each of these will be indexes. 
+        # I also am thinking of the question about distance and the stopping condition. When I am at the same wall, it does not make sense to calculate the volume because the volume of a single wall encapsulates nothing.
+        # When calculating distince, I think it makes sense that the distance will be 'how many steps from one element to the other'. This can be seen if I look at two walls right next to each other, they will have a width of one.
+        # The reason that I was selecting to move the pointer to the wall of the lower wall was that I started at the farthest away and I have already logged that as a potiential solution. Now, I need to move one of the pointers. By keeping the higher of the two walls, the limiting factor is the lower wall, by keeping the lower wall, 
+
+        # Walk Through
+        # height = [1,[8,6,2,5,4,8,3],7]
+        #   l       r       volume      result
+        #   0       8       8           8
+        #   1       8       49          49
+        #   1       7       18          49
+        #   ...
+
+        # height = [1,1]
+        #   l       r       volume      result
+        #   0       1       1           1
+        #   1       1       -           -       (loop doesnt run)
+        # returns: 1
+
+        # I then submitted this code and it passed.
+
+
+class Solution:
+    def maxVowels(self, s: str, k: int) -> int:
+        # I see that we are given a fixed window size of k, so I know this will be a sliding window problem using a fixed size of k. 
+        # It is asking me to find the maximum window of this fixed size for the number of vowels. I don't think I will need some kind of set for this problem, instead I can just have a counter which will check if the item that we are currently adding or dropping from the window is or is not a vowel.
+
+        i = 0
+        res = 0
+        vowels = 0
+        while i < len(s):
+            # Building window section
+            if i < k:
+                if s[i] in ['a', 'e', 'i', 'o', 'u']:
+                    vowels += 1
+                res = max(res, vowels)
+            
+            else:
+                # add new element
+                if s[i] in ['a', 'e', 'i', 'o', 'u']:
+                    vowels += 1
+
+                # kick out 'out of window'
+                if s[i-k] in ['a', 'e', 'i', 'o', 'u']:
+                    vowels -= 1
+                
+                res = max(res, vowels)
+        return res
+
+        # Walk through
+        # s="heello_" k=2
+        #   i       vowels      res
+        #   0       0           0
+        #   1       1           1
+        #   2       2           2
+        #   3       1           2
+        #   4       0           2
+        #   5       1           2
+        #   6       -           -       (loop doesn't run)
+        # returns: 2
+
+        # I then submitted the code and it passed.
