@@ -852,3 +852,35 @@ class Solution:
                 other_temp = curr1.next
                 curr1.next = temp_next
                 curr1 = other_temp
+
+# Oct 21, 2026
+
+# Fast attempt, I have not yet looked to see if it is right. I just did this quickly based on what I remember reading a few (maybe 8) hours ago.
+class Solution:
+    def mergeTwoLists(self, list1: ListNode | None, list2: ListNode | None) -> ListNode | None:
+        # After seeing the lecture document.
+
+        # I know that I will have a dummy node as head because I don't know what my head will be yet. tail will be the last node in my new sorted list
+        dummy = ListNode()
+        tail = dummy
+
+        while list1 and list2:
+            # find smaller value node
+            if list1.val < list2.val:
+                # take node which list1 points to
+                tail.next = list1
+                list1 = list1.next
+            else:
+                tail.next = list2
+                list2 = list2.next
+        
+        # at this point either list1 is gone or list2 is gone (or both are gone)
+        if list1:
+            tail.next = list1
+        elif list2:
+            tail.next = list2
+        else:
+            # The lecture docs seemed to have that this one is unneeded
+            tail.next = None
+        
+        return dummy.next
