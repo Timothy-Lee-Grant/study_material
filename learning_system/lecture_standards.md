@@ -1,6 +1,6 @@
 # Lecture Standards — how to write lectures for Timothy
 
-> Read before generating any lecture, together with `private/clicks_log.md` (what has clicked for him, and why). These standards are **evidence-driven**: each technique has a status in `private/technique_experiments.md`. When recall data supports or refutes a technique, update this file and its changelog (§9).
+> Read before generating any lecture, together with `private/clicks_log.md` (what has clicked for him, and why) and the domain's tracker in `private/understanding/` if one exists (weave its open misconceptions into the new lecture where they fit). These standards are **evidence-driven**: each technique has a status in `private/technique_experiments.md`. When recall data supports or refutes a technique, update this file and its changelog (§9).
 > **Audio lectures** (for NotebookLM podcasts) follow `audio_lecture_standards.md` instead. Use that only when he explicitly asks for an audio/listening lecture.
 > Distilled from the lectures written in Sept 2026 (`lectures/dotnet/001–005`, `lectures/carreer_path/003`) and from `persona.md`.
 
@@ -97,6 +97,7 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-10-21 | Added per-domain understanding trackers (`private/understanding/`): read before writing a lecture in that domain and weave open misconceptions in. | His request after the 10-21 recall check |
 | 2026-10-06 | Added the weekly recap mechanism (§1), the full-problem-statement rule and the no-underived-conventions rule (§4). | His requests + recall check 2026-10-06 |
 | 2026-10-05 | Added T16 (name → valid set → membership) and T17 (numbered derivations). Before writing any lecture, also read `private/clicks_log.md`. | His first reported click (C1) |
 | 2026-10-04 | Retired T2 (personified characters) and T3 (firmware analogies) at Timothy's explicit request. Added T15: build lectures from his own failed attempts (forensics of his code). | His statement 2026-10-04; leetcode/001 → 8→1 bugs same evening |

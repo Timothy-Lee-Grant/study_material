@@ -20,6 +20,7 @@
 | `private/technique_experiments.md` | **Private** | Teaching techniques treated as hypotheses, with evidence for or against | Update when recall data bears on a technique |
 | `private/clicks_log.md` | **Private** | Explanations that made something click for Timothy, why they worked, and the resulting patterns | Read before writing any lecture; add an entry whenever he reports a click |
 | `private/recall_checks/` | **Private** | One file per recall check: transcript, claim map, scores, feedback given | Create one per summary Timothy gives |
+| `private/understanding/` | **Private** | One tracker per domain of his *current* understanding: concept-by-concept status, open misconceptions, and how to weave them into future lectures (never by editing read lectures) | Read before writing a lecture in that domain; update after every recall check or question in it |
 
 Related, older material (read, don't duplicate):
 - `persona.md` (repo root): goals, background, public-safe self-description.
