@@ -4,8 +4,8 @@
 
 > **For:** Timothy
 > **Date:** 2026-10-16
-> **Prerequisites:** `lectures/firmware/windows_platform_validation.md` (the interview lecture), especially Part 2 (the touch path) and Part 3 (IRQL). Helpful but not required: `lectures/firmware/002-when_root_isnt_enough.md` (your pigpio I2C target project).
-> **Why this lecture:** after reading the interview lecture you said three things. First, you have only met interrupts on bare metal (your ATmega), where an ISR felt like "a callback function", and IRQL looked like a different world. Second, there were too many components you couldn't place: what each one is, where it lives, who puts it there, whether it is a separate process, and how they talk. Third, specific phrases didn't land: "touching pageable memory", the bugcheck codes, "the driver registers its interrupt as passive and the framework runs its handler". You also asked how interrupt *lines* are actually wired, how this relates to "interrupts are flags" from school, and how Linux compares. This lecture answers each of those, in that order: components first, then interrupts from the wire up, then the rules an operating system adds.
+> **Prerequisites:** `lectures/firmware/windows_platform_validation.md` (the platform validation lecture), especially Part 2 (the touch path) and Part 3 (IRQL). Helpful but not required: `lectures/firmware/002-when_root_isnt_enough.md` (your pigpio I2C target project).
+> **Why this lecture:** after reading the platform validation lecture you said three things. First, you have only met interrupts on bare metal (your ATmega), where an ISR felt like "a callback function", and IRQL looked like a different world. Second, there were too many components you couldn't place: what each one is, where it lives, who puts it there, whether it is a separate process, and how they talk. Third, specific phrases didn't land: "touching pageable memory", the bugcheck codes, "the driver registers its interrupt as passive and the framework runs its handler". You also asked how interrupt *lines* are actually wired, how this relates to "interrupts are flags" from school, and how Linux compares. This lecture answers each of those, in that order: components first, then interrupts from the wire up, then the rules an operating system adds.
 
 ---
 
@@ -36,7 +36,7 @@
 - [7. Pageable memory, page faults, and bugchecks](#7-pageable-memory-page-faults-and-bugchecks)
 - [8. Linux: same problems, different names](#8-linux-same-problems-different-names)
 - [9. Misconceptions: you thought X, reality Y](#9-misconceptions-you-thought-x-reality-y)
-- [10. Interview relevance](#10-interview-relevance)
+- [10. Saying it precisely](#10-saying-it-precisely)
 - [11. Self-check questions](#11-self-check-questions)
 - [Sources](#sources)
 
@@ -151,7 +151,7 @@ They run the instruction stream. Between instructions each core checks whether a
 - **What it is.** The boot firmware that initializes the board, and the **ACPI tables** it hands to Windows. Those tables describe hardware that can't be discovered by probing. For the touch device the entry says: "I am a HID-over-I2C device (compatible ID `PNP0C50`); I'm at address 0x2C on I2C controller 1 at 400 kHz; my interrupt is GPIO pin 35 on GPIO controller 0, level-triggered, active-low; here is how to power me on and off."
 - **Where it is.** Stored in an SPI flash chip on the motherboard. It runs before Windows. The tables stay in memory for Windows to read.
 - **Who writes it.** The OEM, with a firmware vendor (AMI, Insyde, Phoenix) and the chip vendor's reference code.
-- **Why it matters for your interview role.** A wrong ACPI entry (wrong pin, edge instead of level, wrong polarity) is a classic bring-up bug, and it's the OEM's to fix, not Windows'.
+- **Why it matters for platform work.** A wrong ACPI entry (wrong pin, edge instead of level, wrong polarity) is a classic bring-up bug, and it's the OEM's to fix, not Windows'.
 
 ### 2.7 The Windows kernel's managers 🔵
 
@@ -215,7 +215,7 @@ Every interaction in the system uses one of four channels 🟢:
 | **3. Function calls and request objects** (IRPs, WDF requests, callbacks) | Software ↔ software | `hidi2c` sends "read report" to the I2C controller driver; the framework calls `hidi2c`'s ISR |
 | **4. Interrupts** | Hardware → software | GPIO controller signals the interrupt controller, which signals a CPU core |
 
-### 3.1 A correction to the interview lecture's diagram
+### 3.1 A correction to the platform validation lecture's diagram
 
 `windows_platform_validation.md` §2.2 drew one vertical stack with the I2C controller driver and GPIO controller driver *underneath* `hidi2c`. That was simplified in a way that could mislead you about ownership, so here is the accurate version.
 
@@ -273,10 +273,10 @@ Name the two quantities and the difference becomes one sentence (pattern T16):
 **Pause and predict:** on your ATmega, set INT0 to low-level and wire a button that holds the pin low. You press and hold for one second. How many times does the ISR run?
 
 <details><summary>Answer</summary>
-Continuously, back to back, for the whole second. The main loop barely advances, because between each `RETI` and the next entry it gets one instruction at most. This is an <b>interrupt storm</b>, the same failure the interview lecture described for a level-triggered touch line whose ISR returns without clearing the device's condition. The fix is the same in both worlds: the handler must make the source stop asserting, or mask the request.
+Continuously, back to back, for the whole second. The main loop barely advances, because between each `RETI` and the next entry it gets one instruction at most. This is an <b>interrupt storm</b>, the same failure the platform validation lecture described for a level-triggered touch line whose ISR returns without clearing the device's condition. The fix is the same in both worlds: the handler must make the source stop asserting, or mask the request.
 </details>
 
-Why level exists at all: it's **impossible to miss**. If the host was busy, the request is still there when it looks. Why edge exists: it never storms, and it suits signals that are naturally "something happened". The interview lecture's "dead until hard reset" bug is the mismatch of the two: a device that holds its line (level behavior) described to the host as edge. One missed transition leaves the line low forever, and the host waits for a transition that can't come.
+Why level exists at all: it's **impossible to miss**. If the host was busy, the request is still there when it looks. Why edge exists: it never storms, and it suits signals that are naturally "something happened". The platform validation lecture's "dead until hard reset" bug is the mismatch of the two: a device that holds its line (level behavior) described to the host as edge. One missed transition leaves the line low forever, and the host waits for a transition that can't come.
 
 ### 4.3 How lines reach the CPU: the interrupt controller 🔵
 
@@ -375,7 +375,7 @@ Each step is one move:
 5. So a wait there can never hand the processor to anyone. Nothing that would end the wait can run on that processor.
 6. So waiting at DISPATCH_LEVEL or above is a guaranteed deadlock. Windows treats it as a fatal bug instead of hanging forever.
 
-You've already seen step 5 on bare metal. The Arduino `Wire` library on an ATmega runs I2C transfers **using the TWI peripheral's own interrupt**: a read sets up the transfer, then loops until the TWI ISR marks it done. Call `Wire` from inside another ISR, where the global permission bit is cleared, and the TWI ISR can never run, so the loop never ends. It's the same deadlock as step 5 with two levels instead of sixteen, and it's the core of the interview question "an ISR does an I2C read; what happens?"
+You've already seen step 5 on bare metal. The Arduino `Wire` library on an ATmega runs I2C transfers **using the TWI peripheral's own interrupt**: a read sets up the transfer, then loops until the TWI ISR marks it done. Call `Wire` from inside another ISR, where the global permission bit is cleared, and the TWI ISR can never run, so the loop never ends. It's the same deadlock as step 5 with two levels instead of sixteen, and it's the core of the question "an ISR does an I2C read; what happens?"
 
 ### 5.4 The pattern: do the minimum high, do the rest low 🟢
 
@@ -485,7 +485,7 @@ When **kernel code** breaks a rule, there is no wall to put between the bug and 
 
 ### 7.6 Why this bug hides, and how Driver Verifier finds it 🔵
 
-In step 3 the page is usually in RAM, so the bug passes every test on a developer's machine with plenty of memory, then crashes customers' machines under memory pressure. **Driver Verifier** (built into Windows) makes it deterministic. With *Force IRQL checking* on, whenever the driver raises IRQL to DISPATCH_LEVEL or above, or takes a spin lock, Verifier pages out its pageable code and data first. The first illegal touch then faults every time. In your interview role this is a standard tool: turn a "1-in-1,000-units" crash into a reproducible one.
+In step 3 the page is usually in RAM, so the bug passes every test on a developer's machine with plenty of memory, then crashes customers' machines under memory pressure. **Driver Verifier** (built into Windows) makes it deterministic. With *Force IRQL checking* on, whenever the driver raises IRQL to DISPATCH_LEVEL or above, or takes a spin lock, Verifier pages out its pageable code and data first. The first illegal touch then faults every time. In platform validation work this is a standard tool: turn a "1-in-1,000-units" crash into a reproducible one.
 
 ---
 
@@ -527,7 +527,7 @@ Both kernels solve one problem: waiting requires the scheduler, and the schedule
 
 ### 8.3 Which to study first
 
-For the Microsoft role, Windows vocabulary first: IRQL, DPC, work item, KMDF, bugcheck, Driver Verifier, WinDbg. For hands-on practice, Linux on your Pi is cheaper and more visible: you can watch `/proc/interrupts` climb, write a 50-line module with `request_threaded_irq`, and put a logic analyzer on the line. The concepts transfer one-to-one through the table above. That makes it a good lab even for a Windows role, as long as you say the Windows names in the interview.
+For Windows platform work, Windows vocabulary first: IRQL, DPC, work item, KMDF, bugcheck, Driver Verifier, WinDbg. For hands-on practice, Linux on your Pi is cheaper and more visible: you can watch `/proc/interrupts` climb, write a 50-line module with `request_threaded_irq`, and put a logic analyzer on the line. The concepts transfer one-to-one through the table above. That makes it a good lab even for Windows work, as long as you also learn the Windows names.
 
 ---
 
@@ -535,18 +535,18 @@ For the Microsoft role, Windows vocabulary first: IRQL, DPC, work item, KMDF, bu
 
 | You thought | Reality | Why it matters |
 |---|---|---|
-| An ISR is a callback | It is, called by the hardware between instructions, under rules the OS adds (IRQL) | Interviewers probe the rules, not the callback |
+| An ISR is a callback | It is, called by the hardware between instructions, under rules the OS adds (IRQL) | The rules are where the bugs live |
 | Interrupts are flags | At the hardware level, yes for edge (a latched bit); for level, the live wire is the request | Explains storms and "dead until reset" |
 | Each device has its own line, or all share one, or there's one line per level | Interrupt controllers map inputs to vectors; lines can be shared (level only); PCIe uses messages; GPIO pins go through a second-tier controller; levels are not wires | Lets you reason about where an interrupt can get lost |
 | IRQL is something about the interrupt line | It's a per-CPU threshold in software (in CR8 on x64) compared against each interrupt's priority class | The "can't wait" rule follows from it |
 | Drivers might be separate processes | Kernel drivers are modules in one shared kernel address space with no threads of their own; only UMDF drivers live in a host process | Explains why one driver bug stops the whole machine |
 | The GPIO and I2C drivers sit under `hidi2c` in one stack | They're separate device stacks; `hidi2c` uses them as resources through requests and interrupt routing | Ownership: whose bug is it? |
 | A bugcheck is the kernel checking a separate process | It's the kernel's own handler catching kernel-mode code breaking a rule, then stopping on purpose | Knowing who checks tells you what the dump will show |
-| Linux works the same way, with IRQL | Same problems and hardware, but contexts instead of IRQL, and no pageable kernel memory | Translate vocabulary in interviews |
+| Linux works the same way, with IRQL | Same problems and hardware, but contexts instead of IRQL, and no pageable kernel memory | Lets you translate vocabulary between the two |
 
 ---
 
-## 10. Interview relevance
+## 10. Saying it precisely
 
 Sentences you can say, each at mechanism depth:
 
