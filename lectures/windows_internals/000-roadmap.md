@@ -19,8 +19,9 @@
 | 006 | `006-device_stacks_pnp_inf_signing.md` | Kernel mechanics | Explain PDO/FDO/filters, how PnP builds and starts a stack, read an INF, and explain driver signing |
 | 007 | `007-power_management_and_modern_standby.md` | Kernel mechanics | Explain S-states, D-states and Modern Standby, and debug a resume or standby bug |
 | 008 | `008-processes_threads_memory_and_shared_sections.md` | Kernel mechanics | Explain processes vs threads and virtual → physical mapping, and share memory across processes with named sections, mutexes and events (runnable code) |
+| 009 | `009-what_a_driver_actually_is.md` | Kernel mechanics | Explain what's inside a `.sys` file, what configuration loads it, what `DriverEntry` registers, every hop from `DeviceIoControl` to the driver and back, and how drivers call drivers and the kernel (WDM + KMDF, real build) |
 
-Code: `code/shm_demo.c` (used in 008).
+Code: `code/shm_demo.c` (used in 008); `code/tgcounter/` (driver, IOCTL header, client; used in 009).
 
 ## Reading order
 
