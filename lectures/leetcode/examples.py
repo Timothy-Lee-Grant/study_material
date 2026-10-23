@@ -929,3 +929,12 @@ class Solution:
 
 
 # I am realizing that I don't know how to do the walk-throughs on the linked list problems. I attempted to look at the problem from yesterday of mergeTwoLists, and I was unable to think about how to walk through it and verify it. I attempted to submit it and it failed.
+
+
+class Solution:
+    def productExceptSelf(self, nums: list[int]) -> list[int]:
+        # I know that this is a prefix sum problem. I am doing this to practice the prefix sum concepts.
+
+        # I need to create a new array (answer) and in that the indexes in answer will correspond to the index which we want to exclude. 
+
+        # A summation can be done with the prefix sum idea, but now a product can't because I can't just select the portion of the prefix data structure to get a range. No idea how to do this one.
