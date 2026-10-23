@@ -884,3 +884,46 @@ class Solution:
             tail.next = None
         
         return dummy.next
+
+
+# Oct 23, 2026
+
+class Solution:
+    def canJump(self, nums: list[int]) -> bool:
+        # I read the lecture document today. 
+        # I already know that this is a greedy problem.
+        # I feel like with these problems, once you know the 'trick' to the specific problem, it is easy, but actually identifying and coming up with the trick would have been so hard. There would have been no way for me to come up with this idea of 'just keep track of the furthest'.
+
+        # I will have a variable that tracks the furthest that I could reach since each index can only add to the furthest, and there is no situation, where I would ever want to go back to less distant element because each element along the longer path will nessisarily include the other element anyways.
+
+        # I was intially thinking to have furthest as set to 0, but then I realized the stopping condition should be something where I am currently at an index, and I am no longer allowed to move, so I will need to do that check after I update this furthest variable.
+        #furthest = 0
+
+        # Walk Through
+        # nums = [2,3,1,1,4]    len(nums) -> 5
+        #   i       furthest
+        #   -       2
+        #   0       2
+        #   1       4
+        # returns -> true
+
+        # nums = [3,2,1,0,4]    len(nums) -> 5
+        #   i       furthest
+        #   -       3
+        #   0       3
+        #   1       3
+        #   2       3
+        #   3       3
+        # return false
+        furthest = nums[0]
+        for i in range(len(nums)):
+            furthest = max(furthest, nums[i]+i)
+            if furthest >= len(nums)-1:
+                return True
+
+            if furthest == i:
+                return False
+
+        # During the walk through first one, I initially had `furthest = max(furthest, nums[i])` but then I realized that I needed to change it to be the +i because it is representing the index which you will arrive at when you are at index i and then jump nums[i] steps. 
+        # I then submitted the code after the two walk throughs and it passed.
+        
