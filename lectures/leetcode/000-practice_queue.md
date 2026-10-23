@@ -3,7 +3,7 @@
 > **How to use this:** when you have time, pick **any one** problem from "Pick one now" (the top is the most useful, but any is fine). Solve it from a blank page, trace before submitting, then add a row to the **Attempt log** at the bottom. That's all you need to write. Claude reads the log, updates your notes, and re-ranks the list.
 > **Times** are rough targets for a first attempt: Easy ≈ 20 min, Medium ≈ 30–45 min. Going over is fine; just write down how long it took.
 > **Free problems only.** Each one links to its lecture section in case you get stuck (read it *after* a real attempt).
-> Last re-ranked: 2026-10-20 (after 11, 1456, 739).
+> Last re-ranked: 2026-10-23 (after 21, 55).
 
 ---
 
@@ -24,7 +24,7 @@ Titles only, so you have to work out the technique yourself. Any order is fine. 
 | 7 | [435 Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/) | Medium | 30 |
 | 8 | [20 Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | Easy | 15 |
 | 9 | [1472 Design Browser History](https://leetcode.com/problems/design-browser-history/) (a different design from your first one) | Medium | 30 |
-| 10 | [55 Jump Game](https://leetcode.com/problems/jump-game/) | Medium | 25 |
+| 10 | [876 Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list/) | Easy | 15 |
 | 11 | [875 Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) (finish it) | Medium | 25 |
 | 12 | [54 Spiral Matrix](https://leetcode.com/problems/spiral-matrix/) (redo) | Medium | 30 |
 
@@ -41,7 +41,7 @@ Titles only, so you have to work out the technique yourself. Any order is fine. 
 | 7 | 435 Non-overlapping Intervals | intervals / greedy | 015 §5 | Try to break 2–3 greedy choices with tiny inputs before choosing a sort key |
 | 8 | 20 Valid Parentheses | stacks | 013 §1 | Unresolved items; test all three ways to fail |
 | 9 | 1472 Design Browser History (a different design from your first one) | design | 012 §3.3 | Array + cursor + boundary: visit in O(1) without deleting |
-| 10 | 55 Jump Game | greedy | 015 §7 | Name what one variable must stand for; why one number is enough |
+| 10 | 876 Middle of the Linked List | linked lists | recap 2026-10-19 §1.4–1.5 | Derive the loop condition from 'where should fast stop?' instead of recalling it |
 | 11 | 875 Koko Eating Bananas (finish it) | binary search | 004 | Your attempt is in examples.py; see its log row for a failing input |
 | 12 | 54 Spiral Matrix (redo) | matrix / simulation | 001 | Overdue redo; comment every range; trace a 1×3 |
 
@@ -199,7 +199,7 @@ See **Focus: two pointers and sliding windows** above for the full ladder.
 | Problem | Level | Status |
 |---|---|---|
 | [206 Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/) | Easy | ⬜ |
-| [21 Merge Two Sorted Lists](https://leetcode.com/problems/merge-two-sorted-lists/) | Easy | ⬜ |
+| [21 Merge Two Sorted Lists](https://leetcode.com/problems/merge-two-sorted-lists/) | Easy | 🟡 redo with a trace table |
 | [141 Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/) | Easy | ⬜ |
 | [19 Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/) | Medium | ⬜ |
 | [143 Reorder List](https://leetcode.com/problems/reorder-list/) | Medium | 🔁 (July) |
@@ -243,7 +243,7 @@ Do these **blind**: read only the statement in §3, and write the operations tab
 | [986 Interval List Intersections](https://leetcode.com/problems/interval-list-intersections/) | Medium | ⬜ |
 | [2406 Divide Intervals Into Minimum Number of Groups](https://leetcode.com/problems/divide-intervals-into-minimum-number-of-groups/) | Medium | ⬜ |
 | [1094 Car Pooling](https://leetcode.com/problems/car-pooling/) | Medium | ⬜ |
-| [55 Jump Game](https://leetcode.com/problems/jump-game/) | Medium | ⬜ |
+| [55 Jump Game](https://leetcode.com/problems/jump-game/) | Medium | ✅ 2026-10-23 |
 | [45 Jump Game II](https://leetcode.com/problems/jump-game-ii/) | Medium | ⬜ |
 | [763 Partition Labels](https://leetcode.com/problems/partition-labels/) | Medium | ⬜ |
 | [134 Gas Station](https://leetcode.com/problems/gas-station/) (stretch) | Medium | ⬜ |
@@ -271,4 +271,6 @@ Add one row per attempt, newest at the bottom. Short is fine. Put your code in `
 | 2026-10-20 | 11 Container With Most Water | ✅ | — | yes (2 inputs) | Seen before. Correct (checked on 3,000 random inputs). Your "why move the lower wall" comment stops mid-sentence; finish it as a "ruled out because…" sentence | examples.py |
 | 2026-10-20 | 1456 Maximum Number of Vowels | ✅ | — | yes | Logic correct, but the version in `examples.py` has no `i += 1` (it would loop forever), so it isn't the version you submitted | examples.py |
 | 2026-10-20 | 739 Daily Temperatures | ✅ | — | yes | Solved **without reading lecture 013**: stack of unresolved days, the decreasing shape, and the equal-temperature case all derived; caught the index-vs-distance bug while tracing, before submitting. The code is right but the trace slipped at day 6 (see notes in chat) | examples.py |
+| 2026-10-21 | 21 Merge Two Sorted Lists | ❌ | — | couldn't (no linked-list trace format) | `tail` never moves (no `tail = tail.next`), so each step replaces `dummy.next`; returns `4`. See this week's recap, Entry 1 §1.2–1.3 | examples.py |
+| 2026-10-23 | 55 Jump Game | ✅ (checked on 5,000 random inputs) | — | yes (2 inputs) | Caught `nums[i]` → `nums[i] + i` during the walk-through. "No way I'd come up with the trick": see recap §1.7 | examples.py |
 | | | | | | | |

@@ -926,4 +926,6 @@ class Solution:
 
         # During the walk through first one, I initially had `furthest = max(furthest, nums[i])` but then I realized that I needed to change it to be the +i because it is representing the index which you will arrive at when you are at index i and then jump nums[i] steps. 
         # I then submitted the code after the two walk throughs and it passed.
-        
+
+
+# I am realizing that I don't know how to do the walk-throughs on the linked list problems. I attempted to look at the problem from yesterday of mergeTwoLists, and I was unable to think about how to walk through it and verify it. I attempted to submit it and it failed.
