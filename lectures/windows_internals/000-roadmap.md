@@ -21,6 +21,8 @@
 | 008 | `008-processes_threads_memory_and_shared_sections.md` | Kernel mechanics | Explain processes vs threads and virtual → physical mapping, and share memory across processes with named sections, mutexes and events (runnable code) |
 | 009 | `009-what_a_driver_actually_is.md` | Kernel mechanics | Explain what's inside a `.sys` file, what configuration loads it, what `DriverEntry` registers, every hop from `DeviceIoControl` to the driver and back, and how drivers call drivers and the kernel (WDM + KMDF, real build) |
 | 010 | `010-lab_setup_work_plan.md` | Lab | Work plan: Windows 11 Arm VM on your Mac → driver test config → VS + WDK → build/sign/load TgCounter → crash, live dump, Verifier, WPR labs; optional live debugging options |
+| 011 | `011-session_handoff.md` | Lab | Handoff from lab session 1 (2026-10-23): decisions (VMware Fusion, 4 GB, T7), where every file lives, remaining steps |
+| 012 | `012-virtual_machines_and_where_software_lives.md` | Lab / foundations | Say where a downloaded, installed or running program actually lives (disk vs RAM, disk images, package managers), and explain how a VM works: VM exits, two-stage memory translation, sparse virtual disks, emulated vs paravirtual devices, virtual firmware/TPM, snapshots |
 
 Code: `code/shm_demo.c` (used in 008); `code/tgcounter/` (driver, IOCTL header, client; used in 009).
 
