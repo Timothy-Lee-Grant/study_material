@@ -20,6 +20,7 @@
 | 007 | `007-power_management_and_modern_standby.md` | Kernel mechanics | Explain S-states, D-states and Modern Standby, and debug a resume or standby bug |
 | 008 | `008-processes_threads_memory_and_shared_sections.md` | Kernel mechanics | Explain processes vs threads and virtual → physical mapping, and share memory across processes with named sections, mutexes and events (runnable code) |
 | 009 | `009-what_a_driver_actually_is.md` | Kernel mechanics | Explain what's inside a `.sys` file, what configuration loads it, what `DriverEntry` registers, every hop from `DeviceIoControl` to the driver and back, and how drivers call drivers and the kernel (WDM + KMDF, real build) |
+| 010 | `010-lab_setup_work_plan.md` | Lab | Work plan: Windows 11 Arm VM on your Mac → driver test config → VS + WDK → build/sign/load TgCounter → crash, live dump, Verifier, WPR labs; optional live debugging options |
 
 Code: `code/shm_demo.c` (used in 008); `code/tgcounter/` (driver, IOCTL header, client; used in 009).
 
@@ -41,7 +42,7 @@ The numbering follows your priority (debugging first). The debugging lectures ar
 
 ## Hands-on setup (once, for the labs)
 
-All the labs need a Windows machine. A Windows 11 Arm virtual machine on your Mac is enough to:
+All the labs need a Windows machine. A Windows 11 Arm virtual machine on your Mac is enough (step-by-step plan: `010-lab_setup_work_plan.md`) to:
 - install WinDbg (`winget install Microsoft.WinDbg`), the Windows Performance Toolkit (part of the Windows ADK) and Sysinternals (NotMyFault, LiveKD),
 - create and analyze crash dumps and live dumps,
 - run Driver Verifier and WPR/WPA,
