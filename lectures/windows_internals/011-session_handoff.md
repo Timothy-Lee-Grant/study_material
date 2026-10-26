@@ -1,26 +1,28 @@
-2026_10_24_20_05-(Session-Handoff)
+2026_10_25_19_42-(Session-Handoff)
 
 # 011 — Session Handoff: Windows Driver Lab Setup (living document)
 
 > **For:** Timothy, and Claude at the start of each new session
-> **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break)
-> **Last updated:** 2026-10-24 20:05
+> **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4)
+> **Last updated:** 2026-10-25 19:42
 > **Plan this follows:** [`010-lab_setup_work_plan.md`](010-lab_setup_work_plan.md). Its Phases 0–6 still apply, with the changes listed under "Decisions" below.
-> **Where we are now:** ✅ **Phases 0–3 complete.** Windows 11 Pro 26H2 (26300.9711) ARM64 VM with test signing on, the debugging tools installed, and **VS 2026 + SDK 10.0.28000.2957 + WDK building ARM64 drivers** (HelloKmdf built). **3 snapshots** taken (the latest is `toolchain-ready`). The VM is **shut down**. **Next: Phase 4 (TgCounter)**, starting with setting up the Fusion shared folder.
+> **Where we are now:** ✅ **Phases 0–4 complete.** TgCounter (ARM64, signed with CN=TgTest) loads with `sc.exe start TgCounter`, logs to DebugView, and `tgclient.exe` increments the counter. **4 snapshots**, the latest is **`tgcounter-works`**; the VM is **shut down**. A demo runbook exists: [`012-demo_runbook.md`](012-demo_runbook.md). **Next: Phase 5** (inspect, crash, analyze).
 
 ---
 
 ## TL;DR for next session (start here)
 
-1. **Fusion shared folder** (not done yet; the `.vmx` has no sharing entries): start the VM → Virtual Machine → Settings → **Sharing** → Enable Shared Folders → **+** `/Volumes/T7/windows_experiment/shared` (Read & Write) → in Windows open `\\vmware-host\Shared Folders\shared\tgcounter` → copy it to **`C:\lab\tgcounter\`**.
-2. **Build the driver:** VS 2026 → new **Empty WDM Driver** project `TgCounter` in `C:\lab\` → Add Existing `tgcounter.c` (Source Files) + `tgcounter_ioctl.h` (Header Files) → platform **ARM64** → Build. If the INF causes an error, remove it from the project. Expect `TgCounter.sys` + `.pdb` in `ARM64\Debug\`.
-3. **Build the client:** new **Console App (C++)** `tgclient` → delete `tgclient.cpp` → Add Existing `tgclient.c` + the header → ARM64 → Build.
-4. **Sign + load:** the 010 plan's §4.4 (`New-SelfSignedCertificate` → trust in `certlm.msc` Root + Trusted Publishers → `signtool sign /fd sha256 …`) and §4.5 (`sc create TgCounter type= kernel …` → `sc start` → DebugView shows `TgCounter: loaded from …` → `tgclient.exe` prints 1, 2, 3).
-5. Snapshot `tgcounter-works`.
+**To show off the current state:** follow [`012-demo_runbook.md`](012-demo_runbook.md) (prep → 7 acts → reset).
 
-**Snapshots (in order):** `clean-windows-testmode` (17:56) → `driver-lab-ready` (18:19) → `toolchain-ready` (~20:03, current). All were taken with the VM off.
-**Disk:** the VM bundle is **63 GB** on the T7 (the T7 has 846 GB free). C: inside Windows had ~67 GB free before the SDK/WDK.
-**Optional side requests still open:** (a) a lecture on how virtual machines work (the user's pasted request, also covering their Linux/apt background and the memory question in entry 27); offered, not yet confirmed, location TBD (this folder or the windows_internals lectures). (b) Check the installed WDK version is 10.0.28000.x (Settings → Apps → "Windows Driver Kit").
+**To continue the lab: Phase 5** (see the 010 plan §5; adjusted for this setup):
+1. **5.1 Local kernel debugging:** admin prompt → `bcdedit /debug on` → reboot → WinDbg (admin) → File → Attach to kernel → **Local** → `.symfix C:\symbols`, `.sympath+ C:\lab\TgCounter\ARM64\Debug`, `.reload` → with TgCounter started: `lm m TgCounter`, `!drvobj TgCounter 2`, `!devobj \Device\TgCounter`. (Read-only: no breakpoints.)
+2. **5.2 Crash on purpose:** add `IOCTL_TGCOUNTER_CRASH` (0x8FF; NULL write at DISPATCH_LEVEL) to the driver + a `crash` argument to the client → rebuild → **re-sign** → `sc.exe stop` → copy → `sc.exe start` → predict the stop code → crash → analyze `C:\Windows\MEMORY.DMP` with `!analyze -v`. **Snapshot first.**
+3. 5.3 live dump, 5.4 Driver Verifier, 5.5 WPR trace.
+
+**Still open / unconfirmed:** whether the service is still registered (`sc.exe query TgCounter`); the Phase 4 wrap-up results (second run 4/5/6, WinObj, stop prediction) weren't reported; `certutil -f -addstore TrustedPublisher` (not needed); the installed WDK version (expected 10.0.28000.x); the VM lecture (offered, not confirmed). Shared folder: the `.vmx` has no `sharedFolder` entries even though the source reached `C:\lab\src\`, so how it was transferred isn't confirmed. If the folder is needed, set up Sharing again.
+
+**Snapshots (in order):** `clean-windows-testmode` (10-24 17:56) → `driver-lab-ready` (10-24 18:19) → `toolchain-ready` (10-24 ~20:03) → **`tgcounter-works` (10-25 ~19:35, current)**. All were taken with the VM off.
+**Disk:** the VM bundle is **72 GB** on the T7.
 
 ## Status board
 
@@ -44,8 +46,11 @@
 | Phase 3: **VS 2026** + SDK 10.0.28000.2957 + WDK + HelloKmdf ARM64 build | ✅ Session 2: **build succeeded** (~19:58) |
 | Snapshot `toolchain-ready` | ✅ ~20:03, VM off (snapshot 3, the current one; verified in the `.vmsd`) |
 | Fusion shared folder `/Volumes/T7/windows_experiment/shared` | ⏳ **not set up yet** (no sharing entries in the `.vmx` as of 20:04). The folder exists on the Mac with the tgcounter source |
-| Phase 4: TgCounter build/sign/load | ⏳ **next session** (instructions for 4.1–4.3 given; see the TL;DR) |
-| Phase 5+ | ⏳ pending |
+| Phase 4: TgCounter build/sign/load | ✅ Session 3: loaded, logged, client 1/2/3 (entry 45) |
+| Snapshot `tgcounter-works` | ✅ 2026-10-25 ~19:35, VM off (snapshot 4, current; verified in the `.vmsd`) |
+| Demo runbook `012-demo_runbook.md` | ✅ written 2026-10-25 |
+| Phase 5 (inspect / crash / analyze) | ⏳ next |
+| Phase 6 (optional live debugging) | ⏳ later |
 
 ---
 
@@ -121,6 +126,7 @@
 /Volumes/T7/windows_experiment/
 ├── 010-lab_setup_work_plan.md                       ← master plan (phases 0–6)
 ├── 011-session_handoff.md                           ← this file
+├── 012-demo_runbook.md                              ← how to showcase TgCounter (prep, 7-act script, troubleshooting)
 ├── shared/                                          ← Fusion shared folder (Mac ↔ VM file transfer)
 │   └── tgcounter/                                   ← copy of the lecture 009 source (tgcounter.c, tgcounter_ioctl.h, tgclient.c)
 ├── Windows11_Client_arm64_en-us_26300_9457.iso      ← Windows 11 Arm64 ISO, 8.5 GB
@@ -243,6 +249,34 @@
 35. **Next steps given:** (1) shut down → snapshot `toolchain-ready`; (2) Fusion Settings → Sharing → Enable Shared Folders → add `/Volumes/T7/windows_experiment/shared` (Read & Write) → in Windows `\\vmware-host\Shared Folders\shared\tgcounter` → copy to `C:\lab\tgcounter\`; (3) Phase 4: an **Empty WDM Driver** project `TgCounter` in `C:\lab\` + Add Existing `tgcounter.c` and `tgcounter_ioctl.h` → ARM64 → build (remove the INF if it complains); a **Console App (C++)** `tgclient` → replace the .cpp with `tgclient.c` + the header → ARM64 → build; then the 010 plan's §4.4 signing and §4.5 `sc create/start` + DebugView.
 36. **~20:03: the user shut down the VM and took snapshot 3 `toolchain-ready`.** Verified in the `.vmsd`: `numSnapshots = 3`, current = 3, names `clean-windows-testmode` → `driver-lab-ready` → `toolchain-ready`. VM bundle: **63 GB** (was 36 GB before VS/SDK/WDK). T7: 85 GB used / 846 GB free.
 37. **~20:05: Session 2 ended; the user is taking a break.** State at the break: VM **off**; the shared folder is **not yet configured** in Fusion; Phase 4 not started. Resume from the TL;DR at the top.
+
+### Session 3 (2026-10-25)
+
+38. **The user asked for the Phase 4 steps.** State check: VM **running**; `.vmx` has **no shared folders configured** yet. Detailed steps given (they refine the TL;DR):
+    - **Folder layout (changed):** source in **`C:\lab\src\tgcounter\`**, so it doesn't clash with VS's `C:\lab\TgCounter` (Windows paths ignore case). Projects: `C:\lab\TgCounter\` (Empty WDM Driver) and `C:\lab\tgclient\` (Console App, `tgclient.cpp` deleted, `tgclient.c` added). Files are added with **Add → Existing Item** (linked, not copied).
+    - Outputs: `C:\lab\TgCounter\ARM64\Debug\TgCounter.sys/.pdb`, `C:\lab\tgclient\ARM64\Debug\tgclient.exe`. Optional `dumpbin /headers … | findstr /i "machine subsystem"` → `AA64 machine (ARM64)`, `Native`.
+    - **Signing in PowerShell instead of certlm.msc:** `New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=TgTest" -CertStoreLocation Cert:\LocalMachine\My` → `Export-Certificate … C:\lab\TgTest.cer` → `Import-Certificate` into `LocalMachine\Root` + `LocalMachine\TrustedPublisher`. Then (Developer PowerShell, admin) `signtool sign /fd sha256 /sm /s My /n TgTest …TgCounter.sys` + `signtool verify /pa /v`. ⚠️ **VS re-signs every build with WDKTestCert**, so re-run signtool after each rebuild.
+    - Load: `C:\drivers\`, `sc create TgCounter type= kernel start= demand binPath= C:\drivers\TgCounter.sys`, `sc start`. Expected DebugView: `TgCounter: loaded from \REGISTRY\MACHINE\SYSTEM\ControlSet001\Services\TgCounter`.
+    - **Expected client output (computed from the header):** `IOCTL_TGCOUNTER_INCREMENT = 0x80002000`, `IOCTL_TGCOUNTER_GET = 0x80006004`, then `INCREMENT -> 1/2/3 (4 bytes returned)`; a second run gives 4/5/6.
+    - Explore: regedit service key, `winobj` `\Device\TgCounter` + `\GLOBAL??\TgCounter`; predict the output after `sc stop` (expected: CreateFile error 2); cleanup `sc stop` + `sc delete` (DebugView `TgCounter: unloaded`); snapshot `tgcounter-works`.
+    - Troubleshooting added: 577 (re-sign/re-copy), 1275 (arch/App Control → CodeIntegrity log), 1073 (service exists), client errors 2/5, Smart App Control blocking tgclient.exe.
+    Progress reported in entry 39.
+39. **~18:51: TgCounter driver BUILT** (Debug ARM64, toolset `WindowsKernelModeDriver10.0`, target platform **Desktop**). The first build failed on the **INF** → removed it from the project → success (4 s). The build log shows VS auto-signing (`Done Adding Additional Store`, `Successfully signed`, which is WDKTestCert) and `Inf2Cat/DrvCat skipped (no inf)`. Output: **`C:\lab\TgCounter\ARM64\Debug\TgCounter.sys`**.
+    - `dumpbin /headers` (VS 2026 Developer PowerShell **v18.11.1**): **`AA64 machine (ARM64)`**, `10.00 subsystem version`, **`1 subsystem (Native)`** ✅
+    - tgclient build: the user didn't report it separately (assumed built; confirm `C:\lab\tgclient\ARM64\Debug\tgclient.exe` exists).
+40. **~19:05: certificate** (PowerShell 7.6.8, admin): `New-SelfSignedCertificate` CN=TgTest in `LocalMachine\My` ✅ → exported **`C:\lab\TgTest.cer`** (758 bytes) ✅ → imported to **`LocalMachine\Root`** ✅, **thumbprint `1A117A9DBB870ED38274D96324DBD4A19728E77E`**, EKU Code Signing → import to **`LocalMachine\TrustedPublisher` FAILED: `Access is denied. (0x80070005 (E_ACCESSDENIED))`**, even though the Root import (also admin-only) worked. Cause not confirmed. Workaround given: `certutil -addstore TrustedPublisher C:\lab\TgTest.cer` (admin). TrustedPublisher is **not required** for an `sc`-loaded legacy driver in test mode (it mainly affects PnP package installs), so don't let it block. Next: `signtool sign` from **Developer PowerShell run as admin** (the user's dev PS window started in `C:\Program Files\…`, so it was likely not elevated; signtool `/sm` needs admin for the machine key) → `signtool verify /pa /v` → 4.5 load.
+41. **TrustedPublisher root cause found:** `certutil -addstore TrustedPublisher C:\lab\TgTest.cer` → `Cannot open existing Cert store. Use -f option to force Cert store creation.` / `0x80070002 ERROR_FILE_NOT_FOUND`. **The TrustedPublisher store doesn't exist yet on this fresh install**, and PowerShell's `Import-Certificate` misreported that as E_ACCESSDENIED. Fix: **`certutil -f -addstore TrustedPublisher C:\lab\TgTest.cer`** (result not yet reported; optional anyway).
+42. **signtool `Missing filename`:** the user ran `signtool sign /fd sha256 /sm /s My /n TgTest` **without the .sys path** (the paste into the VM was cut off again, or only part of a wrapped line was copied). Now in **Developer PowerShell as admin** (prompt `C:\WINDOWS\system32`). Gave a shorter form: `cd C:\lab\TgCounter\ARM64\Debug` → `signtool sign /fd sha256 /sm /s My /n TgTest TgCounter.sys` → `signtool verify /pa /v TgCounter.sys`.
+    - ⚠️ **Gotcha: in PowerShell, `sc` is an alias for `Set-Content`. Use `sc.exe create/start/stop/delete/query`.** (The 010 plan's `sc` commands assume cmd.exe.)
+    - ⚠️ **Recurring: long pasted lines get truncated in the VM.** Prefer short commands (cd first) and check the echoed command.
+43. **~19:20: TgCounter.sys signed with TgTest ✅** (this time the user ran the full command; they hadn't noticed the path was part of the same command). `signtool sign … C:\lab\TgCounter\ARM64\Debug\TgCounter.sys` → `Done Adding Additional Store` / `Successfully signed`. `signtool verify /pa /v` → file sha256 `5357B7A1077478E5532501C53BBD9635D3E6DACE989DA31D1CDD6D52232481CF`; chain **Issued to/by: TgTest**, expires **Mon Oct 25 19:14:00 2027**, SHA1 `1A117A9DBB870ED38274D96324DBD4A19728E77E` (= the thumbprint); "File is not timestamped" (fine); **Successfully verified, 0 warnings, 0 errors**. (The file hash changes on every rebuild and re-sign.) TrustedPublisher `certutil -f` result: not reported.
+44. The user searched the Start menu for DebugView and found only web results. **winget's Sysinternals install is portable: command aliases only, no Start menu shortcuts.** Launch with `dbgview` from an admin shell (it inherits elevation). Don't download it separately. Next: `mkdir C:\drivers` → copy → `sc.exe create` → `sc.exe start` → DebugView `loaded from` → `tgclient.exe`.
+45. **~19:27–19:31: 🎉 PHASE 4 CORE SUCCESS.** In the admin Developer PowerShell: `mkdir C:\drivers` (created 7:27 PM) → `copy …TgCounter.sys C:\drivers\` → `sc.exe create TgCounter type= kernel start= demand binPath= C:\drivers\TgCounter.sys` → **`[SC] CreateService SUCCESS`** → `sc.exe start TgCounter` → **`TYPE : 1 KERNEL_DRIVER`, `STATE : 4 RUNNING (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)`**, exit codes 0, PID 0.
+    - **DebugView:** line 1 `TgCounter: loaded from \REGISTRY\M…` (PID System) ✅. After that, periodic lines (~every 5 s) `[0004:xxxx]CcFlushCachePriv: PrePr…` from PID System = **Cache Manager (Cc) informational DbgPrints**, visible because Debug Print Filter `DEFAULT=0xF` lets all components' info messages through (interpretation, not verified). Harmless; filter with Edit → Filter/Highlight → Include `TgCounter`.
+    - **`tgclient.exe`:** `IOCTL_TGCOUNTER_INCREMENT = 0x80002000`, `IOCTL_TGCOUNTER_GET = 0x80006004` (exactly as predicted in entry 38), `INCREMENT -> 1/2/3 (4 bytes returned)` ✅. **The TrustedPublisher import was NOT needed** (it wasn't confirmed done, and the driver loaded anyway).
+    - Remaining Phase 4 steps given: run again (expect 4/5/6), regedit service key (Type=1, Start=3, ImagePath), WinObj `\Device\TgCounter` + `\GLOBAL??\TgCounter`, predict-then-check after `sc.exe stop` (expected: CreateFile error 2 and `TgCounter: unloaded`; the WinObj entries disappear), **recommend keeping the service registered (no `sc.exe delete`)** for Phase 5 (it's demand-start, so it won't load at boot), shut down → snapshot `tgcounter-works`. **Next: Phase 5** (local kernel debugging, crash IOCTL + dump analysis, live dump, Verifier, WPR).
+46. **~19:35–19:40: the user shut down the VM and took snapshot 4 `tgcounter-works`.** Verified in the `.vmsd`: `numSnapshots = 4`, current = 4. VM bundle **72 GB** (was 63 GB). The wrap-up results (2nd run, WinObj, stop prediction, whether the service was deleted) weren't reported.
+47. **The user asked for a showcase document.** Wrote **`012-demo_runbook.md`**: a pitch plus a request-flow diagram; Part A prep (T7, Memory Pressure, optional snapshot restore, ⌘⇧5 recording, admin Developer PowerShell + `dbgview`, `sc.exe query` reset handling STOPPED/RUNNING/1060); Part B 7 acts (platform `winver` + `bcdedit`; artifact `dumpbin` + `signtool verify`; "before" client error 2; `sc.exe create/start` + DebugView loaded; client 1-2-3 then 4-5-6; WinObj + stop + error 2 again; optional live edit → build → re-sign → copy → start); Part C reset; Part D troubleshooting (1056, 1073, 577, 1275, file-in-use, error 5, `sc` vs `sc.exe`, …); Part E command cheat sheet; likely audience questions.
 
 ---
 
