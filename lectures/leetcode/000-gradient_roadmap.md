@@ -26,6 +26,7 @@
 | 012 | `012-data_structure_design_problems.md` | Design problems: the 8-step method, 8 problems incl. your rate limiter. **Oct 17:** restructured so each problem shows only its title and statement; the structures are revealed in §4 after a divider | not yet (Browser History attempted Oct 17) |
 | 013 | `013-stacks_and_monotonic_stacks.md` | Stacks: unresolved items, two-stack machines (your Browser History vs the queue: tops vs bottoms facing each other), invariants for any call order, saved state (RPN, Simplify Path, Decode String), monotonic stacks (Daily Temperatures, Car Fleet) | not yet |
 | 015 | `015-intervals_and_greedy.md` | Intervals and greedy: the overlap condition derived, touching rules, sort by start (merge/insert) vs end (435/452) with counterexamples + exchange argument, sweep for overlaps (2406), a test for when greedy is safe, Jump Game I/II (written out of order, Oct 19) | not yet |
+| 018 | `018-simulation_and_implementation_problems.md` | Simulation / implementation (kind 2): a six-step method (rules → state table → one step → stop → edge cases → trace), seven kinds: queue + formula (2073), direction table + one-pass reasoning (1041), bounce (6), circle `% len` (1823), interacting events with a stack (735), digits + overflow (7), simultaneous update + cycle detection (957). Your request, Oct 27; numbered after 017 since it wasn't in the planned groups | not yet |
 
 ---
 
@@ -160,7 +161,7 @@ It's worth doing once or twice so it isn't new on test day.
 ### 5. What this changes in the plan
 
 - **Design problems get their own lecture** (012, right after linked lists), not "later."
-- **Implementation problems** are a weekly practice item (one per week, using the playbook in §3), not a separate lecture yet. If they keep causing most of your bugs, they'll get one.
+- **Implementation problems** are a weekly practice item (one per week, using the playbook in §3), not a separate lecture yet. If they keep causing most of your bugs, they'll get one. **(Oct 27: they now have one, lecture 018.)**
 - **System design** is outside this LeetCode roadmap. When you want to start it, it should be its own track.
 - **Mock interview habit:** once a week, do one problem out loud, timed, without running the code, then trace and test it yourself before checking. That's the format that actually gets graded.
 

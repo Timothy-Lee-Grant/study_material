@@ -248,6 +248,21 @@ Do these **blind**: read only the statement in §3, and write the operations tab
 | [763 Partition Labels](https://leetcode.com/problems/partition-labels/) | Medium | ⬜ |
 | [134 Gas Station](https://leetcode.com/problems/gas-station/) (stretch) | Medium | ⬜ |
 
+### Simulation (lecture 018)
+
+| Problem | Level | Status |
+|---|---|---|
+| [2073 Time Needed to Buy Tickets](https://leetcode.com/problems/time-needed-to-buy-tickets/) | Easy | ⬜ |
+| [1041 Robot Bounded In Circle](https://leetcode.com/problems/robot-bounded-in-circle/) | Medium | ⬜ |
+| [735 Asteroid Collision](https://leetcode.com/problems/asteroid-collision/) | Medium | ⬜ |
+| [6 Zigzag Conversion](https://leetcode.com/problems/zigzag-conversion/) | Medium | ⬜ |
+| [1823 Find the Winner of the Circular Game](https://leetcode.com/problems/find-the-winner-of-the-circular-game/) | Medium | ⬜ |
+| [7 Reverse Integer](https://leetcode.com/problems/reverse-integer/) | Medium | 🟡 redo (July) |
+| [957 Prison Cells After N Days](https://leetcode.com/problems/prison-cells-after-n-days/) | Medium | ⬜ |
+| [1599 Maximum Profit of Operating a Centennial Wheel](https://leetcode.com/problems/maximum-profit-of-operating-a-centennial-wheel/) | Medium | ⬜ |
+| [2391 Minimum Amount of Time to Collect Garbage](https://leetcode.com/problems/minimum-amount-of-time-to-collect-garbage/) | Medium | ⬜ |
+| [68 Text Justification](https://leetcode.com/problems/text-justification/) (stretch) | Hard | ⬜ |
+
 ---
 
 ## Attempt log
