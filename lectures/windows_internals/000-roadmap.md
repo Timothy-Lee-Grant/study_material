@@ -23,8 +23,9 @@
 | 010 | `010-lab_setup_work_plan.md` | Lab | Work plan: Windows 11 Arm VM on your Mac → driver test config → VS + WDK → build/sign/load TgCounter → crash, live dump, Verifier, WPR labs; optional live debugging options |
 | 011 | `011-session_handoff.md` | Lab | Handoff from lab session 1 (2026-10-23): decisions (VMware Fusion, 4 GB, T7), where every file lives, remaining steps |
 | 012 | `012-virtual_machines_and_where_software_lives.md` | Lab / foundations | Say where a downloaded, installed or running program actually lives (disk vs RAM, disk images, package managers), and explain how a VM works: VM exits, two-stage memory translation, sparse virtual disks, emulated vs paravirtual devices, virtual firmware/TPM, snapshots |
+| 013 | `013-phase5_guide_inspect_crash_analyze.md` | Lab | Phase 5 guide: Phase 5 code via shared folder → local kernel debugging (dispatch table, read the counter from kernel memory) → live dump → crash on purpose + 0xD1 analysis → Driver Verifier makes a paged-pool-at-DISPATCH bug deterministic → WPR/WPA |
 
-Code: `code/shm_demo.c` (used in 008); `code/tgcounter/` (driver, IOCTL header, client; used in 009).
+Code: `code/shm_demo.c` (used in 008); `code/tgcounter/` (driver, IOCTL header, client; used in 009); `code/tgcounter_phase5/` (lab-only bug IOCTLs; used in 013).
 
 ## Reading order
 

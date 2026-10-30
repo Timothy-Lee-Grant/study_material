@@ -4,9 +4,9 @@
 
 > **For:** Timothy, and Claude at the start of each new session
 > **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4)
-> **Last updated:** 2026-10-25 19:42
+> **Last updated:** 2026-10-30 01:45
 > **Plan this follows:** [`010-lab_setup_work_plan.md`](010-lab_setup_work_plan.md). Its Phases 0–6 still apply, with the changes listed under "Decisions" below.
-> **Where we are now:** ✅ **Phases 0–4 complete.** TgCounter (ARM64, signed with CN=TgTest) loads with `sc.exe start TgCounter`, logs to DebugView, and `tgclient.exe` increments the counter. **4 snapshots**, the latest is **`tgcounter-works`**; the VM is **shut down**. A demo runbook exists: [`012-demo_runbook.md`](012-demo_runbook.md). **Next: Phase 5** (inspect, crash, analyze).
+> **Where we are now:** ✅ **Phases 0–4 complete.** TgCounter (ARM64, signed with CN=TgTest) loads with `sc.exe start TgCounter`, logs to DebugView, and `tgclient.exe` increments the counter. **4 snapshots**, the latest is **`tgcounter-works`**; the VM is **shut down**. A demo runbook exists: [`012-demo_runbook.md`](012-demo_runbook.md). **Next: Phase 5**: follow the dedicated guide [`013-phase5_guide_inspect_crash_analyze.md`](013-phase5_guide_inspect_crash_analyze.md) (it supersedes the Phase 5 notes below).
 
 ---
 
@@ -14,7 +14,7 @@
 
 **To show off the current state:** follow [`012-demo_runbook.md`](012-demo_runbook.md) (prep → 7 acts → reset).
 
-**To continue the lab: Phase 5** (see the 010 plan §5; adjusted for this setup):
+**To continue the lab: Phase 5 → use [`013`](013-phase5_guide_inspect_crash_analyze.md).** (Older summary kept for reference:)
 1. **5.1 Local kernel debugging:** admin prompt → `bcdedit /debug on` → reboot → WinDbg (admin) → File → Attach to kernel → **Local** → `.symfix C:\symbols`, `.sympath+ C:\lab\TgCounter\ARM64\Debug`, `.reload` → with TgCounter started: `lm m TgCounter`, `!drvobj TgCounter 2`, `!devobj \Device\TgCounter`. (Read-only: no breakpoints.)
 2. **5.2 Crash on purpose:** add `IOCTL_TGCOUNTER_CRASH` (0x8FF; NULL write at DISPATCH_LEVEL) to the driver + a `crash` argument to the client → rebuild → **re-sign** → `sc.exe stop` → copy → `sc.exe start` → predict the stop code → crash → analyze `C:\Windows\MEMORY.DMP` with `!analyze -v`. **Snapshot first.**
 3. 5.3 live dump, 5.4 Driver Verifier, 5.5 WPR trace.
@@ -49,7 +49,7 @@
 | Phase 4: TgCounter build/sign/load | ✅ Session 3: loaded, logged, client 1/2/3 (entry 45) |
 | Snapshot `tgcounter-works` | ✅ 2026-10-25 ~19:35, VM off (snapshot 4, current; verified in the `.vmsd`) |
 | Demo runbook `012-demo_runbook.md` | ✅ written 2026-10-25 |
-| Phase 5 (inspect / crash / analyze) | ⏳ next |
+| Phase 5 (inspect / crash / analyze) | ⏳ next: guide `013` written 2026-10-30; Phase 5 code in `code/tgcounter_phase5/` |
 | Phase 6 (optional live debugging) | ⏳ later |
 
 ---
@@ -277,6 +277,14 @@
     - Remaining Phase 4 steps given: run again (expect 4/5/6), regedit service key (Type=1, Start=3, ImagePath), WinObj `\Device\TgCounter` + `\GLOBAL??\TgCounter`, predict-then-check after `sc.exe stop` (expected: CreateFile error 2 and `TgCounter: unloaded`; the WinObj entries disappear), **recommend keeping the service registered (no `sc.exe delete`)** for Phase 5 (it's demand-start, so it won't load at boot), shut down → snapshot `tgcounter-works`. **Next: Phase 5** (local kernel debugging, crash IOCTL + dump analysis, live dump, Verifier, WPR).
 46. **~19:35–19:40: the user shut down the VM and took snapshot 4 `tgcounter-works`.** Verified in the `.vmsd`: `numSnapshots = 4`, current = 4. VM bundle **72 GB** (was 63 GB). The wrap-up results (2nd run, WinObj, stop prediction, whether the service was deleted) weren't reported.
 47. **The user asked for a showcase document.** Wrote **`012-demo_runbook.md`**: a pitch plus a request-flow diagram; Part A prep (T7, Memory Pressure, optional snapshot restore, ⌘⇧5 recording, admin Developer PowerShell + `dbgview`, `sc.exe query` reset handling STOPPED/RUNNING/1060); Part B 7 acts (platform `winver` + `bcdedit`; artifact `dumpbin` + `signtool verify`; "before" client error 2; `sc.exe create/start` + DebugView loaded; client 1-2-3 then 4-5-6; WinObj + stop + error 2 again; optional live edit → build → re-sign → copy → start); Part C reset; Part D troubleshooting (1056, 1073, 577, 1275, file-in-use, error 5, `sc` vs `sc.exe`, …); Part E command cheat sheet; likely audience questions.
+
+
+### Session 4 (2026-10-30)
+
+48. **The user reported Phase 4 success** ("VM successfully loaded… kernel driver working… saw it going from user space to the kernel driver") and asked for a guide for the next section, like 010. Claude read this handoff in full, plus 012.
+49. **Wrote `013-phase5_guide_inspect_crash_analyze.md`**, tailored to this setup (Fusion, VS 2026, ARM64, 4 GB, `sc.exe`, re-sign after build, short commands): 5.0 code via the shared folder + rebuild loop + snapshot `phase5-code-loaded`; 5.1 local KD (`bcdedit /dbgsettings local`, `/debug on`; `!drvobj`, `!devobj`, **`dt TgCounter!_TG_EXTENSION` to read the counter**, `!pool` on the paged allocation, `!object`, ARM64 `u`, `!devnode`/`!devstack`; then `/debug off` before the crash labs); 5.2 live dump (0x161); 5.3 crash IOCTL → predicted 0xD1 (P1 0, P2 2) + an analysis table; 5.4 the paged-pool-under-spin-lock bug: no crash without Verifier, crash with `verifier /standard /driver TgCounter.sys`, proven with `!pte`; 5.5 WPR/WPA. Snapshots: `phase5-code-loaded`, `before-crash-labs`, `phase5-done`.
+50. **Phase 5 code written to the repo** at `lectures/windows_internals/code/tgcounter_phase5/` (`tgcounter.c` 137 lines, `tgcounter_ioctl.h` 27, `tgclient.c` 55). New IOCTLs: CRASH fn 0x8FF = `0x800023FC`; PAGED_AT_DISPATCH fn 0x8FE = `0x800023F8`. The load message now says `(phase 5 build)`. Verified on Linux: the driver compiles (MinGW DDK + an `ExAllocatePool2` prototype shim), the client compiles and runs under Wine (error 2 in all modes). The check caught a `send` vs Winsock name clash (renamed `SendIoctl`). `nm` showed `KeRaiseIrql` is inlined (no import) while `KeAcquireSpinLock` imports `KeAcquireSpinLockRaiseToDpc`, which is why bug #2 uses a spin lock (Verifier can intercept it).
+51. **Open:** set up the Fusion shared folder (§5.0 A2), still pending since entry 35. Unverified: local KD on ARM64 in Fusion (fallback: live dump), and which stop code Verifier gives for bug #2 (0xD1 vs 0xC4).
 
 ---
 
