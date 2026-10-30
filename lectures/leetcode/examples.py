@@ -931,7 +931,7 @@ class Solution:
 # I am realizing that I don't know how to do the walk-throughs on the linked list problems. I attempted to look at the problem from yesterday of mergeTwoLists, and I was unable to think about how to walk through it and verify it. I attempted to submit it and it failed.
 
 
-class Solution:
+class Solution: 
     def productExceptSelf(self, nums: list[int]) -> list[int]:
         # I know that this is a prefix sum problem. I am doing this to practice the prefix sum concepts.
 
