@@ -938,3 +938,39 @@ class Solution:
         # I need to create a new array (answer) and in that the indexes in answer will correspond to the index which we want to exclude. 
 
         # A summation can be done with the prefix sum idea, but now a product can't because I can't just select the portion of the prefix data structure to get a range. No idea how to do this one.
+
+
+
+# Attempting to reason through a problem like course scheduler (I am doing this from memory, not on the actual leetcode website)
+# courses should be a list of tuples, where you can take 
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.neighbors = []
+
+def Solution(courses):
+
+    def CreateGraphFromEdgeList(el):
+        # I will need to take in the list which tells me the edges, but I am also going to need to create the Nodes myself 
+        pass
+
+    # Returns bool: true (cycle exists), false (no cycle)
+    def ContainsCycle(curr):
+        # I will need to traverse from this curr node and use (dfs or bfs.... I will decide later) and see if a cycle is there.
+        pass
+
+    visited = set()
+    myGraph = []
+
+    # Create graph from edge list
+    CreateGraphFromEdgeList(courses)
+
+    # I guess I will need to have an itterable of nodes. So this means that I will need to have actual Node objects.
+    for node in myGraph:
+        if node not in visited:
+            if ContainsCycle(node):
+                # If it is found to have a cycle, then it is impossible to complete this
+                return False
+
+    return True
