@@ -10,3 +10,4 @@ Lectures built from **your own attempts**, kept outside the gradient roadmap (`.
 | # | Date of attempts | Problems | Main ideas |
 |---|---|---|---|
 | 001 | 2026-10-18 | 643, 187, 26, 112 | Fixed-window bounds four ways; `<` vs `<=` as sets; two-point check; brute-force checker; "build, then slide"; reader/writer and why `writer` is the count; name-vs-lines check; shrink-the-constant tracing; brute force first; leaf vs `None` |
+| 002 | 2026-10-31 | Birthday Chocolate (revisit) + July attempts | **One model** for window bounds: loop over the left cut `start`, window `s[start:start+m]`; the only `-1` is "slice `[a:b]` holds boxes `a … b-1`"; box that leaves vs first box that stays; why one example can't pin a formula; sum-each-slice first; translation to `i` = box entering; a stuck protocol |

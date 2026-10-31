@@ -288,4 +288,5 @@ Add one row per attempt, newest at the bottom. Short is fine. Put your code in `
 | 2026-10-20 | 739 Daily Temperatures | ✅ | — | yes | Solved **without reading lecture 013**: stack of unresolved days, the decreasing shape, and the equal-temperature case all derived; caught the index-vs-distance bug while tracing, before submitting. The code is right but the trace slipped at day 6 (see notes in chat) | examples.py |
 | 2026-10-21 | 21 Merge Two Sorted Lists | ❌ | — | couldn't (no linked-list trace format) | `tail` never moves (no `tail = tail.next`), so each step replaces `dummy.next`; returns `4`. See this week's recap, Entry 1 §1.2–1.3 | examples.py |
 | 2026-10-23 | 55 Jump Game | ✅ (checked on 5,000 random inputs) | — | yes (2 inputs) | Caught `nums[i]` → `nums[i] + i` during the walk-through. "No way I'd come up with the trick": see recap §1.7 | examples.py |
+| 2026-10-31 | Birthday Chocolate (HackerRank, spaced revisit) | ❌ stuck ~90 min | 90 | — | Box-vs-cut mix in the sliding window: `i` (a box) vs `stop - start` (cuts); `i - m` (box that leaves) vs `i - m + 1` (first box that stays). See attempt review 002 | message |
 | | | | | | | |
