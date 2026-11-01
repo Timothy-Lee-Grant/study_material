@@ -940,6 +940,8 @@ class Solution:
         # A summation can be done with the prefix sum idea, but now a product can't because I can't just select the portion of the prefix data structure to get a range. No idea how to do this one.
 
 
+# Oct 31, 2026
+
 
 # Attempting to reason through a problem like course scheduler (I am doing this from memory, not on the actual leetcode website)
 # courses should be a list of tuples, where you can take 
@@ -974,3 +976,74 @@ def Solution(courses):
                 return False
 
     return True
+
+
+
+# Attempting to do the Serial Packet 
+# (I have only looked at the description, and the hints which the interviewer gave during my interview).
+
+# 
+class Packet:
+    def __init__(self):
+        self.length = -1
+        self.data = []
+
+
+
+class Parser:
+
+    enum states = {LookingForHeader, AtLength, ProcessingData, AtCheckSum}
+
+    def __init__(self):
+        self.successful_packets = []
+        self.current_state = LookingForHeader
+        self.current_data_byte_number = 0
+        self.rolling_sum = 0
+
+    # Input: list of bytes
+    # Operations: Needs to take in all the bytes, and process each item
+    # Needs to: be aware of current position (state) when building a full packet (possible states: looking for start, at header, at len, processing data (this will also need to know which byte it is currently looking at, and also keep track of the current packets length), at checksum)
+    def feed(self, byteList):
+        # (I need a way to tell myself where I am at in the building process. This means that I will need to have a class variable that keeps track of this. I am now realizing that I also need to be cascading processing. So I think I can do this with a for loop, keep itterating over the list)
+        for byte in byteList:
+            if self.current_state == LookingForHeader:
+                if byte == 0xAA:
+                    self.current_state = AtLength
+                    self.current_packet = Packet()
+
+            elif self.current_state == AtLength:
+                self.current_packet.length = byte
+                self.rolling_sum += int(byte)
+                self.current_state = ProcessingData
+
+            elif self.current_state == ProcessingData:
+                # the packet we created (self.current_packet) is the 'source of truth' for how much we need to process the data. The length field here is going to be how many bytes. So I will need to know which byte I am on, and only proceed when I am finished fully processing.
+                if self.current_packet.length == self.current_data_byte_number - 1:
+                    self.current_packet.data.append(byte)
+                    self.current_state = AtCheckSum
+                else:
+                    self.current_data_byte_number += 1
+                    self.current_packet.data.append(byte)
+
+                self.rolling_sum += int(byte)
+
+            elif self.current_state == AtCheckSum:
+                # only keep packet if valid
+                # checksum is: (LEN + DATA[0] + ... + DATA[LEN-1]) % 256    So this indicates to me that along the way I want a rolling sum
+                if self.rolling_sum % 256 == byte:
+                    # Valid, so add it.
+                    self.successful_packets.append(self.current_packet.data)
+
+                # reset to Looking for Header
+                self.current_state = LookingForHeader
+                self.current_data_byte_number = 0
+                self.rolling_sum = 0
+
+    # Inputs: None
+    # Output: List of all data items (of successful packets found since last call to get_all_packets()).
+    # Operations: Needs to 
+    # Need to: know what my current successful datas are (I can use a list and keep appending). Then delete the list after this call and start fresh.
+    def get_all_packets(self):
+        packets_data_to_return = self.successful_packets.copy()
+        self.successful_packets = []
+        return packets_data_to_return
