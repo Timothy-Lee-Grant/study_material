@@ -1,12 +1,12 @@
-2026_10_25_19_42-(Session-Handoff)
+2026_11_01_01_35-(Session-Handoff)
 
 # 011 — Session Handoff: Windows Driver Lab Setup (living document)
 
 > **For:** Timothy, and Claude at the start of each new session
-> **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4)
-> **Last updated:** 2026-10-30 01:45
+> **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4); Session 4 (2026-10-31 ~19:20 → 2026-11-01 ~01:35, Phase 5.0 + start of 5.1; ended for the night)
+> **Last updated:** 2026-11-01 ~01:35 PST (note: DST ended overnight, so file times on the Mac jump back an hour)
 > **Plan this follows:** [`010-lab_setup_work_plan.md`](010-lab_setup_work_plan.md). Its Phases 0–6 still apply, with the changes listed under "Decisions" below.
-> **Where we are now:** ✅ **Phases 0–4 complete.** TgCounter (ARM64, signed with CN=TgTest) loads with `sc.exe start TgCounter`, logs to DebugView, and `tgclient.exe` increments the counter. **4 snapshots**, the latest is **`tgcounter-works`**; the VM is **shut down**. A demo runbook exists: [`012-demo_runbook.md`](012-demo_runbook.md). **Next: Phase 5**: follow the dedicated guide [`013-phase5_guide_inspect_crash_analyze.md`](013-phase5_guide_inspect_crash_analyze.md) (it supersedes the Phase 5 notes below).
+> **Where we are now:** ✅ **Phases 0–4 complete. Phase 5: 5.0 ✅ done, 5.1 ⏳ in progress (exercise 1 of 8 done).** The Phase 5 TgCounter (crash + paged-at-dispatch IOCTLs) is built in **`C:\lab\lab2\`**, signed with TgTest, registered again as a service, and working (`get` → 3). **Local kernel debugging works on this ARM64 VM** (`lkd>`), and `lm m TgCounter` shows private symbols. **5 snapshots**; the newest is **`TgCounter: loaded (phase 5 build)`** (= the guide's `phase5-code-loaded`). Guide: [`phase5/013-phase5_guide_inspect_crash_analyze.md`](phase5/013-phase5_guide_inspect_crash_analyze.md). Demo runbook: [`012-demo_runbook.md`](012-demo_runbook.md).
 
 ---
 
@@ -14,15 +14,37 @@
 
 **To show off the current state:** follow [`012-demo_runbook.md`](012-demo_runbook.md) (prep → 7 acts → reset).
 
-**To continue the lab: Phase 5 → use [`013`](013-phase5_guide_inspect_crash_analyze.md).** (Older summary kept for reference:)
+**To continue the lab: Phase 5, lab 5.1, exercise 2.** Follow **`phase5/013-phase5_guide_inspect_crash_analyze.md`** (it supersedes the 010 plan's Phase 5 and the outline below), with **these corrections for this VM:**
+- **Paths:** everything is in **`C:\lab\lab2\`**: `C:\lab\lab2\TgCounter\ARM64\Debug\TgCounter.sys/.pdb` and `C:\lab\lab2\tgclient\ARM64\Debug\tgclient.exe`. The guide's `C:\lab\TgCounter\…` **doesn't exist** anymore (WinDbg error 0x3, entry 53).
+- **Rebuild loop:** build in VS (ARM64/Debug) → `sc.exe stop TgCounter` → `cd C:\lab\lab2\TgCounter\ARM64\Debug` → `signtool sign /fd sha256 /sm /s My /n TgTest TgCounter.sys` → `copy TgCounter.sys C:\drivers\` → `sc.exe start TgCounter`. (VS's own "Successfully signed" is WDKTestCert, which isn't enough.)
+- **Debug mode is ON** (`bcdedit /debug on`, done in Session 4 for 5.1). **Turn it off (`bcdedit /debug off` + reboot) before the crash labs 5.3/5.4**, as the guide says at the end of 5.1.
+
+**Resume checklist (about 5 minutes):**
+1. Start the VM, log in. Admin **Developer PowerShell for VS 2026** → `sc.exe start TgCounter` (demand-start; it doesn't load at boot) → `C:\lab\lab2\tgclient\ARM64\Debug\tgclient.exe` (→ 1, 2, 3). Optional: `dbgview` (Capture Kernel ✓).
+2. **WinDbg as administrator** → File → Attach to kernel → **Local** → OK → you get an `lkd>` prompt.
+3. Type commands in the box next to **`lkd>`** at the bottom of the Command pane, one at a time, then Enter:
+   ```
+   .symfix C:\symbols
+   .sympath+ C:\lab\lab2\TgCounter\ARM64\Debug
+   .reload
+   .reload /f TgCounter.sys
+   lm m TgCounter
+   ```
+   Expect `(private pdb symbols) c:\lab\lab2\tgcounter\arm64\debug\TgCounter.pdb`. (`.symfix` replaces the whole path, so it clears a bad entry.)
+4. **Continue with exercise 2 (predict first):** `!drvobj \Driver\TgCounter 2` → `!devobj \Device\TgCounter` (note `DevExt`) → `dt TgCounter!_TG_EXTENSION <DevExt>` (expect 3; run the client again → 6) → `dd poi(TgCounter!g_PagedValue) L1` (42 = `0000002a`) + `!pool poi(TgCounter!g_PagedValue)` (Paged, `TgTg`) → `!object \GLOBAL??\TgCounter` → `u TgCounter!TgDispatchDeviceControl L20` → `!devnode 0 1`.
+5. Then `bcdedit /debug off` + reboot → **5.2 live dump** → shut down → snapshot `before-crash-labs` → **5.3 crash**.
+
+**Teaching style that worked (Session 4):** one command at a time, a plain-words table explaining each part of the output, and a "predict first" question before the next command. The user is new to WinDbg (asked "where do I run those commands?").
+
+Original outline (kept for history; the 013 guide is the current version):
 1. **5.1 Local kernel debugging:** admin prompt → `bcdedit /debug on` → reboot → WinDbg (admin) → File → Attach to kernel → **Local** → `.symfix C:\symbols`, `.sympath+ C:\lab\TgCounter\ARM64\Debug`, `.reload` → with TgCounter started: `lm m TgCounter`, `!drvobj TgCounter 2`, `!devobj \Device\TgCounter`. (Read-only: no breakpoints.)
 2. **5.2 Crash on purpose:** add `IOCTL_TGCOUNTER_CRASH` (0x8FF; NULL write at DISPATCH_LEVEL) to the driver + a `crash` argument to the client → rebuild → **re-sign** → `sc.exe stop` → copy → `sc.exe start` → predict the stop code → crash → analyze `C:\Windows\MEMORY.DMP` with `!analyze -v`. **Snapshot first.**
 3. 5.3 live dump, 5.4 Driver Verifier, 5.5 WPR trace.
 
-**Still open / unconfirmed:** whether the service is still registered (`sc.exe query TgCounter`); the Phase 4 wrap-up results (second run 4/5/6, WinObj, stop prediction) weren't reported; `certutil -f -addstore TrustedPublisher` (not needed); the installed WDK version (expected 10.0.28000.x); the VM lecture (offered, not confirmed). Shared folder: the `.vmx` has no `sharedFolder` entries even though the source reached `C:\lab\src\`, so how it was transferred isn't confirmed. If the folder is needed, set up Sharing again.
+**Still open / unconfirmed:** whether the snapshot `TgCounter: loaded (phase 5 build)` was taken before or after `bcdedit /debug on` (most likely after: a cold boot followed it, which would be the debug-on reboot); how the Phase 5 files reached `C:\lab\lab2\` (the `.vmx` **still has no `sharedFolder` entries**, and the logs say "publishing 0 shares", so probably drag-and-drop or the clipboard); what happened to the Phase 4 projects in `C:\lab\TgCounter`; whether the old `C:\lab\src\tgcounter\` is still used; `certutil -f -addstore TrustedPublisher` (not needed). ✅ Resolved in Session 4: the service had been **deleted** (re-created, entry 50); **WDK = 10.0.28000** (entry 49); local KD on ARM64 **works** (entry 52).
 
-**Snapshots (in order):** `clean-windows-testmode` (10-24 17:56) → `driver-lab-ready` (10-24 18:19) → `toolchain-ready` (10-24 ~20:03) → **`tgcounter-works` (10-25 ~19:35, current)**. All were taken with the VM off.
-**Disk:** the VM bundle is **72 GB** on the T7.
+**Snapshots (in order):** `clean-windows-testmode` (10-24 17:56) → `driver-lab-ready` (10-24 18:19) → `toolchain-ready` (10-24 ~20:03) → `tgcounter-works` (10-25 ~19:35) → **`TgCounter: loaded (phase 5 build)` (2026-11-01 ~01:49 PDT = 08:49 UTC, current; uid 6, parent 4, `Virtual Disk-000004.vmdk`)**. All were taken with the VM off (each `.vmsn` is 2.4 MB, so no memory state). Still to take: `before-crash-labs` (guide 5.3).
+**Disk:** the VM bundle is **109 GB** on the T7 (was 72 GB after Session 3).
 
 ## Status board
 
@@ -49,7 +71,11 @@
 | Phase 4: TgCounter build/sign/load | ✅ Session 3: loaded, logged, client 1/2/3 (entry 45) |
 | Snapshot `tgcounter-works` | ✅ 2026-10-25 ~19:35, VM off (snapshot 4, current; verified in the `.vmsd`) |
 | Demo runbook `012-demo_runbook.md` | ✅ written 2026-10-25 |
-| Phase 5 (inspect / crash / analyze) | ⏳ next: guide `013` written 2026-10-30; Phase 5 code in `code/tgcounter_phase5/` |
+| Phase 5 guide `phase5/013-…md` + source | ✅ written 2026-10-30; code staged in `shared/tgcounter_phase5/` (Session 4) |
+| 5.0 Phase 5 build (`C:\lab\lab2\`), TgTest re-sign, service re-created, smoke test | ✅ Session 4 (entries 49–51) |
+| Snapshot `TgCounter: loaded (phase 5 build)` | ✅ 2026-11-01 ~01:49 PDT, VM off (snapshot 5, current) |
+| 5.1 Local kernel debugging | ⏳ **in progress**: `bcdedit /debug on` ✅, Local attach ✅, symbols ✅, `lm m TgCounter` ✅; next: `!drvobj` |
+| 5.2 live dump · 5.3 crash · 5.4 Verifier · 5.5 WPR | ⏳ |
 | Phase 6 (optional live debugging) | ⏳ later |
 
 ---
@@ -278,13 +304,25 @@
 46. **~19:35–19:40: the user shut down the VM and took snapshot 4 `tgcounter-works`.** Verified in the `.vmsd`: `numSnapshots = 4`, current = 4. VM bundle **72 GB** (was 63 GB). The wrap-up results (2nd run, WinObj, stop prediction, whether the service was deleted) weren't reported.
 47. **The user asked for a showcase document.** Wrote **`012-demo_runbook.md`**: a pitch plus a request-flow diagram; Part A prep (T7, Memory Pressure, optional snapshot restore, ⌘⇧5 recording, admin Developer PowerShell + `dbgview`, `sc.exe query` reset handling STOPPED/RUNNING/1060); Part B 7 acts (platform `winver` + `bcdedit`; artifact `dumpbin` + `signtool verify`; "before" client error 2; `sc.exe create/start` + DebugView loaded; client 1-2-3 then 4-5-6; WinObj + stop + error 2 again; optional live edit → build → re-sign → copy → start); Part C reset; Part D troubleshooting (1056, 1073, 577, 1275, file-in-use, error 5, `sc` vs `sc.exe`, …); Part E command cheat sheet; likely audience questions.
 
+### Session 4 (2026-10-31)
 
-### Session 4 (2026-10-30)
-
-48. **The user reported Phase 4 success** ("VM successfully loaded… kernel driver working… saw it going from user space to the kernel driver") and asked for a guide for the next section, like 010. Claude read this handoff in full, plus 012.
-49. **Wrote `013-phase5_guide_inspect_crash_analyze.md`**, tailored to this setup (Fusion, VS 2026, ARM64, 4 GB, `sc.exe`, re-sign after build, short commands): 5.0 code via the shared folder + rebuild loop + snapshot `phase5-code-loaded`; 5.1 local KD (`bcdedit /dbgsettings local`, `/debug on`; `!drvobj`, `!devobj`, **`dt TgCounter!_TG_EXTENSION` to read the counter**, `!pool` on the paged allocation, `!object`, ARM64 `u`, `!devnode`/`!devstack`; then `/debug off` before the crash labs); 5.2 live dump (0x161); 5.3 crash IOCTL → predicted 0xD1 (P1 0, P2 2) + an analysis table; 5.4 the paged-pool-under-spin-lock bug: no crash without Verifier, crash with `verifier /standard /driver TgCounter.sys`, proven with `!pte`; 5.5 WPR/WPA. Snapshots: `phase5-code-loaded`, `before-crash-labs`, `phase5-done`.
-50. **Phase 5 code written to the repo** at `lectures/windows_internals/code/tgcounter_phase5/` (`tgcounter.c` 137 lines, `tgcounter_ioctl.h` 27, `tgclient.c` 55). New IOCTLs: CRASH fn 0x8FF = `0x800023FC`; PAGED_AT_DISPATCH fn 0x8FE = `0x800023F8`. The load message now says `(phase 5 build)`. Verified on Linux: the driver compiles (MinGW DDK + an `ExAllocatePool2` prototype shim), the client compiles and runs under Wine (error 2 in all modes). The check caught a `send` vs Winsock name clash (renamed `SendIoctl`). `nm` showed `KeRaiseIrql` is inlined (no import) while `KeAcquireSpinLock` imports `KeAcquireSpinLockRaiseToDpc`, which is why bug #2 uses a spin lock (Verifier can intercept it).
-51. **Open:** set up the Fusion shared folder (§5.0 A2), still pending since entry 35. Unverified: local KD on ARM64 in Fusion (fallback: live dump), and which stop code Verifier gives for bug #2 (0xD1 vs 0xC4).
+48. **~19:24: the user said "let's start working on Phase 5".** State check from the Mac:
+    - A Phase 5 guide already exists: **`phase5/013-phase5_guide_inspect_crash_analyze.md`** (dated 2026-10-30, from a session not logged here), with the Phase 5 source in `phase5/`: `tgcounter.c` (137 lines), `tgclient.c` (55), `tgcounter_ioctl.h` (27). The new IOCTLs are `IOCTL_TGCOUNTER_CRASH` = `0x800023FC` (NULL write at DISPATCH_LEVEL) and `IOCTL_TGCOUNTER_PAGED_AT_DISPATCH` = `0x800023F8` (reads paged pool under a spin lock; tag `TgTg`, value 42). The client modes are none/`get`/`crash`/`paged`. The load message now says `(phase 5 build)`.
+    - **An unlogged VM run on 2026-10-27, 22:06–22:17 PDT** (vmware.log: about 11 minutes, `HGFSPublish: publishing 0 shares`, clean `VMX exit (0)`), probably demo practice. `shared/tgcounter/tgclient.c` was modified at 21:51 that day. The `.vmx.lck` from that run is stale; the VM is **off**.
+    - Snapshots unchanged: 4, current = `tgcounter-works`. The `.vmx` **still has no `sharedFolder` entries**.
+    - **Done:** copied the three Phase 5 files into **`shared/tgcounter_phase5/`** (guide step 5.0 A1; the guide's source path `Studying_Lectures/...` isn't needed because `phase5/` already holds them).
+    - **Next (user, in Fusion):** 5.0 A2, Sharing → enable → add `shared` (Read & Write) → in the VM, `\\vmware-host\Shared Folders\shared\tgcounter_phase5` → copy to `C:\lab\src\tgcounter\` → line-count check (137/55/27) → build both → rebuild loop → `(phase 5 build)` → smoke test → snapshot `phase5-code-loaded`.
+49. **~20:00–20:05: both Phase 5 projects BUILT, in a new folder `C:\lab\lab2\`** (new projects, not the Phase 4 ones in `C:\lab\TgCounter` / `C:\lab\tgclient`):
+    - Driver: `C:\lab\lab2\TgCounter\ARM64\Debug\TgCounter.sys`, Debug/ARM64, 22 s, 0 errors. This project **kept its INF** (target platform **Universal**, unlike Phase 4's Desktop with the INF removed): `Stamping … DriverVer=10/31/2026,20.0.11.566`, signability test passed, `tgcounter.cat` generated and signed. **WdkVersion 10.0.28000.0, WdkAssemblyVersion 10.0.28000.2526** (confirms the WDK version, which was open since Session 3). The VS editor shows the Phase 5 header comment, and `ExAllocatePool2` compiled with no issues.
+    - `Successfully signed` in the log = **VS auto-signing with WDKTestCert, not TgTest** → still must run `signtool … /n TgTest` before `sc.exe start` (otherwise expect 577). The INF/.cat are unused by the `sc.exe` legacy load.
+    - Client: `C:\lab\lab2\tgclient\ARM64\Debug\tgclient.exe`, 2 s.
+    - ⚠️ **Path change for all Phase 5 commands:** replace `C:\lab\TgCounter\…` with `C:\lab\lab2\TgCounter\…` and `C:\lab\tgclient\…` with `C:\lab\lab2\tgclient\…` (including WinDbg `.sympath+ C:\lab\lab2\TgCounter\ARM64\Debug`).
+50. **~20:10: re-signed with TgTest ✅, but the service is gone.** `sc.exe stop TgCounter` → **1060** (the service doesn't exist; it was deleted at some point after Phase 4, probably in the unlogged 10-27 demo run, whose runbook reset includes `sc.exe delete`). `signtool sign … /n TgTest TgCounter.sys` → `Successfully signed`; `verify /pa /v` → Issued to/by **TgTest**, SHA1 `1A117A9D…`, file sha256 `851C21B853E51A40D85A7ABB823F3C26871B4B184EF7E6A77BE4F214DE638E89`, 0 warnings/errors. Copied to `C:\drivers\` (OK). `sc.exe start` → 1060 again, as expected. Fix given: `sc.exe create TgCounter type= kernel start= demand binPath= C:\drivers\TgCounter.sys` → `sc.exe start`.
+51. **🎉 5.0 smoke test PASSED.** `sc.exe create … binPath= 'C:\drivers\TgCounter.sys'` (quoted path, fine in PowerShell) → `CreateService SUCCESS`; `sc.exe start` → `STATE : 4 RUNNING`, exit codes 0. `C:\lab\lab2\tgclient\ARM64\Debug\tgclient.exe` → INCREMENT 1/2/3; `tgclient.exe get` → **`GET -> 3`**. GET existed in the Phase 4 driver too, so this does **not** prove the Phase 5 build is running. The proof is the DebugView line `(phase 5 build)` (not reported yet) or, in 5.1, the `TgCounter!g_PagedValue` symbol. Next: shut down → snapshot **`phase5-code-loaded`** → lab 5.1 (local kernel debugging).
+52. **2026-11-01 ~01:07: ✅ LOCAL KERNEL DEBUGGING WORKS ON ARM64 in the Fusion VM** (this was the guide's main unverified point). Whether the user took snapshot `phase5-code-loaded` and saw the `(phase 5 build)` DebugView line wasn't reported. WinDbg 1.2610.1001.0 (Administrator), title `KD '', Local Connection`, prompt **`lkd>`**: `Connected to Windows 10 26100 ARM 64-bit (AArch64) target`, `Windows 10 Kernel Version 26100 MP (4 procs) Free ARM 64-bit (AArch64)`, **build lab `26100.1.arm64fre.ge_release.240331-1435`**, **Kernel base `0xfffff800\`67600000`**, PsLoadedModuleList `0xfffff800\`6836ad90` (both change every boot because of KASLR), uptime 0:03:41, default symbol path `srv*`. The Threads pane lists threads waiting in `nt!KiSwapContext+0x20`. The user asked what to do next → gave the 5.1 exercises with `lab2` paths.
+53. **Symbol path.** WinDbg engine **10.0.29661.1004 ARM64**; the extension gallery has 45 local packages; "MCP Server Bridge Attached (enabled, not running, not connected)" is a new WinDbg AI feature (ignore it). `.symfix C:\symbols` → `SRV*C:\symbols*https://msdl.microsoft.com/download/symbols`. The user first typed the guide's old path `.sympath+ C:\lab\TgCounter\ARM64\Debug` → **`0x3 The system cannot find the path specified`**. So the Phase 4 project's output folder **no longer exists** in the VM (the Phase 4 projects seem to have been removed or moved; not confirmed). Then `.sympath+ C:\lab\lab2\TgCounter\ARM64\Debug` → **OK** (typed twice). The bad entry stays in the path and reports an error on every `.sympath`. That's harmless, but the fix given was to re-run `.symfix C:\symbols` (which *replaces* the path) and then `.sympath+` with `lab2` only. Next: `.reload` → `lm m TgCounter`.
+54. **5.1 exercise 1 ✅.** Clean path after `.symfix` + `.sympath+` (Deferred srv*, OK lab2). `.reload` loaded the kernel symbols (no errors); `PEB is paged out (Peb.Ldr = 00000008\`41970018)` is a harmless user-mode note (the local kd's current process context; dbgerr001). `lm m TgCounter` → **`fffff800\`66080000 – fffff800\`66088000`** (0x8000 = 32 KB, 8 pages), `(deferred)` → after `.reload /f TgCounter.sys` → **`(private pdb symbols) c:\lab\lab2\tgcounter\arm64\debug\TgCounter.pdb`**. The driver sits ~22 MB below the kernel base `fffff800\`67600000` (this boot). Next: `!drvobj \Driver\TgCounter 2`.
+55. **~01:35: the user stopped for the night** and asked for a good handoff. Mac-side checks: the `.vmsd` now has **5 snapshots**. The new one is **`TgCounter: loaded (phase 5 build)`** (uid 6, parent 4 = `tgcounter-works`; `.vmsn` at 01:49 PDT, 2.4 MB, so it was taken with the VM off; lastUID 6, so a uid-5 snapshot was made and deleted at some point). The user named it after the DebugView load line, which suggests the `(phase 5 build)` message was seen. The current VM run started **08:51 UTC** (cold boot right after the snapshot, which fits the `bcdedit /debug on` reboot). It was **still running** at 09:30 UTC. `.vmx`: still no shared folders. Bundle: 109 GB. Note: DST ended during the session (PDT → PST at 02:00), so the Mac shows times an hour "earlier" after that. WinDbg's `Sun Nov 1 02:07 (UTC-8)` is the guest's view. **Reminder for the user: shut Windows down (not suspend) and quit Fusion before unplugging the T7.**
 
 ---
 
