@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- A class library that PowerShell loads. No Main: the PowerShell engine is the host. -->
+  <PropertyGroup>
+    <AssemblyName>Showcase.PowerShell</AssemblyName>
+    <RootNamespace>Showcase.PowerShell</RootNamespace>
+    <!-- Copy NuGet dependencies (Microsoft.Extensions.DependencyInjection.dll) next to our dll
+         so PowerShell can find them when the module loads. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Compile against the PowerShell API, but don't ship it: pwsh already contains it.
+         7.4.x targets net8.0, the oldest runtime we support. -->
+    <PackageReference Include="System.Management.Automation" Version="7.4.6" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Showcase.Core\Showcase.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The non-code parts of the module ship next to the dll. -->
+    <None Update="Showcase.psd1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Showcase.Functions.psm1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Showcase.format.ps1xml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Showcase.types.ps1xml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

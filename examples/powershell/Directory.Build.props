@@ -1,0 +1,10 @@
+<Project>
+  <!-- Shared by every project in the solution. -->
+  <PropertyGroup>
+    <!-- net8.0 loads into PowerShell 7.4 (.NET 8), 7.5 (.NET 9) and 7.6 LTS (.NET 10). -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The shared "business" library. It knows nothing about PowerShell or about hosting.
+       Both Showcase.App and Showcase.PowerShell reference it and register its services
+       with the same AddShowcaseCore() extension method. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Default views. Formatting happens at the very END of the pipeline (Out-Default), so every
+  command in between still receives the full object. These views only decide what the
+  console shows when nothing else asked for a format. Get-Member and Select-Object * show everything.
+-->
+<Configuration>
+  <ViewDefinitions>
+
+    <View>
+      <Name>Showcase.Core.Device</Name>
+      <ViewSelectedBy>
+        <TypeName>Showcase.Core.Device</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>Id</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Name</Label><Width>20</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Kind</Label><Width>17</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Status</Label><Width>11</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Temp C</Label><Width>7</Width><Alignment>Right</Alignment></TableColumnHeader>
+          <TableColumnHeader><Label>CPU %</Label><Width>6</Width><Alignment>Right</Alignment></TableColumnHeader>
+          <TableColumnHeader><Label>Location</Label></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>Id</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Name</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Kind</PropertyName></TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  $color = switch ($_.Status) {
+                    'Online'      { $PSStyle.Foreground.Green }
+                    'Degraded'    { $PSStyle.Foreground.Yellow }
+                    'Offline'     { $PSStyle.Foreground.Red }
+                    default       { $PSStyle.Foreground.Cyan }
+                  }
+                  "$color$($_.Status)$($PSStyle.Reset)"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem><ScriptBlock>'{0:N1}' -f $_.TemperatureC</ScriptBlock></TableColumnItem>
+              <TableColumnItem><ScriptBlock>'{0:N0}' -f $_.CpuPercent</ScriptBlock></TableColumnItem>
+              <TableColumnItem><PropertyName>Location</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <View>
+      <Name>Showcase.Core.HealthReport</Name>
+      <ViewSelectedBy>
+        <TypeName>Showcase.Core.HealthReport</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>DeviceId</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>DeviceName</Label><Width>20</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Grade</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Findings</Label></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>DeviceId</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>DeviceName</PropertyName></TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  $color = switch ($_.Grade) {
+                    'Healthy'  { $PSStyle.Foreground.Green }
+                    'Warning'  { $PSStyle.Foreground.Yellow }
+                    default    { $PSStyle.Foreground.Red }
+                  }
+                  "$color$($_.Grade)$($PSStyle.Reset)"
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem><PropertyName>Summary</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <View>
+      <Name>Showcase.Core.ActivityEntry</Name>
+      <ViewSelectedBy>
+        <TypeName>Showcase.Core.ActivityEntry</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>Time</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Source</Label><Width>6</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Operation</Label><Width>9</Width></TableColumnHeader>
+          <TableColumnHeader><Label>DeviceId</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Action</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Message</Label></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><ScriptBlock>$_.Timestamp.ToLocalTime().ToString('HH:mm:ss')</ScriptBlock></TableColumnItem>
+              <TableColumnItem><PropertyName>Source</PropertyName></TableColumnItem>
+              <TableColumnItem><ScriptBlock>$_.OperationId.ToString().Substring(0, 8)</ScriptBlock></TableColumnItem>
+              <TableColumnItem><PropertyName>DeviceId</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Action</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Message</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <View>
+      <Name>Showcase.Core.DeviceSample</Name>
+      <ViewSelectedBy>
+        <TypeName>Showcase.Core.DeviceSample</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>Time</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>DeviceId</Label><Width>8</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Name</Label><Width>20</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Status</Label><Width>11</Width></TableColumnHeader>
+          <TableColumnHeader><Label>Temp C</Label><Width>7</Width><Alignment>Right</Alignment></TableColumnHeader>
+          <TableColumnHeader><Label>CPU %</Label><Width>6</Width><Alignment>Right</Alignment></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><ScriptBlock>$_.Timestamp.ToLocalTime().ToString('HH:mm:ss')</ScriptBlock></TableColumnItem>
+              <TableColumnItem><PropertyName>DeviceId</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Name</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Status</PropertyName></TableColumnItem>
+              <TableColumnItem><ScriptBlock>'{0:N1}' -f $_.TemperatureC</ScriptBlock></TableColumnItem>
+              <TableColumnItem><ScriptBlock>'{0:N0}' -f $_.CpuPercent</ScriptBlock></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+  </ViewDefinitions>
+</Configuration>

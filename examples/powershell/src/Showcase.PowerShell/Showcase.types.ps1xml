@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Extended Type System: add members to existing .NET types WITHOUT recompiling them. -->
+<Types>
+  <Type>
+    <Name>Showcase.Core.Device</Name>
+    <Members>
+      <!-- Computed every time it's read, like a C# get-only property, but written in PowerShell. -->
+      <ScriptProperty>
+        <Name>SecondsSinceSeen</Name>
+        <GetScriptBlock>[math]::Round(([DateTimeOffset]::UtcNow - $this.LastSeen).TotalSeconds, 1)</GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>IsHot</Name>
+        <GetScriptBlock>$this.TemperatureC -ge 70</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Showcase.Core.HealthReport</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Summary</Name>
+        <GetScriptBlock>if ($this.Findings.Count) { $this.Findings -join '; ' } else { 'OK' }</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>

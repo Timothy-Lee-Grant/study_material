@@ -2896,7 +2896,7 @@ Each future lecture takes one 🔵 or ⚫ area from this atlas and turns it 🟢
 | 003 | **Seeing Design**: responsibilities, smells, principles, patterns, architecture styles (✅ written) | The junior → mid-level jump |
 | 004 | **The I2C Target Problem**: embedded Linux systems programming for .NET; your contribution project (✅ written) | Refines 002 to embedded Linux |
 | 005 | **From Sockets to WebSockets to YARP**: TCP, HTTP, WebSockets, YARP timeouts; solving dotnet/yarp#1764 (✅ written) | Your first contribution |
-| 006 | **Generic Host & DI, in depth**: lifetimes, scopes, `IHostedLifecycleService`, options validation, writing your own `Add…()` extensions | Everything at work sits on this |
+| 006 → 007 | **Generic Host & DI, in depth** (number taken by *The Power of PowerShell*; later rows shift by one when written): lifetimes, scopes, `IHostedLifecycleService`, options validation, writing your own `Add…()` extensions | Everything at work sits on this |
 | 007 | **Interop in depth**: marshalling rules, `SafeHandle`, strings, arrays, callbacks, `NativeLibrary`, testing native boundaries | Turns your strongest area into expertise |
 | 008 | **async in .NET, in depth**: thread pool, `SynchronizationContext`, `ValueTask`, `Channel<T>` patterns, cancellation design | Builds on `concurrency/001` with the .NET specifics |
 | 009 | **Data access**: EF Core modeling, migrations, query translation, time-series tables, SQLite on devices, Dapper | The state/value model, generalized |
@@ -2907,7 +2907,7 @@ Each future lecture takes one 🔵 or ⚫ area from this atlas and turns it 🟢
 | 014 | **Observability in .NET**: `ILogger` → OpenTelemetry, `System.Diagnostics.Metrics`, `ActivitySource` traces | Pairs with `llm_orchistration/018–020` |
 | 015 | **Performance**: `Span<T>`, allocations, BenchmarkDotNet, GC modes, `dotnet-counters` / `dotnet-trace` | Senior-level depth |
 | 016 | **Shipping on Azure**: Azure DevOps & GitHub Actions YAML, containers, Azure Container Apps / AKS, Key Vault, managed identity | Directly addresses the "zero Azure" resume gap |
-| 017 | **PowerShell module engineering**: binary modules, manifests, DI inside modules, dependency isolation | Deepens something you already built |
+| 017 | **PowerShell module engineering**: binary modules, manifests, DI inside modules, dependency isolation (✅ largely covered early, as 006: **The Power of PowerShell**, with `examples/powershell/`; ALC isolation still open) | Deepens something you already built |
 | 018 | **Architecture patterns in .NET**: layered/clean architecture, vertical slices, CQRS, the Result pattern | For design interviews |
 
 ---
