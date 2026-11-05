@@ -13,6 +13,7 @@
 | `README.md` (this file) | Public | How the system works | Read at the start of every session |
 | `lecture_standards.md` | Public | How to write lectures for Timothy (format, structure, techniques) | Read before generating any lecture |
 | `recall_protocol.md` | Public | How to analyze Timothy's spoken/written summaries ("recall checks") | Read before responding to any summary |
+| `clarifications_protocol.md` | Public | How to handle free-form talk-throughs (Mode D) and write clarification lectures; the log and transcripts are public in `lectures/clarifications/` | Read before any talk-through intake or clarification lecture |
 | `audio_lecture_standards.md` | Public | How to write **audio lectures** (sources for NotebookLM podcasts) | Read ONLY when he explicitly asks for an audio/listening lecture |
 | `private/learner_profile.md` | **Private** (git-ignored) | The living learner model: cognition, motivation, confusion patterns, what works, hypotheses | Read at session start; revise at consolidation points (§4) |
 | `private/observation_log.md` | **Private** | Append-only dated evidence behind the profile | Append after every substantive interaction |
@@ -30,7 +31,7 @@ Related, older material (read, don't duplicate):
 
 ---
 
-## 2. The three interaction modes
+## 2. The four interaction modes
 
 Timothy will say which mode he's in. **Never assume he has read a lecture just because it was generated.** He often requests a lecture and keeps working, and may ask questions the lecture already answers.
 
@@ -39,6 +40,7 @@ Timothy will say which mode he's in. **Never assume he has read a lecture just b
 | **A. Request / working question** | Asks for a lecture, or asks a question while working | Answer or generate. Log the *question itself* as evidence of what he's curious or confused about. If a generated-but-unread lecture already covers it, answer briefly and point to the section. **Not** a retention failure. |
 | **B. Question after reading** | "I read lecture X, and I have a question about …" | Mark X as read in `reading_status.md`. The question is evidence about *what the lecture failed to make clear*. Log it, and note which section it concerns. |
 | **C. Recall check** | "I want to summarize X," or a (possibly voice-transcribed) stream-of-consciousness explanation | Follow `recall_protocol.md` exactly. |
+| **D. Talk-through intake** | A free-form talk-through of what he *thinks* is true across topics, for the clarifications folder (not tied to a lecture he read) | Follow `clarifications_protocol.md`: save transcript, claim map + root concepts into `lectures/clarifications/log.md` (public), short reply. The clarification lecture is written only when he asks. |
 
 **Lecture format:** "generate a lecture" = a normal **reading** lecture (`lecture_standards.md`). Only when he explicitly says audio / listen / NotebookLM, write an **audio** lecture (`audio_lecture_standards.md`).
 

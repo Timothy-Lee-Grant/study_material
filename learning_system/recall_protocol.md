@@ -20,6 +20,13 @@
 | "C-sharp", "dot net", "net10" | C#, .NET, .NET 10 |
 | "pinvoke" | P/Invoke |
 | "powerful commands" | PowerShell commands (cmdlets) |
+| "Colonel" | kernel |
+| "address boss" | address bus |
+| "right" (with read) | write |
+| "packet parlor" | packet parser |
+| "link bite" | length byte |
+| "check some" | checksum |
+| "by directional" | bidirectional |
 
 - He usually signals the mode: "I read X and want to summarize it." If he summarizes without saying whether he read it, ask. The analysis differs (first-pass reasoning vs retention).
 
