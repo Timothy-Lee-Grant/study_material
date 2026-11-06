@@ -6,6 +6,7 @@ This repo runs a **self-improving learning system**. Before generating a lecture
 2. Read `learning_system/private/learner_profile.md` and the latest rows of `learning_system/private/observation_log.md` (git-ignored; exists only on Timothy's machine).
 3. Before writing a lecture, read `learning_system/lecture_standards.md`. Before responding to any summary Timothy gives (often a voice transcript from a walk), read `learning_system/recall_protocol.md`.
 4. For a free-form talk-through meant for `lectures/clarifications/` (or a request to generate a clarifications lecture), read `learning_system/clarifications_protocol.md`.
+5. For a request to analyze a single LeetCode problem attempt and write a lecture from it ("analyze problem X and generate the deep dive"), read `lectures/leetcode/problem_deep_dives/CLAUDE.md`.
 
 Non-negotiables:
 - **Never assume Timothy has read a lecture because it was generated.** He'll say explicitly when he's read something or wants to summarize it.

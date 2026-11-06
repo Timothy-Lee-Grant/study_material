@@ -14,6 +14,7 @@
 | Project lecture | `lectures/<project>/` | same |
 | Project idea | `project_ideas/` | same |
 | **Weekly recap** (LeetCode) | `lectures/leetcode/recaps/YYYY-MM-DD_week_recap.md` (week starts Monday) | After each recall check that week, **append** an entry with only what his recall shows he needs (gaps, misconceptions, flagged doubts, deeper derivations). Never edit read lectures. Don't pad: a solid topic gets one line. He reads it at the end of the week |
+| **Problem deep dive** (LeetCode) | `lectures/leetcode/problem_deep_dives/NNN-<number>_<slug>.md` | One lecture per problem he attempted and struggled with: analyze his attempt, trace each gap to its root concept, teach the roots. Full procedure in that folder's `CLAUDE.md` |
 | Short issue-focused Q&A | `lectures/open_source/concept_notes/` | append to the current Q&A file (see CLAUDE.md) |
 
 When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §23), **update the roadmap and the "next lecture" lines** of neighboring lectures.
@@ -97,6 +98,7 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-11-06 | Added problem deep dives (§1): one lecture per struggled-with problem, procedure in `lectures/leetcode/problem_deep_dives/CLAUDE.md`. | His request 2026-11-06 |
 | 2026-10-21 | Added per-domain understanding trackers (`private/understanding/`): read before writing a lecture in that domain and weave open misconceptions in. | His request after the 10-21 recall check |
 | 2026-10-06 | Added the weekly recap mechanism (§1), the full-problem-statement rule and the no-underived-conventions rule (§4). | His requests + recall check 2026-10-06 |
 | 2026-10-05 | Added T16 (name → valid set → membership) and T17 (numbered derivations). Before writing any lecture, also read `private/clicks_log.md`. | His first reported click (C1) |

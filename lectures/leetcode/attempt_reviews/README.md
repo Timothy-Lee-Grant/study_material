@@ -5,6 +5,8 @@ Lectures built from **your own attempts**, kept outside the gradient roadmap (`.
 - **Gradient lectures** (`../001-…`, `../002-…`) teach new topics.
 - **Attempt reviews** (this folder) take the problems you actually did, find where you were stuck, slow or unsure (using the comments you write while solving), and go over those ideas again from several angles until they're fluent.
 
+**Single problems:** when one specific problem gives me trouble, it goes to [`../problem_deep_dives/`](../problem_deep_dives/) instead (one lecture per problem).
+
 **How it works:** solve problems from `../000-practice_queue.md`, write your thinking in comments as you go, and log each attempt there. When you've built up a few, ask for a review. Problems you're planning to go back to on your own are left out of the review, so nothing gets spoiled.
 
 | # | Date of attempts | Problems | Main ideas |
