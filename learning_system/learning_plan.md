@@ -60,7 +60,7 @@ Statuses come from `private/reading_status.md`. 📄 = generated, not read · �
 | Debugging | `windows_internals/001–004`, `013` | 📄, lab phase 5 next | **Lab phase 5** (crash, dump, Verifier) |
 | Performance and power | `windows_internals/007`, `015`, `016` | 📄 | Later; read `015` after the lab |
 | Coding (Ring 0) | `leetcode/` gradient + tracker + practice queue | Active | Keep the one-problem loop (`problem_deep_dives/`) |
-| Design (Ring 0) | `system_design/001` + `practice/` | 📄 | One timed, spoken attempt per week, graded with `practice/rubric.md` |
+| Design (Ring 0) | `system_design/001`, `002` (gradient: `000-gradient_roadmap.md`) + `practice/` | 📄 | One timed, spoken attempt per week, graded with `practice/rubric.md` |
 
 **What the board says:** nearly every row already has material. The column that's empty is "read, recalled, labbed." That's where the hours should go.
 

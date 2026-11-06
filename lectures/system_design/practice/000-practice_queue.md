@@ -3,6 +3,7 @@
 > **How to use this:** pick **any one** case from "Pick one now" (the top is the most useful next step, but any is fine), run `python3 practice.py start <id>`, do the attempt, and add a row to the **Attempt log** at the bottom. That's all you need to write. When you ask for a review, I read the log and your attempt folder, write the review, update `progress.md`, and re-rank this list.
 > **Every attempt:** 45 minutes, timed, out loud, blank page, no references open.
 > **Bridge pieces** (family E) are separate 45-minute sessions; do them within a few days of the design case they pair with.
+> **Lectures:** each lecture in `../000-gradient_roadmap.md` names the case to attempt right after it. Lecture `002` (the read path) → `a01`.
 > Last re-ranked: 2026-11-06 (initial order).
 
 ---
@@ -11,7 +12,7 @@
 
 | # | Case | Family | Why it's here |
 |---|---|---|---|
-| 1 | `a01` URL shortener | A | The gentlest full run of the seven steps; read-heavy path; estimation that decides something |
+| 1 | `a01` URL shortener | A | Pairs with lecture 002 (the read path). The gentlest full run of the seven steps; your deep dive is unique codes across servers |
 | 2 | `d01` Device FIFO to a GUI | D | A redo from a blank page of a design you've already studied: does the skeleton make it easier? |
 | 3 | `e01` Token bucket (code) | E | Redo from blank; train "interface + one exact example" before code |
 | 4 | `b01` Distributed rate limiter | B | Same component at fleet scale; shared state and atomicity |
