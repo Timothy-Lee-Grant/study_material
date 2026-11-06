@@ -8,6 +8,7 @@ This repo runs a **self-improving learning system**. Before generating a lecture
 4. For a free-form talk-through meant for `lectures/clarifications/` (or a request to generate a clarifications lecture), read `learning_system/clarifications_protocol.md`.
 5. When Timothy asks what to study next ("what's the gradient?"), read `learning_system/learning_plan.md` and answer with one recommendation.
 6. For a request to analyze a single LeetCode problem attempt and write a lecture from it ("analyze problem X and generate the deep dive"), read `lectures/leetcode/problem_deep_dives/CLAUDE.md`.
+7. For a system design practice request (review an attempt in `lectures/system_design/practice/attempts/`, re-rank the practice queue, or add a case), read `lectures/system_design/practice/CLAUDE.md`.
 
 Non-negotiables:
 - **Never assume Timothy has read a lecture because it was generated.** He'll say explicitly when he's read something or wants to summarize it.

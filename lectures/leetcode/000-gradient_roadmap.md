@@ -50,7 +50,7 @@ Four topics have been read in five days, with almost no problems attempted. The 
 |---|---|---|
 | ~~009~~ | ~~Graphs~~ | **Done Oct 11** (see the table above) |
 | ~~010~~ | ~~Linked lists~~ | **Done Oct 12** (see the table above) |
-| 011 | **Backtracking in depth: choose / explore / un-choose, pruning, subsets vs permutations vs combinations** (78, 46, 39, 40, 79, 131) | Completes the recursion family (the "accumulate down" style). Targets the missing un-choose (Word Search) and the end-of-function steps that tend to get dropped |
+| 011 | **Backtracking in depth: choose / explore / un-choose, pruning, subsets vs permutations vs combinations** (78, 46, 39, 40, 79, 131) | Completes the recursion family (the "accumulate down" style). Targets the missing un-choose (Word Search) and the end-of-function steps that tend to get dropped. **Nov 6: moved up as the next gradient lecture** (your Permutations attempt; problem deep dive 001 covers the 'what does each level decide' idea, and 011 builds on it) |
 
 ## Group 3: design problems, ordering and selection
 

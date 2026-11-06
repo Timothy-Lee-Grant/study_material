@@ -1047,3 +1047,52 @@ class Parser:
         packets_data_to_return = self.successful_packets.copy()
         self.successful_packets = []
         return packets_data_to_return
+
+
+# Nov 6, 2026
+
+class Solution:
+    def permute(self, nums: list[int]) -> list[list[int]]:
+        # I will use technique of selecting and then not selecting each step. When I have ran out of elements I can add those
+
+        res = []
+        path = []
+
+        # Walk through
+        # nums = [1,2,3]
+
+        # Realizing that doing a walkthrough with recursion is not immediately coming to me how to express and organize.
+        # As I am going through this, I am realizing that this is not correct because I am adding the results where it is less than all of the elements. I should only have permutations, which means that all numbers should be present, but in different order.
+        # res = [[1, 2, 3], [1, 2]]
+        # path = [1]
+        # i = 2
+
+        def bt(i):
+            # Stop when I am out of bounds. Because if I still have an element, I need to decide if I want to include it or not include it. If out of bounds, I know I am finished and can add this currently built list as one of the unique answers.
+            if i >= len(nums):
+                res.append(path.copy())
+                return
+            
+            # Add to path
+            path.append(nums[i])
+            bt(i+1)
+            path.pop()
+            bt(i+1)
+
+        # Is there a way to think about this in terms of placement instead of selecting / unselecting elements?
+        # This way here just guards against adding those 'unfull paths' but this does not feel like the right path.
+        def bt2(i):
+            if i>=len(nums):
+                if len(path) == len(nums):
+                    res.append(path.copy())
+                return
+            path.append(nums[i])
+            bt(i+1)
+            path.pop()
+            bt(i+1)
+
+
+
+        #bt(0)
+        bt2(0)
+        return res

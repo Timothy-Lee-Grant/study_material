@@ -263,6 +263,17 @@ Do these **blind**: read only the statement in §3, and write the operations tab
 | [2391 Minimum Amount of Time to Collect Garbage](https://leetcode.com/problems/minimum-amount-of-time-to-collect-garbage/) | Medium | ⬜ |
 | [68 Text Justification](https://leetcode.com/problems/text-justification/) (stretch) | Hard | ⬜ |
 
+### Backtracking (problem deep dive 001; gradient lecture 011 not written yet)
+
+| Problem | Level | Status |
+|---|---|---|
+| [46 Permutations](https://leetcode.com/problems/permutations/) | Medium | 🟡 retry |
+| [78 Subsets](https://leetcode.com/problems/subsets/) | Medium | ⬜ |
+| [77 Combinations](https://leetcode.com/problems/combinations/) | Medium | ⬜ |
+| [17 Letter Combinations of a Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number/) | Medium | ⬜ |
+| [39 Combination Sum](https://leetcode.com/problems/combination-sum/) | Medium | ⬜ |
+| [47 Permutations II](https://leetcode.com/problems/permutations-ii/) | Medium | ⬜ |
+
 ---
 
 ## Attempt log
@@ -289,4 +300,5 @@ Add one row per attempt, newest at the bottom. Short is fine. Put your code in `
 | 2026-10-21 | 21 Merge Two Sorted Lists | ❌ | — | couldn't (no linked-list trace format) | `tail` never moves (no `tail = tail.next`), so each step replaces `dummy.next`; returns `4`. See this week's recap, Entry 1 §1.2–1.3 | examples.py |
 | 2026-10-23 | 55 Jump Game | ✅ (checked on 5,000 random inputs) | — | yes (2 inputs) | Caught `nums[i]` → `nums[i] + i` during the walk-through. "No way I'd come up with the trick": see recap §1.7 | examples.py |
 | 2026-10-31 | Birthday Chocolate (HackerRank, spaced revisit) | ❌ stuck ~90 min | 90 | — | Box-vs-cut mix in the sliding window: `i` (a box) vs `stop - start` (cuts); `i - m` (box that leaves) vs `i - m + 1` (first box that stays). See attempt review 002 | message |
+| 2026-11-06 | 46 Permutations | 🟡 not submitted | — | partly (caught partial lists) | Used the include/exclude (subsets) tree, which decides which numbers but never their order; `bt2` calls `bt`. See problem deep dive 001 | examples.py |
 | | | | | | | |

@@ -18,4 +18,4 @@ One lecture per problem. When a problem gives me trouble, that's a sign of a mis
 
 | # | Problem | Attempted | Root concepts covered | Retry |
 |---|---|---|---|---|
-| — | *(none yet)* | | | |
+| 001 | [46 Permutations](001-0046_permutations.md) | 2026-11-06 | what each backtracking level decides (include/exclude = which numbers, placement = which order); count the leaves before coding; placement state (`path`, `used`, next position = `len(path)`); base case = "answer complete"; call-tree tracing; recursive helper must call itself | planned |

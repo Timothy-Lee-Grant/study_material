@@ -138,10 +138,10 @@ def attempt_count(case_id: str) -> int:
 
 def cmd_list(_args):
     cases = all_cases()
-    print(f"{'id':<32} {'fam':<4} {'level':<12} {'tries':<6} title")
-    print("-" * 90)
+    print(f"{'id':<35} {'fam':<4} {'level':<12} {'tries':<6} title")
+    print("-" * 93)
     for c in cases:
-        print(f"{c['id']:<32} {c['family']:<4} {c['level']:<12} {attempt_count(c['id']):<6} {c['title']}")
+        print(f"{c['id']:<35} {c['family']:<4} {c['level']:<12} {attempt_count(c['id']):<6} {c['title']}")
 
 
 def cmd_random(args):
