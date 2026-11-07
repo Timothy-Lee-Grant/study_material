@@ -73,7 +73,8 @@ When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §2
 
 Recent lectures run 600–3,000 lines. There's **no evidence yet** on how much he reads or retains from lectures this long. Until recall data exists:
 - Keep the **Core ideas** list short and put it first, so a partial read still delivers the essentials.
-- Prefer one focused lecture over a sprawling one. Split into a series if a lecture would exceed ~1,200 lines.
+- **One request = ONE self-contained lecture document** (his standing rule, 2026-11-07: "unless I explicitly state that I want multiple lectures… I just want one single lecture document, which is self-contained"). Never split a request into a series unless he explicitly asks for multiple; if the material is too big, cut scope and say what was left out.
+- Prefer one focused lecture over a sprawling one.
 - Revisit this section after the first 3 recall checks (hypothesis H3 in the experiments file).
 
 ## 6. After generating a lecture
