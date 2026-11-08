@@ -94,6 +94,7 @@ Work down each group; you don't need to finish one group before starting the nex
 |---|---|---|
 | [26 Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) | Easy | 🟡 return value |
 | [283 Move Zeroes](https://leetcode.com/problems/move-zeroes/) | Easy | ⬜ |
+| [27 Remove Element](https://leetcode.com/problems/remove-element/) | Easy | ⬜ |
 | [88 Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/) (fill from the back) | Easy | ⬜ |
 | [80 Remove Duplicates from Sorted Array II](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/) | Medium | ⬜ |
 
@@ -214,7 +215,7 @@ Do these **blind**: read only the statement in §3, and write the operations tab
 | [933 Number of Recent Calls](https://leetcode.com/problems/number-of-recent-calls/) | Easy | ⬜ |
 | [1472 Design Browser History](https://leetcode.com/problems/design-browser-history/) | Medium | ✅ two stacks · ⬜ array version |
 | [981 Time Based Key-Value Store](https://leetcode.com/problems/time-based-key-value-store/) | Medium | ⬜ |
-| [380 Insert Delete GetRandom O(1)](https://leetcode.com/problems/insert-delete-getrandom-o1/) | Medium | ⬜ |
+| [380 Insert Delete GetRandom O(1)](https://leetcode.com/problems/insert-delete-getrandom-o1/) | Medium | 🟡 retry |
 | [146 LRU Cache](https://leetcode.com/problems/lru-cache/) | Medium | 🔁 redo (August) |
 | Rate limiter (012 §3.7), as a 45-min mock interview | — | ⬜ |
 
@@ -301,4 +302,6 @@ Add one row per attempt, newest at the bottom. Short is fine. Put your code in `
 | 2026-10-23 | 55 Jump Game | ✅ (checked on 5,000 random inputs) | — | yes (2 inputs) | Caught `nums[i]` → `nums[i] + i` during the walk-through. "No way I'd come up with the trick": see recap §1.7 | examples.py |
 | 2026-10-31 | Birthday Chocolate (HackerRank, spaced revisit) | ❌ stuck ~90 min | 90 | — | Box-vs-cut mix in the sliding window: `i` (a box) vs `stop - start` (cuts); `i - m` (box that leaves) vs `i - m + 1` (first box that stays). See attempt review 002 | message |
 | 2026-11-06 | 46 Permutations | 🟡 not submitted | — | partly (caught partial lists) | Used the include/exclude (subsets) tree, which decides which numbers but never their order; `bt2` calls `bt`. See problem deep dive 001 | examples.py |
+| 2026-11-07 | 46 Permutations (retry) | 🟡 not submitted | — | not yet | Placement model now right. `valid_set` is filled with `1 … n-1` instead of the numbers in `nums`, so it returns `[]`. See problem deep dive 002 §6 | examples.py |
+| 2026-11-08 | 380 Insert Delete GetRandom O(1) (blind, from lecture 012 §3) | 🟡 design unfinished | — | — | Picked list + dict and saw the hole problem; missing: a set's list doesn't need its order, so swap with last. See problem deep dive 002 | examples.py |
 | | | | | | | |

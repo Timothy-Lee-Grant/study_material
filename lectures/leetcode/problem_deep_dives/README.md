@@ -18,4 +18,5 @@ One lecture per problem. When a problem gives me trouble, that's a sign of a mis
 
 | # | Problem | Attempted | Root concepts covered | Retry |
 |---|---|---|---|---|
-| 001 | [46 Permutations](001-0046_permutations.md) | 2026-11-06 | what each backtracking level decides (include/exclude = which numbers, placement = which order); count the leaves before coding; placement state (`path`, `used`, next position = `len(path)`); base case = "answer complete"; call-tree tracing; recursive helper must call itself | planned |
+| 001 | [46 Permutations](001-0046_permutations.md) | 2026-11-06 | what each backtracking level decides (include/exclude = which numbers, placement = which order); count the leaves before coding; placement state (`path`, `used`, next position = `len(path)`); base case = "answer complete"; call-tree tracing; recursive helper must call itself | 11-07: placement model correct; `valid_set` filled with `1 … n-1` instead of the values in `nums`, so it returns `[]` (hint in deep dive 002 §6) |
+| 002 | [380 Insert Delete GetRandom O(1)](002-0380_insert_delete_getrandom_o1.md) | 2026-11-08 | question the property, not the structure (a set's list needn't keep order → swap with last, pop); operations as lookup questions; the dict stores *where* in the source of truth; invariant sentence; update the moved element's index; delete-last edge case | planned |
