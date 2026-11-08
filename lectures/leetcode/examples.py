@@ -1189,7 +1189,8 @@ class Solution:
 
 # It seems I have selected Set and List.
 # Lecture doc says: Choose the source of truth (where the data really lives) and the index(es) (shortcuts into it). Write the invariant linking them in one sentence.
-# 
+# I have no idea how to combine them.....
+# Maybe I acutally select a dict, because then it allows me extra functionality. I now have access to a value for the given key (key is the val). So what info would I want for the val? What do I want to save? If I know the number of elements (just keep a state variable increasing and decreasing for each insert / remove), I can know the range. 
 
 class RandomizedSet:
 
