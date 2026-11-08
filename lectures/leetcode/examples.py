@@ -1096,3 +1096,55 @@ class Solution:
         #bt(0)
         bt2(0)
         return res
+
+
+
+
+class Solution:
+
+    # Reattempting to do this problem after I read the lecture document yesterday.
+    # I know that I will need to think of this in terms of placing positions instead of selecting / not selecting an item.
+    # The difference is that each time I do a backtracking loop, I will need to ask 'what should I place at this index'? Where as in the past for the other problems, I would ask, "I am building a path, I am at a given index, I need to decide if I want to add this element or not."
+    def permute(self, nums: list[int]) -> list[list[int]]:
+        
+        # answer will be the list that I store each fully built path.
+        # path will be as I am going along, I will place at each index in path (so each placement will occur based on the i which is passed in). Because I want to itterate through all permutations, I need to select all remaining valid numbers. This means that instead of the way I did it for select/not-select, in that case I would 'choose to select' then I would backtrack with that decision that I just made, then I would eventually come out of that bt for the select, and then I could remove that decision to include that element, and try to go down the path further with my updated decision of not selecting. Here because I must fill every position, and each position needs to place all remaining valid elements, I will place an element, bt with that decision of placing that element at that position
+        # As I am saying this, I am seeing that I will need some way of determining 'valid elements' so I will have a set, and as I put an element (in this case, a distinct integer between 1 and n), then I will add and remove it from my set. Although now I am seeing that it actually might be the exact opposite of what I am normally doing with a set. Normally I am using a set to see 'visited' but in this case I will need to have a datastructure that holds data such that I can itterate over it to get all of the remaining valid elements. I can't just do 'elements = not in my set()' then 'for e in elements' (so maybe I cant use a set here.)
+
+        answer = []
+        path = []
+        valid_set = set()
+        for i in range(1,len(nums)):
+            valid_set.add(i)
+
+        # Input:
+        #   i: the index in the path which we are building
+        def bt(i):
+            
+            # Base Case: 
+            if i >= len(nums):
+                # This means that we have reached the spot where we are saying I want to place the element (box) at index i, and len(nums) tells me the amount of elements, so 
+                answer.append(path.copy())
+                return
+
+            # Grab the valid elements here so they don't slip out from under my feet.
+            valid_elements_frozen = list(valid_set.copy())
+            for element in valid_elements_frozen:
+                valid_set.remove(element)
+                path.append(element)
+
+                # I have now made my decision, deselected the element that I decided to place at index i of path as no longer a valid element to choose. I will now explore all the other possible permutations for the subproblem of placing elements path[i+1:len(nums)]
+                bt(i+1)
+
+                # Now it is time to undo my decision to place element at index i
+                valid_set.add(element)
+                path.pop()
+        
+        bt(0)
+        return answer
+# Looking at the problem before I trace it, then try to submit it.
+# Time Complexity: Because I am going to each index, and for each index I am placing all valid elements. Each time I place an index there is the remaining number of elements left way to do so. len(nums) for index 0, len(nums)-1 ways for position 1, ... , 1 way for position len(nums)-1 So this corresponds to a factorial time complexity.
+# Time Complexity: o(len(nums)!) -> O(n!)
+# Space: O(n)
+
+# Walk through:
