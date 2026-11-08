@@ -15,6 +15,7 @@
 | `recall_protocol.md` | Public | How to analyze Timothy's spoken/written summaries ("recall checks") | Read before responding to any summary |
 | `clarifications_protocol.md` | Public | How to handle free-form talk-throughs (Mode D) and write clarification lectures; the log and transcripts are public in `lectures/clarifications/` | Read before any talk-through intake or clarification lecture |
 | `audio_lecture_standards.md` | Public | How to write **audio lectures** (sources for NotebookLM podcasts) | Read ONLY when he explicitly asks for an audio/listening lecture |
+| `../where_i_stand.md` (repo root) | Public | Central status: strengths, growth areas, area-by-area status, current threads; §0 = paste-able hand-off summary | Read for a quick picture; update per its §8 after recalls, labs, attempts, interview rounds |
 | `private/learner_profile.md` | **Private** (git-ignored) | The living learner model: cognition, motivation, confusion patterns, what works, hypotheses | Read at session start; revise at consolidation points (§4) |
 | `private/observation_log.md` | **Private** | Append-only dated evidence behind the profile | Append after every substantive interaction |
 | `private/reading_status.md` | **Private** | Which lectures are generated / read / recalled, and when to re-check | Update whenever Timothy says he read or summarized something |
