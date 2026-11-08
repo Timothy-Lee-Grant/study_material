@@ -1148,3 +1148,71 @@ class Solution:
 # Space: O(n)
 
 # Walk through:
+
+
+
+
+
+
+
+# Nov 8, 2026
+# I have not looked at the solution, and have not looked at the data structures needed for this problem. 
+
+# insert and remove are normal operations which a set can handle. But sets are not able to return a random element.
+# Thoughts: 
+#   I could keep a seperate data structure which is a list (or some indexable structure), which will allow me to index it (and I can make the index random between the valid range). 
+#   Considerations: 1. I would need to have some way of keeping a single source of truth because now I have two seperate data structures, which both hold the same information of these inserted/removed values. (maybe I can solve this with having a single mutator helper function who is the only one that is allowed to mutate either structures, this way I can guarantee that both structures always get changed at the same time. This prevents drift.) 2. But a list is not able to perform O(1) removal of an arbitrary element. 
+
+# I should go and follow the workflow outlined in that lecture document of lectures/leetcode/012-data_structure_design_problems.md
+
+# Wrote input/outputs
+
+# Operation Table and associated Question for each method
+
+# insert:
+# Does: Put the element into our structure. 
+# Question: Must have way to place element immediately, with no reorganizing or shifting of already inserted element (like balancing a binary tree)
+# Data Structure: Set
+
+# remove:
+# Does: Removes an element POTENTIALLY in our structure. 
+# Question: Must have way to immediately search our structure to know if/if not present. Must have way to immediately remove element.
+# Data Structure: Set, dict, linked list (operation: immediately search. Requires a hashable data strucuture (ie, set or dict)). (operation: immediately remove. Arrays need to move everything over (arrays eleminated), sets work, dict works, linked lists (assuming pointer to the node) works)
+
+# getRandom:
+# Does: Has way to select a random element 
+# Question: Must have way to select an element (with equal probability)
+# Data Structure: List (sets (not indexable), Linked List would need a way to have immediate access (a pointer to) every element in the list, dict are only indexable by key)
+
+# Clarifying Questions:
+# During getRandom Operation Table: what does random mean? If an element is determined by the val, if the val is of the same value should the random give each instance which was inserted an equal probability or each specific value. Nevermind, each element val is guaranteed by our structure itself to be unique.  
+
+# It seems I have selected Set and List.
+# Lecture doc says: Choose the source of truth (where the data really lives) and the index(es) (shortcuts into it). Write the invariant linking them in one sentence.
+# 
+
+class RandomizedSet:
+
+    # Inputs: None
+    # Outputs: None
+    def __init__(self):
+        
+    # Inputs: val (int to be inserted)
+    # Outputs: success (bool, true if val was not in before. False if already added)
+    def insert(self, val: int) -> bool:
+        
+    # Inputs: val (int to be taken out of our structure)
+    # Outputs: success (bool, true if val was in our structure. False if it was not in our structure)
+    def remove(self, val: int) -> bool:
+        
+    # Inputs: None
+    # Outputs: item (int, a randomized element of one of the inputted elements through the insert method)
+    def getRandom(self) -> int:
+        
+
+
+# Your RandomizedSet object will be instantiated and called as such:
+# obj = RandomizedSet()
+# param_1 = obj.insert(val)
+# param_2 = obj.remove(val)
+# param_3 = obj.getRandom()
