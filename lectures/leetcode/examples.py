@@ -1212,6 +1212,94 @@ class RandomizedSet:
         
 
 
+# Second Attempt (after reading one line as mentioned in the comments as to when I did that.)
+
+# I have not looked at the solution, and have not looked at the data structures needed for this problem. 
+
+# insert and remove are normal operations which a set can handle. But sets are not able to return a random element.
+# Thoughts: 
+#   I could keep a seperate data structure which is a list (or some indexable structure), which will allow me to index it (and I can make the index random between the valid range). 
+#   Considerations: 1. I would need to have some way of keeping a single source of truth because now I have two seperate data structures, which both hold the same information of these inserted/removed values. (maybe I can solve this with having a single mutator helper function who is the only one that is allowed to mutate either structures, this way I can guarantee that both structures always get changed at the same time. This prevents drift.) 2. But a list is not able to perform O(1) removal of an arbitrary element. 
+
+# I should go and follow the workflow outlined in that lecture document of lectures/leetcode/012-data_structure_design_problems.md
+
+# Wrote input/outputs
+
+# Operation Table and associated Question for each method
+
+# insert:
+# Does: Put the element into our structure. 
+# Question: Must have way to place element immediately, with no reorganizing or shifting of already inserted element (like balancing a binary tree)
+# Data Structure: Set
+
+# remove:
+# Does: Removes an element POTENTIALLY in our structure. 
+# Question: Must have way to immediately search our structure to know if/if not present. Must have way to immediately remove element.
+# Data Structure: Set, dict, linked list (operation: immediately search. Requires a hashable data strucuture (ie, set or dict)). (operation: immediately remove. Arrays need to move everything over (arrays eleminated), sets work, dict works, linked lists (assuming pointer to the node) works)
+
+# getRandom:
+# Does: Has way to select a random element 
+# Question: Must have way to select an element (with equal probability)
+# Data Structure: List (sets (not indexable), Linked List would need a way to have immediate access (a pointer to) every element in the list, dict are only indexable by key)
+
+# Clarifying Questions:
+# During getRandom Operation Table: what does random mean? If an element is determined by the val, if the val is of the same value should the random give each instance which was inserted an equal probability or each specific value. Nevermind, each element val is guaranteed by our structure itself to be unique.  
+
+# It seems I have selected Set and List.
+# Lecture doc says: Choose the source of truth (where the data really lives) and the index(es) (shortcuts into it). Write the invariant linking them in one sentence.
+# I have no idea how to combine them.....
+# Maybe I acutally select a dict, because then it allows me extra functionality. I now have access to a value for the given key (key is the val). So what info would I want for the val? What do I want to save? If I know the number of elements (just keep a state variable increasing and decreasing for each insert / remove), I can know the range. 
+
+# Asked to create a lecture document. Read one single line of that document 'A list can remove from the middle in O(1) if you don't care about order: move the last element into the hole, then pop() the end. Shifting is only needed to keep the order, and a set has no order.' and now I think I see it. 
+
+# I can have a set and a list, then as I remove the element. I will remove it from my set, and also remove it from my list. I can remove from my list by swaping the last element for where the element is that I want to remove. This does mean that I will need to immediately know which index the element to remove is at (That is what I can do with my dictionary)
+
+class RandomizedSet:
+
+    # Inputs: None
+    # Outputs: None
+    def __init__(self):
+        self.my_dict = {}
+        self.my_list = []
+        self.size = 0
+        
+    # Inputs: val (int to be inserted)
+    # Outputs: success (bool, true if val was not in before. False if already added)
+    def insert(self, val: int) -> bool:
+
+        # return the answer and don't add anything.
+        if val in self.my_dict:
+            return False
+
+        # here size is the number of elements, and that will correspond to the index at which I want to place my next element upon adding a new element. I will want to add the val to my dict, and point that key to the index in the list which this new val will be living at. This way I will be able to easily know where that value lives immediately. Then I want to expand my list by one and place the element at that expanded index. Finally I will want to increase my size by one because I have just added an element, and the index which I want to place another new element has increased. (these two statements correspond to the same number so I can keep it in one variable, but otherwise I would need to create two seperate variables tracking the state of the index and another tracking the size of the number of elements.)
+        self.my_dict[val] = self.size
+        self.my_list.append(val)
+        self.size += 1
+
+        return True
+        
+    # Inputs: val (int to be taken out of our structure)
+    # Outputs: success (bool, true if val was in our structure. False if it was not in our structure)
+    def remove(self, val: int) -> bool:
+        if val not in self.my_dict:
+            return False
+        
+        self.my_list[self.my_dict[val]] = self.my_list[self.size - 1]
+        self.my_list.pop()
+        self.size -= 1
+        del self.my_dict[val]
+        return True
+        
+    # Inputs: None
+    # Outputs: item (int, a randomized element of one of the inputted elements through the insert method)
+    def getRandom(self) -> int:
+
+        # Don't know the exact library to get a random number. But assuming it is like this, and that random method gives a random number between the two ranges (if inclusive of the end)
+        random_index = int.random(0,self.size-1)
+        return self.my_list[random_index]
+        
+
+
 # Your RandomizedSet object will be instantiated and called as such:
 # obj = RandomizedSet()
 # param_1 = obj.insert(val)
