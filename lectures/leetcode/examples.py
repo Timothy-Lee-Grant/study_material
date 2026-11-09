@@ -1280,6 +1280,13 @@ class RandomizedSet:
         
     # Inputs: val (int to be taken out of our structure)
     # Outputs: success (bool, true if val was in our structure. False if it was not in our structure)
+
+    # Walkthrough (for remove):
+    #   state       self.size     self.my_list      self.my_dict
+
+    #   initial     5               [4,8,11,90,6]   {4:0, 8:1, 11:2, 90:3, 6:4}
+    #   remove(16)  returns Flase (not in dict), no other changes 
+    #   remove(8)   4               [4,6,11,90]   {4:0, 11:2, 90:3, 6:4}   
     def remove(self, val: int) -> bool:
         if val not in self.my_dict:
             return False
@@ -1295,13 +1302,11 @@ class RandomizedSet:
     def getRandom(self) -> int:
 
         # Don't know the exact library to get a random number. But assuming it is like this, and that random method gives a random number between the two ranges (if inclusive of the end)
-        random_index = int.random(0,self.size-1)
-        return self.my_list[random_index]
-        
+        #random_index = int.random(0,self.size-1)
+        # (looked this up online): random.randint(1, 10) Returns a whole number between 1 and 10 (inclusive).
+        random_index = random.randint(1,self.size)
 
+        return self.my_list[random_index-1]
+    
+# Submitted, but it gives that the answer was wrong. Too tired to investigate.
 
-# Your RandomizedSet object will be instantiated and called as such:
-# obj = RandomizedSet()
-# param_1 = obj.insert(val)
-# param_2 = obj.remove(val)
-# param_3 = obj.getRandom()
