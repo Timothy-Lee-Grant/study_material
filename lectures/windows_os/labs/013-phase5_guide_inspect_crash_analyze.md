@@ -51,7 +51,7 @@ sc.exe start TgCounter
 
 ### What changed in the code
 
-The Phase 5 versions are in your repo at **`lectures/windows_internals/code/tgcounter_phase5/`**. The originals in `code/tgcounter/` are unchanged.
+The Phase 5 versions are in your repo at **`lectures/windows_os/labs/code/tgcounter_phase5/`**. The originals in `code/tgcounter/` are unchanged.
 
 | File | Change |
 |---|---|
@@ -72,7 +72,7 @@ When compiled, `KeRaiseIrql` became **inline code** (a direct write to the IRQL 
 ### Steps
 
 **A. Move the files Mac → VM through a shared folder (no pasting).**
-1. On the Mac, in Finder, copy the three files from `Studying_Lectures/lectures/windows_internals/code/tgcounter_phase5/` into `/Volumes/T7/windows_experiment/shared/tgcounter_phase5/`.
+1. On the Mac, in Finder, copy the three files from `Studying_Lectures/lectures/windows_os/labs/code/tgcounter_phase5/` into `/Volumes/T7/windows_experiment/shared/tgcounter_phase5/`.
 2. **Set up the Fusion shared folder**, which is still pending from handoff entry 35. With the VM running: Fusion → Virtual Machine → Settings → **Sharing** → turn on Shared Folders → **+** → choose `/Volumes/T7/windows_experiment/shared` → permissions **Read & Write**.
 3. In Windows, File Explorer → address bar: `\\vmware-host\Shared Folders\shared\tgcounter_phase5`. You should see the three files.
 4. Copy them into the source folder your VS projects already link to, **overwriting** the old ones:

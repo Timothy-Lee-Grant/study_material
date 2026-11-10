@@ -20,17 +20,17 @@
 | 007 | `007-power_management_and_modern_standby.md` | Kernel mechanics | Explain S-states, D-states and Modern Standby, and debug a resume or standby bug |
 | 008 | `008-processes_threads_memory_and_shared_sections.md` | Kernel mechanics | Explain processes vs threads and virtual → physical mapping, and share memory across processes with named sections, mutexes and events (runnable code) |
 | 009 | `009-what_a_driver_actually_is.md` | Kernel mechanics | Explain what's inside a `.sys` file, what configuration loads it, what `DriverEntry` registers, every hop from `DeviceIoControl` to the driver and back, and how drivers call drivers and the kernel (WDM + KMDF, real build) |
-| 010 | `010-lab_setup_work_plan.md` | Lab | Work plan: Windows 11 Arm VM on your Mac → driver test config → VS + WDK → build/sign/load TgCounter → crash, live dump, Verifier, WPR labs; optional live debugging options |
-| 011 | `011-session_handoff.md` | Lab | Handoff from lab session 1 (2026-10-23): decisions (VMware Fusion, 4 GB, T7), where every file lives, remaining steps |
+| 010 | `../labs/010-lab_setup_work_plan.md` | Lab | Work plan: Windows 11 Arm VM on your Mac → driver test config → VS + WDK → build/sign/load TgCounter → crash, live dump, Verifier, WPR labs; optional live debugging options |
+| 011 | `../labs/011-session_handoff.md` | Lab | Handoff from lab session 1 (2026-10-23): decisions (VMware Fusion, 4 GB, T7), where every file lives, remaining steps |
 | 012 | `012-virtual_machines_and_where_software_lives.md` | Lab / foundations | Say where a downloaded, installed or running program actually lives (disk vs RAM, disk images, package managers), and explain how a VM works: VM exits, two-stage memory translation, sparse virtual disks, emulated vs paravirtual devices, virtual firmware/TPM, snapshots |
-| 013 | `013-phase5_guide_inspect_crash_analyze.md` | Lab | Phase 5 guide: Phase 5 code via shared folder → local kernel debugging (dispatch table, read the counter from kernel memory) → live dump → crash on purpose + 0xD1 analysis → Driver Verifier makes a paged-pool-at-DISPATCH bug deterministic → WPR/WPA |
+| 013 | `../labs/013-phase5_guide_inspect_crash_analyze.md` | Lab | Phase 5 guide: Phase 5 code via shared folder → local kernel debugging (dispatch table, read the counter from kernel memory) → live dump → crash on purpose + 0xD1 analysis → Driver Verifier makes a paged-pool-at-DISPATCH bug deterministic → WPR/WPA |
 | 014 | `014-device_to_app_data_path.md` | Design | Design a device → driver → app path for a level-triggered "FIFO not empty" line and a blocking read: mask/drain/unmask (no storms), why a DPC can't block and where the read goes (passive-level ISR / work item; Linux threaded IRQ + `IRQF_ONESHOT`), ring buffer, parked read requests (KMDF manual queue / wait queue + `poll`), FIFO sizing from worst-case latency, overflow policy, reader thread + UI thread |
 | 015 | `015-performance_analysis_cpu_and_waits.md` | Performance | Decide running vs waiting from a trace; CPU Usage (Sampled) vs (Precise) in WPA; spot a single-core bottleneck; Amdahl's law; parallel chunked compression and its costs; Profile Explorer down to assembly; Arm-specific slowdowns (emulation, missing SIMD paths) |
 | 016 | `016-battery_life_and_energy_efficiency.md` | Performance / power | Energy = power × time; idle states and wake-ups; DVFS vs race-to-idle; QoS levels and EcoQoS (`SetProcessInformation`); coalescable timers and timer resolution; KMDF idle power-down; measure with powercfg (batteryreport, energy, sleepstudy, srumutil/E3) and WPR power traces |
 | 017 | `017-windows_app_platform_and_open_source_projects.md` | App platform | Explain how WinUI 3 / the Windows App SDK sit on Win32, the UI thread and `DispatcherQueue`, deployment models; know four open-source repos (microsoft-ui-xaml, WindowsAppSDK, profile-explorer, performance-toolkit-sdk) and a connected TgCounter project (TraceLogging → WPA → SDK plugin → WinUI front-end) |
 | 018 | `018-phase5_concepts_what_the_analyses_are_doing.md` | Lab / concepts | The *why* behind the Phase 5 guide (013): kernel state = bytes in memory read through symbols; pointer chain from `\Driver\TgCounter` to `Counter`; live vs live dump vs crash dump; what a bugcheck is (rule vs bug, P1–P4, stack); latent bugs and Verifier; snapshots vs traces; the predict → evidence → one-sentence-conclusion loop |
 
-Code: `code/shm_demo.c` (used in 008); `code/tgcounter/` (driver, IOCTL header, client; used in 009); `code/tgcounter_phase5/` (lab-only bug IOCTLs; used in 013); `code/014_fifo_sizing.py`; `code/015_parallel_compress.py`; `code/016_ecoqos_and_timers.c`.
+Code: `code/shm_demo.c` (used in 008); `../labs/code/tgcounter/` (driver, IOCTL header, client; used in 009); `../labs/code/tgcounter_phase5/` (lab-only bug IOCTLs; used in 013); `code/014_fifo_sizing.py`; `code/015_parallel_compress.py`; `code/016_ecoqos_and_timers.c`.
 
 ## Reading order
 
@@ -50,7 +50,7 @@ The numbering follows your priority (debugging first). The debugging lectures ar
 
 ## Hands-on setup (once, for the labs)
 
-All the labs need a Windows machine. A Windows 11 Arm virtual machine on your Mac is enough (step-by-step plan: `010-lab_setup_work_plan.md`) to:
+All the labs need a Windows machine. A Windows 11 Arm virtual machine on your Mac is enough (step-by-step plan: `../labs/010-lab_setup_work_plan.md`; lab tracking lives in `../labs/README.md`) to:
 - install WinDbg (`winget install Microsoft.WinDbg`), the Windows Performance Toolkit (part of the Windows ADK) and Sysinternals (NotMyFault, LiveKD),
 - create and analyze crash dumps and live dumps,
 - run Driver Verifier and WPR/WPA,

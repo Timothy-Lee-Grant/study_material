@@ -3,7 +3,7 @@
 # 018 — Phase 5, Conceptually: What We're Doing, How the Pieces Interact, and What Each Analysis Looks For
 
 > **For:** Timothy · **Date:** 2026-11-07
-> **Pairs with:** `013-phase5_guide_inspect_crash_analyze.md` (the *steps*). This lecture is the *why*: it explains the ideas behind every Phase 5 lab, so the commands stop being recipes. It's self-contained; you don't need to reread 001–004 first, though it points to them.
+> **Pairs with:** `../labs/013-phase5_guide_inspect_crash_analyze.md` (the *steps*). This lecture is the *why*: it explains the ideas behind every Phase 5 lab, so the commands stop being recipes. It's self-contained; you don't need to reread 001–004 first, though it points to them.
 > **Why this lecture:** you've got the driver loaded and WinDbg attached to the live kernel on ARM64 (`lkd>`, `lm m TgCounter` showed your driver at `fffff800`66080000`). Next come `!drvobj`, a live dump, a deliberate crash, Driver Verifier and a WPR trace. You asked for the conceptual picture: what is actually going on, how everything interacts, how these analyses work, and what we're looking for. The short answer: **the kernel is a program whose state lives in memory; every Phase 5 lab is a different way of getting at that state (now, frozen, at the moment of death, under stress, or as a timeline) and reading it with a map (symbols).** The rest of the lecture unpacks that sentence.
 > **Format notes:** no new commands to learn; the commands are in 013. Where something you saw in your own session illustrates a concept (the `PEB is paged out` message, threads waiting in `KiSwapContext`, a kernel base that changes every boot), it's used as the example. No firmware analogies.
 
@@ -366,4 +366,4 @@ Phase 5 is that whole toolkit, on a driver you wrote, where you already know the
 - Microsoft Learn, [Symbols for Windows debugging](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/symbols) (public vs private symbols, symbol server). Checked 2026-11-07.
 - Microsoft Learn, [Event Tracing for Windows](https://learn.microsoft.com/en-us/windows/win32/etw/about-event-tracing) and [Windows Performance Recorder](https://learn.microsoft.com/en-us/windows-hardware/test/wpt/windows-performance-recorder). Checked 2026-11-07.
 - Yosifovich, Ionescu, Russinovich, Solomon, *Windows Internals, Part 1*, 7th ed., ch. 5 (memory management, pools, page faults) and ch. 6 (I/O system: driver/device objects, IRPs); *Part 2*, 7th ed., ch. 10 (ETW, Windows Error Reporting and crash dumps).
-- Your own lab record: `011-session_handoff.md` entries 52–55 (ARM64 local KD, kernel base, `PEB is paged out`, `KiSwapContext`, `lm m TgCounter`).
+- Your own lab record: `../labs/011-session_handoff.md` entries 52–55 (ARM64 local KD, kernel base, `PEB is paged out`, `KiSwapContext`, `lm m TgCounter`).

@@ -94,7 +94,7 @@ Keep this picture in mind. Every section below zooms into one part of it.
 | `DeviceIoControl(h, IOCTL_TGCOUNTER_GET, …)` | `IRP_MJ_DEVICE_CONTROL` | Returns the counter |
 | `CloseHandle(h)` | `IRP_MJ_CLOSE` | Says yes |
 
-Files, in `lectures/windows_internals/code/tgcounter/`:
+Files, in `lectures/windows_os/labs/code/tgcounter/`:
 
 | File | Role |
 |---|---|

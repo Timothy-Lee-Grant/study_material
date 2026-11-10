@@ -4,9 +4,9 @@
 
 > **For:** Timothy, and Claude at the start of each new session
 > **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4); Session 4 (2026-10-31 ~19:20 → 2026-11-01 ~01:35, Phase 5.0 + start of 5.1; ended for the night)
-> **Last updated:** 2026-11-01 ~01:35 PST (note: DST ended overnight, so file times on the Mac jump back an hour)
+> **Last updated:** 2026-11-10 (Session 5 started; earlier: 2026-11-01 ~01:35 PST) (note: DST ended overnight, so file times on the Mac jump back an hour)
 > **Plan this follows:** [`010-lab_setup_work_plan.md`](010-lab_setup_work_plan.md). Its Phases 0–6 still apply, with the changes listed under "Decisions" below.
-> **Where we are now:** ✅ **Phases 0–4 complete. Phase 5: 5.0 ✅ done, 5.1 ⏳ in progress (exercise 1 of 8 done).** The Phase 5 TgCounter (crash + paged-at-dispatch IOCTLs) is built in **`C:\lab\lab2\`**, signed with TgTest, registered again as a service, and working (`get` → 3). **Local kernel debugging works on this ARM64 VM** (`lkd>`), and `lm m TgCounter` shows private symbols. **5 snapshots**; the newest is **`TgCounter: loaded (phase 5 build)`** (= the guide's `phase5-code-loaded`). Guide: [`phase5/013-phase5_guide_inspect_crash_analyze.md`](phase5/013-phase5_guide_inspect_crash_analyze.md). Demo runbook: [`012-demo_runbook.md`](012-demo_runbook.md).
+> **Where we are now:** ✅ **Phases 0–4 complete. Phase 5: 5.0 ✅ done, 5.1 ⏳ in progress (exercise 1 of 8 done).** The Phase 5 TgCounter (crash + paged-at-dispatch IOCTLs) is built in **`C:\lab\lab2\`**, signed with TgTest, registered again as a service, and working (`get` → 3). **Local kernel debugging works on this ARM64 VM** (`lkd>`), and `lm m TgCounter` shows private symbols. **5 snapshots**; the newest is **`TgCounter: loaded (phase 5 build)`** (= the guide's `phase5-code-loaded`). Guide: [`013-phase5_guide_inspect_crash_analyze.md`](013-phase5_guide_inspect_crash_analyze.md). Lab trackers: [`README.md`](README.md). Demo runbook: [`012-demo_runbook.md`](012-demo_runbook.md).
 
 ---
 
@@ -14,7 +14,7 @@
 
 **To show off the current state:** follow [`012-demo_runbook.md`](012-demo_runbook.md) (prep → 7 acts → reset).
 
-**To continue the lab: Phase 5, lab 5.1, exercise 2.** Follow **`phase5/013-phase5_guide_inspect_crash_analyze.md`** (it supersedes the 010 plan's Phase 5 and the outline below), with **these corrections for this VM:**
+**To continue the lab: Phase 5, lab 5.1, exercise 2.** Follow **`013-phase5_guide_inspect_crash_analyze.md`** (it supersedes the 010 plan's Phase 5 and the outline below), with **these corrections for this VM:**
 - **Paths:** everything is in **`C:\lab\lab2\`**: `C:\lab\lab2\TgCounter\ARM64\Debug\TgCounter.sys/.pdb` and `C:\lab\lab2\tgclient\ARM64\Debug\tgclient.exe`. The guide's `C:\lab\TgCounter\…` **doesn't exist** anymore (WinDbg error 0x3, entry 53).
 - **Rebuild loop:** build in VS (ARM64/Debug) → `sc.exe stop TgCounter` → `cd C:\lab\lab2\TgCounter\ARM64\Debug` → `signtool sign /fd sha256 /sm /s My /n TgTest TgCounter.sys` → `copy TgCounter.sys C:\drivers\` → `sc.exe start TgCounter`. (VS's own "Successfully signed" is WDKTestCert, which isn't enough.)
 - **Debug mode is ON** (`bcdedit /debug on`, done in Session 4 for 5.1). **Turn it off (`bcdedit /debug off` + reboot) before the crash labs 5.3/5.4**, as the guide says at the end of 5.1.
@@ -71,7 +71,7 @@ Original outline (kept for history; the 013 guide is the current version):
 | Phase 4: TgCounter build/sign/load | ✅ Session 3: loaded, logged, client 1/2/3 (entry 45) |
 | Snapshot `tgcounter-works` | ✅ 2026-10-25 ~19:35, VM off (snapshot 4, current; verified in the `.vmsd`) |
 | Demo runbook `012-demo_runbook.md` | ✅ written 2026-10-25 |
-| Phase 5 guide `phase5/013-…md` + source | ✅ written 2026-10-30; code staged in `shared/tgcounter_phase5/` (Session 4) |
+| Phase 5 guide `013-…md` + source | ✅ written 2026-10-30; code staged in `shared/tgcounter_phase5/` (Session 4) |
 | 5.0 Phase 5 build (`C:\lab\lab2\`), TgTest re-sign, service re-created, smoke test | ✅ Session 4 (entries 49–51) |
 | Snapshot `TgCounter: loaded (phase 5 build)` | ✅ 2026-11-01 ~01:49 PDT, VM off (snapshot 5, current) |
 | 5.1 Local kernel debugging | ⏳ **in progress**: `bcdedit /debug on` ✅, Local attach ✅, symbols ✅, `lm m TgCounter` ✅; next: `!drvobj` |
@@ -323,6 +323,11 @@ Original outline (kept for history; the 013 guide is the current version):
 53. **Symbol path.** WinDbg engine **10.0.29661.1004 ARM64**; the extension gallery has 45 local packages; "MCP Server Bridge Attached (enabled, not running, not connected)" is a new WinDbg AI feature (ignore it). `.symfix C:\symbols` → `SRV*C:\symbols*https://msdl.microsoft.com/download/symbols`. The user first typed the guide's old path `.sympath+ C:\lab\TgCounter\ARM64\Debug` → **`0x3 The system cannot find the path specified`**. So the Phase 4 project's output folder **no longer exists** in the VM (the Phase 4 projects seem to have been removed or moved; not confirmed). Then `.sympath+ C:\lab\lab2\TgCounter\ARM64\Debug` → **OK** (typed twice). The bad entry stays in the path and reports an error on every `.sympath`. That's harmless, but the fix given was to re-run `.symfix C:\symbols` (which *replaces* the path) and then `.sympath+` with `lab2` only. Next: `.reload` → `lm m TgCounter`.
 54. **5.1 exercise 1 ✅.** Clean path after `.symfix` + `.sympath+` (Deferred srv*, OK lab2). `.reload` loaded the kernel symbols (no errors); `PEB is paged out (Peb.Ldr = 00000008\`41970018)` is a harmless user-mode note (the local kd's current process context; dbgerr001). `lm m TgCounter` → **`fffff800\`66080000 – fffff800\`66088000`** (0x8000 = 32 KB, 8 pages), `(deferred)` → after `.reload /f TgCounter.sys` → **`(private pdb symbols) c:\lab\lab2\tgcounter\arm64\debug\TgCounter.pdb`**. The driver sits ~22 MB below the kernel base `fffff800\`67600000` (this boot). Next: `!drvobj \Driver\TgCounter 2`.
 55. **~01:35: the user stopped for the night** and asked for a good handoff. Mac-side checks: the `.vmsd` now has **5 snapshots**. The new one is **`TgCounter: loaded (phase 5 build)`** (uid 6, parent 4 = `tgcounter-works`; `.vmsn` at 01:49 PDT, 2.4 MB, so it was taken with the VM off; lastUID 6, so a uid-5 snapshot was made and deleted at some point). The user named it after the DebugView load line, which suggests the `(phase 5 build)` message was seen. The current VM run started **08:51 UTC** (cold boot right after the snapshot, which fits the `bcdedit /debug on` reboot). It was **still running** at 09:30 UTC. `.vmx`: still no shared folders. Bundle: 109 GB. Note: DST ended during the session (PDT → PST at 02:00), so the Mac shows times an hour "earlier" after that. WinDbg's `Sun Nov 1 02:07 (UTC-8)` is the guest's view. **Reminder for the user: shut Windows down (not suspend) and quit Fusion before unplugging the T7.**
+
+### Session 5 (2026-11-10, Phase 5.1 resume)
+
+56. **Repo reorganized:** `lectures/windows_os/` now has `lectures/` (concept lectures + their code) and `labs/` (010–013, this handoff, the TgCounter code). New trackers in `labs/`: [`README.md`](README.md) (index + session routine), [`lab_progress.md`](lab_progress.md) (checklist + current position), [`lab_notebook.md`](lab_notebook.md) (prediction → result → conclusion per exercise), [`issues_and_fixes.md`](issues_and_fixes.md) (every error, cause, fix). Older entries above keep their original paths (`windows_internals/…`, `phase5/…`) as history.
+57. **Rebuild loop run from plain PowerShell 7.6.9** (prompt started in `C:\Windows\System32`, not Developer PowerShell): `sc.exe stop TgCounter` → **1062** (already stopped; normal after a reboot). `signtool` → **not recognized** (not on PATH outside the VS developer shell), so **nothing was re-signed**. `copy` → silent. `sc.exe start TgCounter` → **RUNNING**, exit codes 0. Which build is loaded is **unconfirmed**. Fix given: rerun the loop in admin **Developer PowerShell for VS 2026** (or call signtool by full path under `C:\Program Files (x86)\Windows Kits\10\bin\<ver>\arm64\`), then confirm `(phase 5 build)` in DebugView before 5.1 exercise 2.
 
 ---
 

@@ -121,7 +121,7 @@ Microsoft documents that, starting with **WDK 10.0.26100**, the WDK "can be inst
 This is lecture 009 §13, made concrete for this VM.
 
 **4.1 Get the code into the VM**
-- [ ] Copy `lectures/windows_internals/code/tgcounter/` from your repo into the VM, e.g. to `C:\lab\tgcounter\`, through the hypervisor's shared folder or drag-and-drop.
+- [ ] Copy `lectures/windows_os/labs/code/tgcounter/` from your repo into the VM, e.g. to `C:\lab\tgcounter\`, through the hypervisor's shared folder or drag-and-drop.
 
 **4.2 Build the driver**
 - [ ] New project → **Empty WDM Driver** → name it `TgCounter`. (It's WDM, not KMDF, because 009's driver uses `DriverEntry` and `MajorFunction[]` directly.)

@@ -212,7 +212,7 @@ A common wrong belief is that locks only work between threads of one process. Ke
 
 ## 7. The complete program 🟢
 
-`lectures/windows_internals/code/shm_demo.c`: one program, two roles. Run a **reader** and a **writer**; the writer sends three messages through the shared page. A named mutex protects the data, an event `Ready` says "a message is waiting", and an event `Ack` says "it's consumed".
+`lectures/windows_os/lectures/code/shm_demo.c`: one program, two roles. Run a **reader** and a **writer**; the writer sends three messages through the shared page. A named mutex protects the data, an event `Ready` says "a message is waiting", and an event `Ack` says "it's consumed".
 
 ```c
 // shm_demo.c - two processes share one page through a named section,

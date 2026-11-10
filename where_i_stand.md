@@ -209,7 +209,7 @@ What has evidence behind it:
 | `lectures/clarifications/log.md` | §3.2 |
 | `lectures/leetcode/private/000-weakness_tracker.md` | §3.1 |
 | `lectures/system_design/practice/progress.md` | §3.3 |
-| `lectures/windows_internals/011-session_handoff.md` | §5 driver lab |
+| `lectures/windows_os/labs/011-session_handoff.md` (trackers: `labs/lab_progress.md`) | §5 driver lab |
 | `learning_system/learning_plan.md` | §4 next actions (the plan picks *what to study*; this file says *where I stand*) |
 
 **Rules:**
