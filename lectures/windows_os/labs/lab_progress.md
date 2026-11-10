@@ -13,8 +13,8 @@
 **Phase 5 → lab 5.1 → exercise 2** (`!drvobj \Driver\TgCounter 2`).
 
 **State of the VM (Session 5, 2026-11-10):**
-- `sc.exe start TgCounter` → **RUNNING**. But the re-sign failed in that same run (`signtool` isn't recognized in plain PowerShell 7), so **it isn't confirmed which build is loaded.**
-- **Next action:** in an admin **Developer PowerShell for VS 2026**, run the rebuild loop again (stop → sign → copy → start) and confirm `TgCounter: loaded (phase 5 build)` in DebugView. Then reattach WinDbg (Local) and continue with exercise 2.
+- Rebuild loop rerun in **Developer PowerShell for VS 2026** ✅: stop → `Successfully signed` (TgTest) → copy → **RUNNING**.
+- **Next action:** confirm `TgCounter: loaded (phase 5 build)` in DebugView → `tgclient.exe` (1/2/3) → WinDbg Local attach + symbols → exercise 2 (prediction first in `lab_notebook.md`).
 - Debug mode: **ON** (`bcdedit /debug on`, from Session 4). Turn it off before 5.3.
 - Newest snapshot: **`TgCounter: loaded (phase 5 build)`**. The next one to take is `before-crash-labs` (5.3).
 
