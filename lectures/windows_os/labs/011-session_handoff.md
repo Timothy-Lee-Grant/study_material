@@ -3,10 +3,10 @@
 # 011 — Session Handoff: Windows Driver Lab Setup (living document)
 
 > **For:** Timothy, and Claude at the start of each new session
-> **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4); Session 4 (2026-10-31 ~19:20 → 2026-11-01 ~01:35, Phase 5.0 + start of 5.1; ended for the night)
-> **Last updated:** 2026-11-10 (Session 5 started; earlier: 2026-11-01 ~01:35 PST) (note: DST ended overnight, so file times on the Mac jump back an hour)
+> **Sessions covered:** Session 1 (2026-10-23 evening → 2026-10-24 ~02:00); Session 2 (2026-10-24 ~15:00 → ~20:05, ended for a break); Session 3 (2026-10-25, Phase 4); Session 4 (2026-10-31 ~19:20 → 2026-11-01 ~01:35, Phase 5.0 + start of 5.1; ended for the night); Session 5 (2026-11-10 evening → 2026-11-11 ~00:00, re-sign + blocked on kernel symbols; ended for the night)
+> **Last updated:** 2026-11-11 ~00:00 PST (end of Session 5) (note: DST ended overnight, so file times on the Mac jump back an hour)
 > **Plan this follows:** [`010-lab_setup_work_plan.md`](010-lab_setup_work_plan.md). Its Phases 0–6 still apply, with the changes listed under "Decisions" below.
-> **Where we are now:** ✅ **Phases 0–4 complete. Phase 5: 5.0 ✅ done, 5.1 ⏳ in progress (exercise 1 of 8 done).** The Phase 5 TgCounter (crash + paged-at-dispatch IOCTLs) is built in **`C:\lab\lab2\`**, signed with TgTest, registered again as a service, and working (`get` → 3). **Local kernel debugging works on this ARM64 VM** (`lkd>`), and `lm m TgCounter` shows private symbols. **5 snapshots**; the newest is **`TgCounter: loaded (phase 5 build)`** (= the guide's `phase5-code-loaded`). Guide: [`013-phase5_guide_inspect_crash_analyze.md`](013-phase5_guide_inspect_crash_analyze.md). Lab trackers: [`README.md`](README.md). Demo runbook: [`012-demo_runbook.md`](012-demo_runbook.md).
+> **Where we are now:** ✅ **Phases 0–4 complete. Phase 5: 5.0 ✅ done, 5.1 ⏳ in progress (exercise 1 of 8 done). ⛔ BLOCKED since Session 5: Windows Update moved the VM to build 26300.9974 and Microsoft's symbol server has no `ntkrnlmp.pdb` for that kernel (HTTP 404), so `!drvobj`/`!devobj` can't work. Fix: restore snapshot `TgCounter: loaded (phase 5 build)` and pause updates (see TL;DR).** The Phase 5 TgCounter (crash + paged-at-dispatch IOCTLs) is built in **`C:\lab\lab2\`**, signed with TgTest, registered again as a service, and working (`get` → 3). **Local kernel debugging works on this ARM64 VM** (`lkd>`), and `lm m TgCounter` shows private symbols. **5 snapshots**; the newest is **`TgCounter: loaded (phase 5 build)`** (= the guide's `phase5-code-loaded`). Guide: [`013-phase5_guide_inspect_crash_analyze.md`](013-phase5_guide_inspect_crash_analyze.md). Lab trackers: [`README.md`](README.md). Demo runbook: [`012-demo_runbook.md`](012-demo_runbook.md).
 
 ---
 
@@ -14,7 +14,14 @@
 
 **To show off the current state:** follow [`012-demo_runbook.md`](012-demo_runbook.md) (prep → 7 acts → reset).
 
-**To continue the lab: Phase 5, lab 5.1, exercise 2.** Follow **`013-phase5_guide_inspect_crash_analyze.md`** (it supersedes the 010 plan's Phase 5 and the outline below), with **these corrections for this VM:**
+**⛔ First, unblock kernel symbols (Session 5, entries 59–62):** the VM updated itself from **26300.9711 → 26300.9974**, and the new kernel's symbols aren't on Microsoft's server (`HttpQueryInfo: 800C0194` = 404). Steps:
+1. With Windows shut down: Fusion → Virtual Machine → Snapshots → **`TgCounter: loaded (phase 5 build)`** → Restore. (Nothing from Session 5 is lost that matters: the snapshot already has the signed Phase 5 driver, and `C:\symbols` there holds the 9711 kernel symbols from Session 4.)
+2. Boot → **Settings → Windows Update → Pause updates** (longest option) **before anything else**.
+3. `cmd /c ver` → expect **26300.9711**. Then `sc.exe start TgCounter` → `tgclient.exe` → WinDbg Local → `.symfix C:\symbols`, `.sympath+ C:\lab\lab2\TgCounter\ARM64\Debug`, `.reload` (expect **no** "Symbol Loading Error Summary") → `lm m TgCounter` → `!drvobj \Driver\TgCounter 2`.
+4. Optional: once working, shut down and take a new snapshot (e.g. `phase5-updates-paused`).
+- If restoring isn't wanted: retry `.reload /f nt` in a few days (Insider symbols sometimes appear late).
+
+**Then continue the lab: Phase 5, lab 5.1, exercise 2.** Follow **`013-phase5_guide_inspect_crash_analyze.md`** (it supersedes the 010 plan's Phase 5 and the outline below), with **these corrections for this VM:**
 - **Paths:** everything is in **`C:\lab\lab2\`**: `C:\lab\lab2\TgCounter\ARM64\Debug\TgCounter.sys/.pdb` and `C:\lab\lab2\tgclient\ARM64\Debug\tgclient.exe`. The guide's `C:\lab\TgCounter\…` **doesn't exist** anymore (WinDbg error 0x3, entry 53).
 - **Rebuild loop:** build in VS (ARM64/Debug) → `sc.exe stop TgCounter` → `cd C:\lab\lab2\TgCounter\ARM64\Debug` → `signtool sign /fd sha256 /sm /s My /n TgTest TgCounter.sys` → `copy TgCounter.sys C:\drivers\` → `sc.exe start TgCounter`. (VS's own "Successfully signed" is WDKTestCert, which isn't enough.)
 - **Debug mode is ON** (`bcdedit /debug on`, done in Session 4 for 5.1). **Turn it off (`bcdedit /debug off` + reboot) before the crash labs 5.3/5.4**, as the guide says at the end of 5.1.
@@ -74,7 +81,7 @@ Original outline (kept for history; the 013 guide is the current version):
 | Phase 5 guide `013-…md` + source | ✅ written 2026-10-30; code staged in `shared/tgcounter_phase5/` (Session 4) |
 | 5.0 Phase 5 build (`C:\lab\lab2\`), TgTest re-sign, service re-created, smoke test | ✅ Session 4 (entries 49–51) |
 | Snapshot `TgCounter: loaded (phase 5 build)` | ✅ 2026-11-01 ~01:49 PDT, VM off (snapshot 5, current) |
-| 5.1 Local kernel debugging | ⏳ **in progress**: `bcdedit /debug on` ✅, Local attach ✅, symbols ✅, `lm m TgCounter` ✅; next: `!drvobj` |
+| 5.1 Local kernel debugging | ⛔ **blocked (Session 5): no kernel symbols for build 26300.9974; restore snapshot + pause updates** · earlier: `bcdedit /debug on` ✅, Local attach ✅, symbols ✅, `lm m TgCounter` ✅; next: `!drvobj` |
 | 5.2 live dump · 5.3 crash · 5.4 Verifier · 5.5 WPR | ⏳ |
 | Phase 6 (optional live debugging) | ⏳ later |
 
@@ -329,6 +336,10 @@ Original outline (kept for history; the 013 guide is the current version):
 56. **Repo reorganized:** `lectures/windows_os/` now has `lectures/` (concept lectures + their code) and `labs/` (010–013, this handoff, the TgCounter code). New trackers in `labs/`: [`README.md`](README.md) (index + session routine), [`lab_progress.md`](lab_progress.md) (checklist + current position), [`issues_and_fixes.md`](issues_and_fixes.md) (every error, cause, fix). (A prediction notebook was also created, then removed the same day at the user's request: no prediction exercises.) Older entries above keep their original paths (`windows_internals/…`, `phase5/…`) as history.
 57. **Rebuild loop run from plain PowerShell 7.6.9** (prompt started in `C:\Windows\System32`, not Developer PowerShell): `sc.exe stop TgCounter` → **1062** (already stopped; normal after a reboot). `signtool` → **not recognized** (not on PATH outside the VS developer shell), so **nothing was re-signed**. `copy` → silent. `sc.exe start TgCounter` → **RUNNING**, exit codes 0. Which build is loaded is **unconfirmed**. Fix given: rerun the loop in admin **Developer PowerShell for VS 2026** (or call signtool by full path under `C:\Program Files (x86)\Windows Kits\10\bin\<ver>\arm64\`), then confirm `(phase 5 build)` in DebugView before 5.1 exercise 2.
 58. **Rebuild loop rerun in admin Developer PowerShell for VS 2026 (v18.11.1) ✅.** `sc.exe stop` → STOPPED; `signtool … /n TgTest TgCounter.sys` → `Done Adding Additional Store` / `Successfully signed`; copy OK; `sc.exe start` → **RUNNING**, exit codes 0. Next: confirm `(phase 5 build)` in DebugView, then 5.1 exercise 2.
+59. **~23:30: VM had been rebooted** (WinDbg uptime 0:14:57). `sc.exe query TgCounter` → STOPPED, **1077** (`ERROR_SERVICE_NEVER_STARTED`: not started since boot; normal for a demand-start driver). `sc.exe start` → RUNNING; `tgclient.exe` → 1/2/3 ✅. DebugView `(phase 5 build)` line not checked this session.
+60. **WinDbg Local attach OK** (kernel base `0xfffff800\`68a00000` this boot, build lab string still `26100.1.arm64fre.ge_release.240331-1435`). `.reload` → **Symbol Loading Error Summary: `ntkrnlmp — The system cannot find the file specified`**. Without nt symbols: `!drvobj` → `Cannot find _OBJECT_DIRECTORY type`, and `.reload /f TgCounter.sys` → "not found in the image list" (the driver was also stopped at that point; see 59). Several typos in the same run (`.relaod`, `.reload \f`, `lm m TgCountr`, `!drvobj \Driver\Tgcouter`).
+61. **Diagnosis:** `Test-NetConnection msdl.microsoft.com -Port 443` → `TcpTestSucceeded : True` (network fine). `!sym noisy` + `.reload /f nt` → looks for `ntkrnlmp.pdb\C88DB4308AC30EFB39144EB14B6C63301`: not in `C:\symbols`, and **HTTP GET → `800C0194` (404)** for `.pdb`, `.pd_` and `file.ptr`; result `0x80190194`; falls back to **export symbols** only. `cmd /c ver` → **`10.0.26300.9974`** (Session 2 was **26300.9711**), so **Windows Update installed a newer Insider kernel** whose symbols Microsoft hasn't published. (`Get-Item C:\Windows\System32\ntoskrnl.exe` → "does not exist" in the VS Developer PowerShell window: that window is Windows PowerShell 5.1, probably a 32-bit/emulated process where `System32` is redirected. Use `C:\Windows\Sysnative\ntoskrnl.exe` from such a window, or PowerShell 7.)
+62. **~00:00 (11-11): the user stopped for the night** (shutting the Mac down). Fix agreed for next session: restore snapshot `TgCounter: loaded (phase 5 build)` → pause Windows Update → redo 5.1 setup → exercise 2. No new snapshot taken in Session 5. Debug mode still **ON**. Also this session: the user asked to drop prediction exercises from the labs; docs updated (entry 56 note, README §Session routine).
 
 ---
 

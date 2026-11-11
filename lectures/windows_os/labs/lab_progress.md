@@ -2,7 +2,7 @@
 
 # Lab Progress — where we are in the driver lab
 
-> **Last updated:** 2026-11-10 (Session 5)
+> **Last updated:** 2026-11-11 ~00:00 (end of Session 5)
 > **Updated at the end-of-session handoff** (see [`README.md`](README.md) §Session routine).
 > **Detail behind every tick:** [`011-session_handoff.md`](011-session_handoff.md) (entry numbers in brackets, e.g. [54]).
 > **Steps come from:** [`010`](010-lab_setup_work_plan.md) (Phases 0–4, 6) and [`013`](013-phase5_guide_inspect_crash_analyze.md) (Phase 5).
@@ -13,9 +13,14 @@
 
 **Phase 5 → lab 5.1 → exercise 2** (`!drvobj \Driver\TgCounter 2`).
 
-**State of the VM (Session 5, 2026-11-10):**
-- Rebuild loop rerun in **Developer PowerShell for VS 2026** ✅: stop → `Successfully signed` (TgTest) → copy → **RUNNING**.
-- **Next action:** confirm `TgCounter: loaded (phase 5 build)` in DebugView → `tgclient.exe` (1/2/3) → WinDbg Local attach + symbols → exercise 2.
+**⛔ Blocked on kernel symbols (Session 5, 2026-11-10/11):** Windows Update moved the VM from build **26300.9711 → 26300.9974**, and Microsoft's symbol server has no `ntkrnlmp.pdb` for the new kernel (HTTP 404). Without it, `!drvobj`, `!devobj` and `!object` don't work.
+
+**Next actions (in order):**
+1. Windows shut down → Fusion → Snapshots → restore **`TgCounter: loaded (phase 5 build)`**.
+2. Boot → **pause Windows Update** before anything else → `cmd /c ver` shows 26300.9711.
+3. `sc.exe start TgCounter` → `tgclient.exe` (1/2/3) → WinDbg Local → `.symfix C:\symbols` → `.sympath+ C:\lab\lab2\TgCounter\ARM64\Debug` → `.reload` (no symbol errors) → `lm m TgCounter` → **exercise 2** `!drvobj \Driver\TgCounter 2`.
+4. Optional: snapshot once it works.
+
 - Debug mode: **ON** (`bcdedit /debug on`, from Session 4). Turn it off before 5.3.
 - Newest snapshot: **`TgCounter: loaded (phase 5 build)`**. The next one to take is `before-crash-labs` (5.3).
 
@@ -43,6 +48,7 @@
 - [x] WinDbg → Attach to kernel → Local → `lkd>` [52]
 - [x] Symbols: `.symfix C:\symbols`, `.sympath+ C:\lab\lab2\TgCounter\ARM64\Debug`, `.reload` [53–54]
 - [x] **Ex 1** `lm m TgCounter`: kernel address, private symbols [54]
+- [ ] ⛔ Kernel symbols for the current build (restore snapshot + pause updates) [59–62]
 - [ ] **Ex 2** `!drvobj \Driver\TgCounter 2`: the dispatch table
 - [ ] **Ex 3** `!devobj \Device\TgCounter`: note `DevExt`
 - [ ] **Ex 4** `dt TgCounter!_TG_EXTENSION <DevExt>`: counter = 3, run the client, = 6
