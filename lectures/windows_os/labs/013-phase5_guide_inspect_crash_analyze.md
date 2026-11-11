@@ -31,7 +31,7 @@ Time: roughly one evening per lab. Labs 5.3 and 5.4 crash the VM on purpose. Tha
 3. **Every rebuild means re-sign, then copy.** VS signs with its own `WDKTestCert`. Re-sign with `TgTest`, stop the driver before copying (a loaded `.sys` can't be overwritten), copy to `C:\drivers\`, then start it.
 4. **Work from an admin Developer PowerShell for VS 2026.** Launch `dbgview` from it so DebugView inherits admin rights (Capture → Capture Kernel ✓).
 5. **Snapshots before anything risky.** Shut Windows down first (not suspend), then Fusion → Virtual Machine → Snapshots → Take Snapshot.
-6. **Predict before you run.** Every lab has a prediction step. Write the prediction down; it's what turns this into learning rather than following steps.
+6. **Run it, then read the output.** Each step lists what to expect, so you can tell at a glance whether it worked. (Updated 2026-11-10: the prediction steps were dropped; Claude walks you through each step and documents everything at the end-of-session handoff.)
 
 The rebuild loop, which you'll use several times:
 
@@ -133,19 +133,19 @@ and **reboot**. (Secure Boot is already off, which this requires.)
    ```
    The first `.reload` downloads Microsoft's kernel symbols and can take a few minutes on this VM.
 
-### The exercises (predict first, then run)
+### The exercises
 
 **1. Is it loaded, and where?**
 ```
 lm m TgCounter
 ```
-Predict: a start and end address in **kernel** space (a very high address), with `(private pdb symbols)` because you built it.
+Expect: a start and end address in **kernel** space (a very high address), with `(private pdb symbols)` because you built it.
 
 **2. The dispatch table: lecture 009 §4.2, made real.**
 ```
 !drvobj \Driver\TgCounter 2
 ```
-Predict: which `IRP_MJ_*` entries point into `TgCounter`, and where all the others point. Expect `IRP_MJ_CREATE`, `IRP_MJ_CLOSE` and `IRP_MJ_DEVICE_CONTROL` → `TgCounter!Tg…`; everything else → `nt!IopInvalidDeviceRequest`. That table **is** "the I/O manager calls the driver".
+Expect `IRP_MJ_CREATE`, `IRP_MJ_CLOSE` and `IRP_MJ_DEVICE_CONTROL` → `TgCounter!Tg…`; everything else → `nt!IopInvalidDeviceRequest`. That table **is** "the I/O manager calls the driver".
 
 **3. The device object, and its extension.**
 ```
@@ -157,7 +157,7 @@ Note the **`DevExt`** address it prints (the device extension, where `Counter` l
 ```
 dt TgCounter!_TG_EXTENSION <DevExt address from step 3>
 ```
-Predict the value first. It should be **3** (or whatever `tgclient get` says).
+It should be **3** (or whatever `tgclient get` says).
 
 Then, keeping WinDbg open, run `tgclient.exe` again in PowerShell (→ 4, 5, 6) and repeat the `dt`. It now reads **6**. You just watched a user-mode program change kernel memory through an IRP, and read the result from the debugger.
 
@@ -166,7 +166,7 @@ Then, keeping WinDbg open, run `tgclient.exe` again in PowerShell (→ 4, 5, 6) 
 dd poi(TgCounter!g_PagedValue) L1
 !pool poi(TgCounter!g_PagedValue)
 ```
-Predict: the `dd` shows `0000002a` (42). `!pool` says **Paged pool** with tag **`TgTg`**. (The source writes `'gTgT'`; the bytes are stored reversed, so tools display `TgTg`.)
+Expect: the `dd` shows `0000002a` (42). `!pool` says **Paged pool** with tag **`TgTg`**. (The source writes `'gTgT'`; the bytes are stored reversed, so tools display `TgTg`.)
 
 **6. Names in the object manager** (lecture 009 §7.1, 008 §5):
 ```
@@ -209,7 +209,7 @@ A snapshot of kernel memory while Windows keeps running (lecture 003 §3).
    - It needs free memory to copy kernel memory. With a 4 GB VM, close VS first. If it aborts because of memory pressure, use **Kernel stacks** instead, which is smaller but can't show the counter.
 4. A dialog shows the file location, under `%LocalAppData%\Microsoft\Windows\TaskManager\LiveKernelDumps`.
 5. WinDbg (admin) → File → **Open dump file** → that file. Then `.symfix C:\symbols`, `.sympath+ C:\lab\TgCounter\ARM64\Debug`, `.reload`.
-6. **Predict:** the stop code shown when the dump opens. Then check with `!analyze -v`, or the first lines of output. It should be **0x161 LIVE_SYSTEM_DUMP**: a label, not a crash.
+6. Check the stop code with `!analyze -v`, or the first lines of output. It should be **0x161 LIVE_SYSTEM_DUMP**: a label, not a crash.
 7. Repeat 5.1 exercises 2–5 on the dump. The counter value is frozen at the moment of capture: run `tgclient` now and the dump doesn't change.
 
 **Done when:** the dump shows 0x161 and your counter value.
@@ -225,15 +225,6 @@ A snapshot of kernel memory while Windows keeps running (lecture 003 §3).
 3. **Shut down → snapshot `before-crash-labs`.** Start the VM again and log in.
 4. Start TgCounter and DebugView.
 
-### Predict, in writing, before you crash
-
-Using lecture 002 §1:
-- Which **stop code**?
-- **P1** (the address written)?
-- **P2** (the IRQL)?
-- **P3** (read or write)?
-- Which **function** will `!analyze` name?
-- What will the bottom of the stack (`k`) look like: which system-call path from lecture 009 §8?
 
 ### Crash
 
@@ -265,14 +256,14 @@ DebugView may flash `TgCounter: CRASH requested…`, then the VM blue-screens, w
 | 6 | `lmv m TgCounter` | Image path `C:\drivers\TgCounter.sys` and timestamp (proves which build crashed) |
 | 7 | `.frame` / `dv` (on the TgCounter frame) | With private symbols: local variables like `code` (should be `0x800023fc`) |
 
-**Expected:** **0xD1 DRIVER_IRQL_NOT_LESS_OR_EQUAL**, P1 = `0` (NULL), P2 = `2` (DISPATCH_LEVEL), P3 = a write, P4 inside `TgCounter!TgDispatchDeviceControl`. If you see **0xA** instead, it's the same rule (lecture 002 §1), just not attributed to a driver. Compare everything against your written prediction.
+**Expected:** **0xD1 DRIVER_IRQL_NOT_LESS_OR_EQUAL**, P1 = `0` (NULL), P2 = `2` (DISPATCH_LEVEL), P3 = a write, P4 inside `TgCounter!TgDispatchDeviceControl`. If you see **0xA** instead, it's the same rule (lecture 002 §1), just not attributed to a driver. Check the dump against this.
 
 **Write the one-sentence conclusion** (lecture 001 §10), for example:
 "`TgCounter!TgDispatchDeviceControl` wrote through a NULL pointer at DISPATCH_LEVEL (P1 = 0, P2 = 2) while handling IOCTL `0x800023FC`; it was raised to DISPATCH by `KeRaiseIrql`; build timestamp X."
 
-**Reflection question for your notes:** why does this crash read as 0xD1 and not "just a NULL pointer"? Lecture 002's answer: the IRQL decided *which* rule caught it; the NULL is the actual bug.
+**Reflection question:** why does this crash read as 0xD1 and not "just a NULL pointer"? Lecture 002's answer: the IRQL decided *which* rule caught it; the NULL is the actual bug.
 
-**Done when:** your prediction and the dump are compared line by line, and the sentence is written.
+**Done when:** you've gone through the analysis table and can say in one sentence what crashed and why.
 
 ---
 
@@ -280,11 +271,11 @@ DebugView may flash `TgCounter: CRASH requested…`, then the VM blue-screens, w
 
 This is lecture 004's central claim, demonstrated: Verifier turns a latent bug into a deterministic crash.
 
-### Step 1: without Verifier, predict, then run
+### Step 1: without Verifier
 
 Driver started (after the 5.3 reboot: `sc.exe start TgCounter`).
 
-**Predict:** what will `tgclient paged` print? Will it crash?
+Run it:
 ```
 C:\lab\tgclient\ARM64\Debug\tgclient.exe paged
 ```
@@ -307,9 +298,9 @@ verifier /query
 - The normal increments still work (TgCounter's normal path has no bugs).
 - `/query` shows TgCounter being verified, with counters.
 
-### Step 3: predict, then trigger the bug under Verifier
+### Step 3: trigger the bug under Verifier
 
-**Predict:** does `paged` crash now? Which stop code? (Lecture 004 A2 and A4.)
+Background: lecture 004 A2 and A4.
 ```
 C:\lab\tgclient\ARM64\Debug\tgclient.exe paged
 ```

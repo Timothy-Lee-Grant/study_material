@@ -19,14 +19,13 @@
 
 ### Trackers (where we are, what happened)
 
-| File | Answers | Update when |
+| File | Answers | Updated |
 |---|---|---|
-| [`lab_progress.md`](lab_progress.md) | **Where am I right now, and what's next?** A checklist of every phase and exercise, with the current position at the top | Each step is finished (tick it), and at the end of every session (update "Current position") |
-| [`lab_notebook.md`](lab_notebook.md) | **What did I predict, what happened, and what did I learn?** One entry per exercise: prediction → command → result → one-sentence conclusion | Before running anything with a prediction step (write the prediction), then right after (write the result) |
-| [`issues_and_fixes.md`](issues_and_fixes.md) | **I've seen this error before. What fixed it?** Every error hit in the lab, with its cause and fix | Whenever something fails, even if the fix was quick |
-| [`011-session_handoff.md`](011-session_handoff.md) | **The full history.** VM facts (paths, snapshots, certificate, versions), decisions, and a numbered log of every session | End of every session (new "Session N" entries; don't rewrite history) |
+| [`lab_progress.md`](lab_progress.md) | **Where am I, and what's next?** A checklist of every phase and step, with the current position at the top | At the end-of-session handoff |
+| [`issues_and_fixes.md`](issues_and_fixes.md) | **I've seen this error before. What fixed it?** Every problem hit in the lab, with its cause and fix | At the end-of-session handoff (Claude adds every problem from that session) |
+| [`011-session_handoff.md`](011-session_handoff.md) | **The full history.** VM facts (paths, snapshots, certificate, versions), decisions, and a numbered log of every session | At the end-of-session handoff (new "Session N" entries; don't rewrite history) |
 
-How they fit together: `lab_progress.md` is the short "you are here" view. `011` is the long record behind it. The notebook holds your own reasoning, and the issues log turns every error into something you only debug once.
+`lab_progress.md` is the short "you are here" view, `011` is the long record behind it, and the issues log means a problem only gets debugged once.
 
 ### Code
 
@@ -39,23 +38,24 @@ How they fit together: `lab_progress.md` is the short "you are here" view. `011`
 
 ## Session routine
 
+**How lab sessions work:** Claude guides, Timothy does. No prediction exercises and no note-taking during the session. Claude gives the next concrete step (exact commands, what output means it worked), explains the result briefly, helps fix whatever breaks, and moves on. All the writing happens once, at the end.
+
 **Start of a session (Claude):**
 1. Read `lab_progress.md` → "Current position".
 2. Read the newest entries in `011-session_handoff.md` (TL;DR + the last session's log).
 3. Skim `issues_and_fixes.md` so known problems aren't debugged twice.
-4. Give Timothy the resume checklist and the next step, with a prediction question if the step has one.
+4. Give Timothy the resume steps and the next thing to do.
 
-**During a session:**
-- Before a step with a prediction: Timothy writes the prediction in `lab_notebook.md` (or says it, and Claude records it word for word).
-- When an error appears: add a row to `issues_and_fixes.md`.
-- When a step is done: tick it in `lab_progress.md`.
+**During a session (Claude):**
+- One step at a time: the commands to run, what success looks like, then a short plain-words explanation of the output once Timothy pastes it.
+- When something fails: diagnose it, give the fix, keep going. Don't stop to write documentation.
+- Keep the guide's "Expected" results in mind to check the output, but don't ask Timothy to guess them first.
 
-**End of a session (Claude):**
-1. Update "Current position" and "Last updated" in `lab_progress.md`.
-2. Add a "Session N" section to `011-session_handoff.md` (numbered entries, facts, error text, snapshots taken).
-3. Per the repo rules: observation log and `reading_status.md` (private), and `where_i_stand.md` at a lab milestone.
-
----
+**End of a session — the handoff (Claude, when Timothy says he's stopping):**
+1. `011-session_handoff.md`: a "Session N" section listing what was done, the key output, and the state left behind (driver loaded or not, debug mode on or off, Verifier on or off, snapshots taken). Update "Last updated", the status board and the TL;DR.
+2. `lab_progress.md`: tick finished steps, rewrite "Current position" and the next action.
+3. `issues_and_fixes.md`: one row for every problem hit that session (exact error text, cause, fix).
+4. Per the repo rules: observation log and `reading_status.md` (private), and `where_i_stand.md` at a lab milestone.
 
 ## Machine facts you'll need every session
 

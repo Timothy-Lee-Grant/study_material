@@ -3,6 +3,7 @@
 # Lab Progress — where we are in the driver lab
 
 > **Last updated:** 2026-11-10 (Session 5)
+> **Updated at the end-of-session handoff** (see [`README.md`](README.md) §Session routine).
 > **Detail behind every tick:** [`011-session_handoff.md`](011-session_handoff.md) (entry numbers in brackets, e.g. [54]).
 > **Steps come from:** [`010`](010-lab_setup_work_plan.md) (Phases 0–4, 6) and [`013`](013-phase5_guide_inspect_crash_analyze.md) (Phase 5).
 
@@ -14,7 +15,7 @@
 
 **State of the VM (Session 5, 2026-11-10):**
 - Rebuild loop rerun in **Developer PowerShell for VS 2026** ✅: stop → `Successfully signed` (TgTest) → copy → **RUNNING**.
-- **Next action:** confirm `TgCounter: loaded (phase 5 build)` in DebugView → `tgclient.exe` (1/2/3) → WinDbg Local attach + symbols → exercise 2 (prediction first in `lab_notebook.md`).
+- **Next action:** confirm `TgCounter: loaded (phase 5 build)` in DebugView → `tgclient.exe` (1/2/3) → WinDbg Local attach + symbols → exercise 2.
 - Debug mode: **ON** (`bcdedit /debug on`, from Session 4). Turn it off before 5.3.
 - Newest snapshot: **`TgCounter: loaded (phase 5 build)`**. The next one to take is `before-crash-labs` (5.3).
 
@@ -53,21 +54,20 @@
 
 ### 5.2 Live kernel dump
 - [ ] Task Manager (admin) → System → Create live kernel memory dump (Full)
-- [ ] Open it in WinDbg, predict the stop code → 0x161?
+- [ ] Open it in WinDbg → stop code 0x161 LIVE_SYSTEM_DUMP
 - [ ] Repeat 5.1 exercises 2–5 on the dump (counter frozen)
 
 ### 5.3 Crash on purpose
 - [ ] Debug mode off confirmed; dump settings confirmed
 - [ ] Shut down → snapshot **`before-crash-labs`**
-- [ ] Written prediction: stop code, P1–P4, function, stack shape (in the notebook)
 - [ ] `tgclient.exe crash` → blue screen → `C:\Windows\MEMORY.DMP` exists
 - [ ] Analysis table: `!analyze -v`, `k`, `!irql`, `ln/u/ub <P4>`, `r`, `lmv m TgCounter`, `.frame`/`dv`
 - [ ] One-sentence conclusion written
 
 ### 5.4 Driver Verifier
-- [ ] `tgclient paged` ×5–10 without Verifier (prediction first)
+- [ ] `tgclient paged` ×5–10 without Verifier (expect `PAGED -> 42`, no crash)
 - [ ] `verifier /bootmode resetonbootfail` + `verifier /standard /driver TgCounter.sys` → reboot → `/querysettings`
-- [ ] `tgclient paged` under Verifier (prediction first) → crash
+- [ ] `tgclient paged` under Verifier → crash
 - [ ] Analysis: `!analyze -v`, `!pool <P1>`, `!pte <P1>`, `k`, `!verifier`
 - [ ] One-sentence conclusion written
 - [ ] `verifier /reset` → reboot → confirm nothing is verified
