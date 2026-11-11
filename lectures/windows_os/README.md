@@ -2,7 +2,7 @@
 
 | Folder | What's in it | Start here |
 |---|---|---|
-| [`lectures/`](lectures/) | Concept lectures 000–009, 012, 014–018 (WinDbg, bugchecks, dumps, Verifier/ETW, IRQL, device stacks, power, memory, drivers, VMs, data paths, performance, battery, app platform, Phase 5 concepts), plus their example code in `lectures/code/` | [`lectures/000-roadmap.md`](lectures/000-roadmap.md) |
+| [`lectures/`](lectures/) | Concept lectures 000–009, 012, 014–019 (WinDbg, bugchecks, dumps, Verifier/ETW, IRQL, device stacks, power, memory, drivers, VMs, data paths, performance, battery, app platform, Phase 5 concepts, IRPs and reading memory in WinDbg), plus their example code in `lectures/code/` | [`lectures/000-roadmap.md`](lectures/000-roadmap.md) |
 | [`labs/`](labs/) | Hands-on walkthroughs (010 work plan, 013 Phase 5 guide, 012 demo runbook), the session handoff (011), the TgCounter code, and the lab trackers | [`labs/README.md`](labs/README.md) → [`labs/lab_progress.md`](labs/lab_progress.md) |
 | `audio/`, `audio_old/` | NotebookLM audio sources and their prompts | — |
 

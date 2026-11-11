@@ -67,6 +67,7 @@ When adding a lecture to a folder with a roadmap (e.g. `lectures/dotnet/001` §2
 - **Keep work details generic; keep his fears private.** Lectures may reference his public persona, but not private observations.
 
 - **Every example problem must include the full problem** (paraphrased in your own words, plus examples and constraints), so he can work it without opening LeetCode (his request, 2026-10-06).
+- **Fully self-contained: no external code or prior-lab assumptions** (his standing rule, 2026-11-11: "I only want a self-contained lecture document… I'm not going to be searching through random projects in different folders"). Put every code snippet the lecture relies on *inside the lecture*, next to the explanation that uses it. Never assume he has built, run or read a project, lab or earlier lecture; if a lecture uses his own code (e.g. TgCounter), show the relevant parts inline. Debugger output may be illustrative (label it so) rather than requiring him to reproduce it. Code snippets inline are wanted: he finds them very helpful.
 - **Never leave a step justified only as "the convention."** Derive it (clicks log P4; the floor-division gap, 2026-10-06).
 
 ## 5. Length (open question, under test)
@@ -99,6 +100,7 @@ Direct, warm, candid, second person ("you"). Plain English, short sentences, con
 
 | Date | Change | Evidence |
 |---|---|---|
+| 2026-11-11 | §4: lectures must be fully self-contained (all code inline; no assumption he built/ran/read a project or lab). | His explicit standing request 2026-11-11 |
 | 2026-11-06 | Added problem deep dives (§1): one lecture per struggled-with problem, procedure in `lectures/leetcode/problem_deep_dives/CLAUDE.md`. | His request 2026-11-06 |
 | 2026-10-21 | Added per-domain understanding trackers (`private/understanding/`): read before writing a lecture in that domain and weave open misconceptions in. | His request after the 10-21 recall check |
 | 2026-10-06 | Added the weekly recap mechanism (§1), the full-problem-statement rule and the no-underived-conventions rule (§4). | His requests + recall check 2026-10-06 |

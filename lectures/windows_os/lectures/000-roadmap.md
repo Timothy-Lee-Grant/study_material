@@ -46,6 +46,7 @@ The numbering follows your priority (debugging first). The debugging lectures ar
            006 device stacks / PnP        ──►  001 !devnode, !devstack ──► 002 0x9F (whose IRP is stuck?)
            007 power / D-states           ──►  002 0x9F             ──►  003 "dead after resume" data collection
            008 processes / threads / VM   ──►  001 !thread, !process ──► 002 0x50 (which address, which space?)
+           019 IRPs + reading memory      ──►  001 !irp, dt, dq      ──► 002 0x9F (P4 is the IRP), hangs (who holds the request?)
 ```
 
 ## Hands-on setup (once, for the labs)
