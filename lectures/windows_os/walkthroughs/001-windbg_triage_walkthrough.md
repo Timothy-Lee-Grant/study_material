@@ -77,8 +77,8 @@ Every scenario below is a **dump file**, except Scenario 3, which starts from a 
 ### 1.2 Anatomy of a line
 
 ```
-0: kd> !irp ffffc283`14a9b8a0
-│  │   │    └─ argument: an address (backtick only splits it for readability)
+0: kd> !irp ffffc283'14a9b8a0
+│  │   │    └─ argument: an address (the ' only splits it for readability; see §1.3)
 │  │   └─ command: "!" means an extension (a plug-in that knows some structure)
 │  └─ "kd" = kernel debugger
 └─ the processor whose context you're currently viewing (0, 1, 2, ...)
@@ -93,17 +93,17 @@ Everything after the prompt line, until the next prompt, is output.
 | `48`, `ffff…` with no prefix | **hexadecimal**: WinDbg's default |
 | `0n120` | decimal 120 (the `0n` prefix) |
 | `0x48`, `48h` | hexadecimal, written explicitly |
-| `ffffc283`14a9b8a0` | one 64-bit hex number; the backtick is only for readability |
+| `ffffc283'14a9b8a0` | one 64-bit hex number; the separator in the middle is only for readability. **WinDbg itself prints a backtick there**; this document shows an apostrophe so the Markdown formatting doesn't break. When you type an address into WinDbg, use the backtick or leave the separator out (`ffffc28314a9b8a0`); an apostrophe won't work |
 | `module!Function+0x5c` | 0x5c bytes past the start of `Function` inside `module` |
 | `module+0x1464` | 0x1464 bytes past the start of the module: **no symbols** for it |
 
 ### 1.4 Address ranges at a glance
 
 ```
-0000xxxx`xxxxxxxx  user mode (valid only inside one process)
+0000xxxx'xxxxxxxx  user mode (valid only inside one process)
 ffff8xxx…ffffexxx  kernel dynamic memory: pool allocations, objects, stacks
-fffff80x`xxxxxxxx  kernel and driver images: code and global data
-00000000`000000xx  not a real address: NULL plus a small offset
+fffff80x'xxxxxxxx  kernel and driver images: code and global data
+00000000'000000xx  not a real address: NULL plus a small offset
 ```
 
 ### 1.5 The first commands of any session
@@ -172,17 +172,17 @@ IRQL:  2
 
 PROCESS_NAME:  System
 
-TRAP_FRAME:  ffff9a81`2c4e7690 -- (.trap 0xffff9a812c4e7690)
+TRAP_FRAME:  ffff9a81'2c4e7690 -- (.trap 0xffff9a812c4e7690)
 
 STACK_TEXT:
-ffff9a81`2c4e7410 fffff806`36a41c2c     : nt!KeBugCheckEx
-ffff9a81`2c4e7420 fffff806`36a1f6b8     : nt!KiBugCheckDispatch+0x6c
-ffff9a81`2c4e7460 fffff806`36a1b2d0     : nt!KiSystemFatalException+0x...
-ffff9a81`2c4e7690 fffff806`3a2b1464     : nt!KiDataAbortException+0x...
-ffff9a81`2c4e77a0 fffff806`368c41f0     : vendornet+0x1464
-ffff9a81`2c4e7800 fffff806`368c3a4c     : nt!KiExecuteAllDpcs+0x2f0
-ffff9a81`2c4e7980 fffff806`36a1e8d8     : nt!KiRetireDpcList+0x1ac
-ffff9a81`2c4e7c10 00000000`00000000     : nt!KiIdleLoop+0x58
+ffff9a81'2c4e7410 fffff806'36a41c2c     : nt!KeBugCheckEx
+ffff9a81'2c4e7420 fffff806'36a1f6b8     : nt!KiBugCheckDispatch+0x6c
+ffff9a81'2c4e7460 fffff806'36a1b2d0     : nt!KiSystemFatalException+0x...
+ffff9a81'2c4e7690 fffff806'3a2b1464     : nt!KiDataAbortException+0x...
+ffff9a81'2c4e77a0 fffff806'368c41f0     : vendornet+0x1464
+ffff9a81'2c4e7800 fffff806'368c3a4c     : nt!KiExecuteAllDpcs+0x2f0
+ffff9a81'2c4e7980 fffff806'36a1e8d8     : nt!KiRetireDpcList+0x1ac
+ffff9a81'2c4e7c10 00000000'00000000     : nt!KiIdleLoop+0x58
 
 MODULE_NAME: vendornet
 IMAGE_NAME:  vendornet.sys
@@ -212,7 +212,7 @@ Symbol search path is: srv*;C:\vendorsyms
 0: kd> lmvm vendornet
 Browse full module list
 start             end                 module name
-fffff806`3a2b0000 fffff806`3a2d6000   vendornet   (private pdb symbols)  C:\vendorsyms\vendornet.pdb
+fffff806'3a2b0000 fffff806'3a2d6000   vendornet   (private pdb symbols)  C:\vendorsyms\vendornet.pdb
     Loaded symbol image file: vendornet.sys
     Image path: \SystemRoot\System32\drivers\vendornet.sys
     Timestamp:        Tue Mar  4 10:12:55 2025
@@ -225,14 +225,14 @@ fffff806`3a2b0000 fffff806`3a2d6000   vendornet   (private pdb symbols)  C:\vend
 ```
 0: kd> k
  # Child-SP          RetAddr               Call Site
-00 ffff9a81`2c4e7410 fffff806`36a41c2c     nt!KeBugCheckEx
-01 ffff9a81`2c4e7420 fffff806`36a1f6b8     nt!KiBugCheckDispatch+0x6c
-02 ffff9a81`2c4e7460 fffff806`36a1b2d0     nt!KiSystemFatalException+0x...
-03 ffff9a81`2c4e7690 fffff806`3a2b1464     nt!KiDataAbortException+0x...
-04 ffff9a81`2c4e77a0 fffff806`368c41f0     vendornet!VnRxDpcRoutine+0x64 [vnrx.c @ 212]
-05 ffff9a81`2c4e7800 fffff806`368c3a4c     nt!KiExecuteAllDpcs+0x2f0
-06 ffff9a81`2c4e7980 fffff806`36a1e8d8     nt!KiRetireDpcList+0x1ac
-07 ffff9a81`2c4e7c10 00000000`00000000     nt!KiIdleLoop+0x58
+00 ffff9a81'2c4e7410 fffff806'36a41c2c     nt!KeBugCheckEx
+01 ffff9a81'2c4e7420 fffff806'36a1f6b8     nt!KiBugCheckDispatch+0x6c
+02 ffff9a81'2c4e7460 fffff806'36a1b2d0     nt!KiSystemFatalException+0x...
+03 ffff9a81'2c4e7690 fffff806'3a2b1464     nt!KiDataAbortException+0x...
+04 ffff9a81'2c4e77a0 fffff806'368c41f0     vendornet!VnRxDpcRoutine+0x64 [vnrx.c @ 212]
+05 ffff9a81'2c4e7800 fffff806'368c3a4c     nt!KiExecuteAllDpcs+0x2f0
+06 ffff9a81'2c4e7980 fffff806'36a1e8d8     nt!KiRetireDpcList+0x1ac
+07 ffff9a81'2c4e7c10 00000000'00000000     nt!KiIdleLoop+0x58
 ```
 
 ### Step 3 — Read the stack's *shape*: what context was this?
@@ -268,13 +268,13 @@ x16=0000000000000000  x17=0000000000000000
  fp=ffff9a812c4e77a0   lr=fffff8063a2b1440   sp=ffff9a812c4e77a0   pc=fffff8063a2b1464
 psr=60400085 -ZC- EL1
 vendornet!VnRxDpcRoutine+0x64:
-fffff806`3a2b1464 b9404909 ldr         w9,[x8,#0x48]
+fffff806'3a2b1464 b9404909 ldr         w9,[x8,#0x48]
 ```
 
 The debugger's view is now "as if we were stopped at the faulting instruction". Read the last two lines:
 
 ```
-fffff806`3a2b1464   b9404909   ldr  w9,[x8,#0x48]
+fffff806'3a2b1464   b9404909   ldr  w9,[x8,#0x48]
 │                    │          │    │   └────────── address = (value in x8) + 0x48
 │                    │          │    └────────────── destination: w9 (32-bit view of register x9)
 │                    │          └─────────────────── "load register": read from memory
@@ -291,14 +291,14 @@ Note on the warning: the trap frame doesn't save every register on Arm64 (the "c
 `ub` = "unassemble backwards": show the instructions *before* an address.
 
 ```
-0: kd> ub fffff806`3a2b1464 L6
+0: kd> ub fffff806'3a2b1464 L6
 vendornet!VnRxDpcRoutine+0x4c:
-fffff806`3a2b144c aa0003f3 mov         x19,x0                 ; x19 = first argument
-fffff806`3a2b1450 b9400668 ldr         w8,[x19,#4]            ; w8  = Adapter->State
-fffff806`3a2b1454 7100091f cmp         w8,#2
-fffff806`3a2b1458 540001a1 bne         vendornet!VnRxDpcRoutine+0x8c ; if State != Running, skip
-fffff806`3a2b145c f9400a68 ldr         x8,[x19,#0x10]         ; x8  = Adapter->RxRing      ◄── loaded NULL
-fffff806`3a2b1460 d503201f nop
+fffff806'3a2b144c aa0003f3 mov         x19,x0                 ; x19 = first argument
+fffff806'3a2b1450 b9400668 ldr         w8,[x19,#4]            ; w8  = Adapter->State
+fffff806'3a2b1454 7100091f cmp         w8,#2
+fffff806'3a2b1458 540001a1 bne         vendornet!VnRxDpcRoutine+0x8c ; if State != Running, skip
+fffff806'3a2b145c f9400a68 ldr         x8,[x19,#0x10]         ; x8  = Adapter->RxRing      ◄── loaded NULL
+fffff806'3a2b1460 d503201f nop
 ```
 
 Now the chain is visible:
@@ -314,14 +314,14 @@ Now the chain is visible:
 We can look at the context structure with `dt`. Which address is it? `x0` in the trap frame was `ffffa50c2e3f1018`. That's `x0` at the fault, and `x0` was the first argument copied into `x19`. Before trusting it, check that it actually looks like the structure:
 
 ```
-0: kd> dt vendornet!_VN_ADAPTER ffffa50c`2e3f1018
+0: kd> dt vendornet!_VN_ADAPTER ffffa50c'2e3f1018
    +0x000 Signature        : 0x64417656  'VvAd'
    +0x004 State            : 3 ( VnAdapterRemoving )
    +0x008 Regs             : (null)
    +0x010 RxRing           : (null)
    +0x018 RxDpc            : _KDPC
    +0x058 RxLock           : 0
-   +0x060 Device           : 0xffffa50c`2a1e7c30 WDFDEVICE__
+   +0x060 Device           : 0xffffa50c'2a1e7c30 WDFDEVICE__
    +0x068 RemoveCount      : 0n1
 ```
 
@@ -666,8 +666,8 @@ Which event is that? Look at the driver's device context (the KMDF context area 
 ```
 0: kd> dt camvendor!_CAM_DEVICE_CONTEXT ffffc28313c05200
    +0x000 Signature        : 0x6d614376  'vCam'
-   +0x008 Regs             : 0xffff8501`0b7a0000 CAM_REGS
-   +0x010 Interrupt        : 0x00003d7c`eb3fa6e8 WDFINTERRUPT__
+   +0x008 Regs             : 0xffff8501'0b7a0000 CAM_REGS
+   +0x010 Interrupt        : 0x00003d7c'eb3fa6e8 WDFINTERRUPT__
    +0x018 StreamActive     : 0n1
    +0x020 StreamFlags      : 0x3
    +0x038 StreamStopAck    : _KEVENT        ← at 0xffffc28313c05238 (0x...5200 + 0x38): the event being waited on
@@ -679,7 +679,7 @@ Which event is that? Look at the driver's device context (the KMDF context area 
 
 ```
 0: kd> x camvendor!*Dpc*
-fffff806`3b412c80 camvendor!CamEvtInterruptDpc (struct WDFINTERRUPT__ *, struct WDFOBJECT__ *)
+fffff806'3b412c80 camvendor!CamEvtInterruptDpc (struct WDFINTERRUPT__ *, struct WDFOBJECT__ *)
 ```
 
 The vendor's source (or the disassembly) for that DPC looks like this:
@@ -825,14 +825,14 @@ System Processors:  (00000000000000ff)
        Prcbs             Current         (pri) Next            (pri) Idle
   0    fffff80630d6d180  ffffc2831061a080 (12)                       fffff80630e7e440  ................
  # Child-SP          RetAddr               Call Site
-00 ffff8f0c`3be41580 fffff806`3299f3c8     nt!KeBugCheckEx
-01 ffff8f0c`3be41590 fffff806`32a1b0dc     nt!PopPowerButtonBugcheck+0x...
+00 ffff8f0c'3be41580 fffff806'3299f3c8     nt!KeBugCheckEx
+01 ffff8f0c'3be41590 fffff806'32a1b0dc     nt!PopPowerButtonBugcheck+0x...
  ...
 
   1    ffff8f0c3a3c2180  ffff8f0c3a3cd2c0 ( 0)                       ffff8f0c3a3cd2c0  ................
  # Child-SP          RetAddr               Call Site
-00 ffff8f0c`3a3e7c00 fffff806`32a1e8d8     nt!PpmIdleExecuteTransition+0x...
-01 ffff8f0c`3a3e7c60 00000000`00000000     nt!KiIdleLoop+0x...
+00 ffff8f0c'3a3e7c00 fffff806'32a1e8d8     nt!PpmIdleExecuteTransition+0x...
+01 ffff8f0c'3a3e7c60 00000000'00000000     nt!KiIdleLoop+0x...
 
   2 … 7: (same: idle thread, in the idle loop)
 ```
@@ -889,17 +889,17 @@ THREAD ffffc283135d5080  Cid 0004.1a8c  Teb: 0000000000000000 Win32Thread: 00000
 Owning Process            ffffc28310e6f080       Image:         System
 Wait Start TickCount      402771         Ticks: 11520 (0:00:03:00.000)
  # Child-SP          RetAddr               Call Site
-00 ffff8f0c`3d2a7270 fffff806`32893a40     nt!KiSwapContext+0x76
-01 ffff8f0c`3d2a73b0 fffff806`328928ff     nt!KiSwapThread+0x500
-02 ffff8f0c`3d2a7460 fffff806`32891d23     nt!KiCommitThreadWait+0x14f
-03 ffff8f0c`3d2a7500 fffff806`3c5a1b44     nt!KeWaitForSingleObject+0x233
-04 ffff8f0c`3d2a75f0 fffff806`3c5a1e10     sensorflt!SfAcquireBus+0x24
-05 ffff8f0c`3d2a7630 fffff806`3c5a2470     sensorflt!SfApplyOrientation+0x80
-06 ffff8f0c`3d2a7680 fffff806`328a5d01     sensorflt!SfOrientationWorkItem+0x40
-07 ffff8f0c`3d2a76d0 fffff806`328a5c10     nt!IopProcessWorkItem+0x...
-08 ffff8f0c`3d2a7720 fffff806`3299c247     nt!ExpWorkerThread+0x...
-09 ffff8f0c`3d2a77b0 fffff806`32a12a64     nt!PspSystemThreadStartup+0x...
-0a ffff8f0c`3d2a7800 00000000`00000000     nt!KiStartSystemThread+0x...
+00 ffff8f0c'3d2a7270 fffff806'32893a40     nt!KiSwapContext+0x76
+01 ffff8f0c'3d2a73b0 fffff806'328928ff     nt!KiSwapThread+0x500
+02 ffff8f0c'3d2a7460 fffff806'32891d23     nt!KiCommitThreadWait+0x14f
+03 ffff8f0c'3d2a7500 fffff806'3c5a1b44     nt!KeWaitForSingleObject+0x233
+04 ffff8f0c'3d2a75f0 fffff806'3c5a1e10     sensorflt!SfAcquireBus+0x24
+05 ffff8f0c'3d2a7630 fffff806'3c5a2470     sensorflt!SfApplyOrientation+0x80
+06 ffff8f0c'3d2a7680 fffff806'328a5d01     sensorflt!SfOrientationWorkItem+0x40
+07 ffff8f0c'3d2a76d0 fffff806'328a5c10     nt!IopProcessWorkItem+0x...
+08 ffff8f0c'3d2a7720 fffff806'3299c247     nt!ExpWorkerThread+0x...
+09 ffff8f0c'3d2a77b0 fffff806'32a12a64     nt!PspSystemThreadStartup+0x...
+0a ffff8f0c'3d2a7800 00000000'00000000     nt!KiStartSystemThread+0x...
 ```
 
 **Reading it:**
@@ -920,21 +920,21 @@ IRP List:
 Owning Process            ffffc28313210080       Image:         SensorApp.exe
 Wait Start TickCount      402770         Ticks: 11521 (0:00:03:00.015)
  # Child-SP          RetAddr               Call Site
-00 ffff8f0c`3e1c6f40 fffff806`32893a40     nt!KiSwapContext+0x76
-01 ffff8f0c`3e1c7080 fffff806`328928ff     nt!KiSwapThread+0x500
-02 ffff8f0c`3e1c7130 fffff806`32891d23     nt!KiCommitThreadWait+0x14f
-03 ffff8f0c`3e1c71d0 fffff806`328d0f12     nt!ExpWaitForResource+0x...
-04 ffff8f0c`3e1c7280 fffff806`3c5a2d50     nt!ExAcquireResourceExclusiveLite+0x...
-05 ffff8f0c`3e1c7310 fffff806`3c5a3010     sensorflt!SfUpdateCalibration+0x60
-06 ffff8f0c`3e1c7360 fffff806`3c5a0a28     sensorflt!SfDispatchDeviceControl+0xd0
-07 ffff8f0c`3e1c73b0 fffff806`32881a35     nt!IofCallDriver+0x55
-08 ffff8f0c`3e1c73f0 fffff806`32c7c1e2     nt!IopSynchronousServiceTail+0x...
-09 ffff8f0c`3e1c7490 fffff806`32c7b5a6     nt!IopXxxControlFile+0x...
-0a ffff8f0c`3e1c75d0 fffff806`32a12505     nt!NtDeviceIoControlFile+0x56
-0b ffff8f0c`3e1c7640 00007ffc`a2b4f4d4     nt!KiSystemServiceCopyEnd+0x25
-0c 0000008e`1a7ff6a8 00007ffc`9f9a6e3b     ntdll!NtDeviceIoControlFile+0x14
-0d 0000008e`1a7ff6b0 00007ff7`1c2a31b9     KERNELBASE!DeviceIoControl+0x6b
-0e 0000008e`1a7ff720 00000000`00000000     SensorApp+0x31b9
+00 ffff8f0c'3e1c6f40 fffff806'32893a40     nt!KiSwapContext+0x76
+01 ffff8f0c'3e1c7080 fffff806'328928ff     nt!KiSwapThread+0x500
+02 ffff8f0c'3e1c7130 fffff806'32891d23     nt!KiCommitThreadWait+0x14f
+03 ffff8f0c'3e1c71d0 fffff806'328d0f12     nt!ExpWaitForResource+0x...
+04 ffff8f0c'3e1c7280 fffff806'3c5a2d50     nt!ExAcquireResourceExclusiveLite+0x...
+05 ffff8f0c'3e1c7310 fffff806'3c5a3010     sensorflt!SfUpdateCalibration+0x60
+06 ffff8f0c'3e1c7360 fffff806'3c5a0a28     sensorflt!SfDispatchDeviceControl+0xd0
+07 ffff8f0c'3e1c73b0 fffff806'32881a35     nt!IofCallDriver+0x55
+08 ffff8f0c'3e1c73f0 fffff806'32c7c1e2     nt!IopSynchronousServiceTail+0x...
+09 ffff8f0c'3e1c7490 fffff806'32c7b5a6     nt!IopXxxControlFile+0x...
+0a ffff8f0c'3e1c75d0 fffff806'32a12505     nt!NtDeviceIoControlFile+0x56
+0b ffff8f0c'3e1c7640 00007ffc'a2b4f4d4     nt!KiSystemServiceCopyEnd+0x25
+0c 0000008e'1a7ff6a8 00007ffc'9f9a6e3b     ntdll!NtDeviceIoControlFile+0x14
+0d 0000008e'1a7ff6b0 00007ff7'1c2a31b9     KERNELBASE!DeviceIoControl+0x6b
+0e 0000008e'1a7ff720 00000000'00000000     SensorApp+0x31b9
 ```
 
 **Reading it:**
@@ -1041,20 +1041,20 @@ Arg4: fffff80314ffb320, cast to nt!DPC_WATCHDOG_GLOBAL_TRIAGE_BLOCK, which conta
 
 STACK_TEXT:
  # Child-SP          RetAddr               Call Site
-00 fffff803`1a8d5c88 fffff803`14838f2d     nt!KeBugCheckEx
-01 fffff803`1a8d5c90 fffff803`14837b11     nt!KeAccumulateTicks+0x1ed
-02 fffff803`1a8d5cf0 fffff803`14836c3a     nt!KiUpdateRunTime+0x61
-03 fffff803`1a8d5d50 fffff803`1483aa5e     nt!KeClockInterruptNotify+0x...
-04 fffff803`1a8d5e40 fffff803`1483a0c2     nt!HalpTimerClockInterrupt+0x...
-05 fffff803`1a8d5e70 fffff803`149e0f7a     nt!KiCallInterruptServiceRoutine+0x...
-06 fffff803`1a8d5eb0 fffff803`149e14e7     nt!KiInterruptSubDispatchNoLockNoEtw+0xfa
-07 fffff803`1a8c3a60 fffff803`1489c2d1     nt!KiInterruptDispatchNoLockNoEtw+0x37
-08 fffff803`1a8c3bf0 fffff803`1f612a63     nt!KeStallExecutionProcessor+0x91
-09 fffff803`1a8c3c20 fffff803`1f612b21     vendori2c!I2cWaitForTxEmpty+0x23
-0a fffff803`1a8c3c60 fffff803`1484d1f5     vendori2c!I2cDpcForIsr+0x91
-0b fffff803`1a8c3cb0 fffff803`1484c43a     nt!KiExecuteAllDpcs+0x2f5
-0c fffff803`1a8c3e20 fffff803`149e30d5     nt!KiRetireDpcList+0x1ba
-0d fffff803`1a8c4060 00000000`00000000     nt!KiIdleLoop+0x55
+00 fffff803'1a8d5c88 fffff803'14838f2d     nt!KeBugCheckEx
+01 fffff803'1a8d5c90 fffff803'14837b11     nt!KeAccumulateTicks+0x1ed
+02 fffff803'1a8d5cf0 fffff803'14836c3a     nt!KiUpdateRunTime+0x61
+03 fffff803'1a8d5d50 fffff803'1483aa5e     nt!KeClockInterruptNotify+0x...
+04 fffff803'1a8d5e40 fffff803'1483a0c2     nt!HalpTimerClockInterrupt+0x...
+05 fffff803'1a8d5e70 fffff803'149e0f7a     nt!KiCallInterruptServiceRoutine+0x...
+06 fffff803'1a8d5eb0 fffff803'149e14e7     nt!KiInterruptSubDispatchNoLockNoEtw+0xfa
+07 fffff803'1a8c3a60 fffff803'1489c2d1     nt!KiInterruptDispatchNoLockNoEtw+0x37
+08 fffff803'1a8c3bf0 fffff803'1f612a63     nt!KeStallExecutionProcessor+0x91
+09 fffff803'1a8c3c20 fffff803'1f612b21     vendori2c!I2cWaitForTxEmpty+0x23
+0a fffff803'1a8c3c60 fffff803'1484d1f5     vendori2c!I2cDpcForIsr+0x91
+0b fffff803'1a8c3cb0 fffff803'1484c43a     nt!KiExecuteAllDpcs+0x2f5
+0c fffff803'1a8c3e20 fffff803'149e30d5     nt!KiRetireDpcList+0x1ba
+0d fffff803'1a8c4060 00000000'00000000     nt!KiIdleLoop+0x55
 
 IMAGE_NAME:  vendori2c.sys
 FAILURE_BUCKET_ID:  0x133_DPC_vendori2c!I2cWaitForTxEmpty
@@ -1084,27 +1084,27 @@ On x64, `ub` (backwards) can mis-decode, so use **`uf`** (unassemble the whole f
 ```
 0: kd> uf vendori2c!I2cWaitForTxEmpty
 vendori2c!I2cWaitForTxEmpty:
-fffff803`1f612a40 48895c2408      mov     qword ptr [rsp+8],rbx
-fffff803`1f612a45 57              push    rdi
-fffff803`1f612a46 4883ec20        sub     rsp,20h
-fffff803`1f612a4a 488bd9          mov     rbx,rcx                         ; rbx = 1st argument (controller context)
-fffff803`1f612a4d 488b7b10        mov     rdi,qword ptr [rbx+10h]         ; rdi = ctx->Regs (mapped device registers)
+fffff803'1f612a40 48895c2408      mov     qword ptr [rsp+8],rbx
+fffff803'1f612a45 57              push    rdi
+fffff803'1f612a46 4883ec20        sub     rsp,20h
+fffff803'1f612a4a 488bd9          mov     rbx,rcx                         ; rbx = 1st argument (controller context)
+fffff803'1f612a4d 488b7b10        mov     rdi,qword ptr [rbx+10h]         ; rdi = ctx->Regs (mapped device registers)
 
 vendori2c!I2cWaitForTxEmpty+0x11:                                         ; ── loop top ──
-fffff803`1f612a51 8b4714          mov     eax,dword ptr [rdi+14h]         ; eax = read STATUS register (Regs + 0x14)
-fffff803`1f612a54 a802            test    al,2                            ; bit 1 = TX_EMPTY?
-fffff803`1f612a56 7512            jne     vendori2c!I2cWaitForTxEmpty+0x2a ; if set → done
-fffff803`1f612a58 b90a000000      mov     ecx,0Ah                         ; ecx = 10
-fffff803`1f612a5d ff15e5450000    call    qword ptr [vendori2c!_imp_KeStallExecutionProcessor] ; busy-wait 10 µs
-fffff803`1f612a63 0f1f440000      nop     dword ptr [rax+rax]
-fffff803`1f612a68 ebe7            jmp     vendori2c!I2cWaitForTxEmpty+0x11 ; back to loop top  ← NO EXIT except bit 1
+fffff803'1f612a51 8b4714          mov     eax,dword ptr [rdi+14h]         ; eax = read STATUS register (Regs + 0x14)
+fffff803'1f612a54 a802            test    al,2                            ; bit 1 = TX_EMPTY?
+fffff803'1f612a56 7512            jne     vendori2c!I2cWaitForTxEmpty+0x2a ; if set → done
+fffff803'1f612a58 b90a000000      mov     ecx,0Ah                         ; ecx = 10
+fffff803'1f612a5d ff15e5450000    call    qword ptr [vendori2c!_imp_KeStallExecutionProcessor] ; busy-wait 10 µs
+fffff803'1f612a63 0f1f440000      nop     dword ptr [rax+rax]
+fffff803'1f612a68 ebe7            jmp     vendori2c!I2cWaitForTxEmpty+0x11 ; back to loop top  ← NO EXIT except bit 1
                                                                             ; (+0x23 = ...a63 is the return address from the
                                                                             ;  stall call: the stack's frame 09 pointed here)
 vendori2c!I2cWaitForTxEmpty+0x2a:
-fffff803`1f612a6a 488b5c2430      mov     rbx,qword ptr [rsp+30h]
-fffff803`1f612a6f 4883c420        add     rsp,20h
-fffff803`1f612a73 5f              pop     rdi
-fffff803`1f612a74 c3              ret
+fffff803'1f612a6a 488b5c2430      mov     rbx,qword ptr [rsp+30h]
+fffff803'1f612a6f 4883c420        add     rsp,20h
+fffff803'1f612a73 5f              pop     rdi
+fffff803'1f612a74 c3              ret
 ```
 
 Translated back into C:
@@ -1127,18 +1127,18 @@ The controller context gives us the mapped register block:
 
 ```
 0: kd> .frame /r 9                ← switch to frame 09 (I2cWaitForTxEmpty) and recover its registers
-09 fffff803`1a8c3c20 fffff803`1f612b21     vendori2c!I2cWaitForTxEmpty+0x23
+09 fffff803'1a8c3c20 fffff803'1f612b21     vendori2c!I2cWaitForTxEmpty+0x23
 rax=0000000000000019 rbx=ffffd0812c71a200 rcx=000000000000000a ... rdi=ffffd0812c6f0000 ...
 
 0: kd> dt vendori2c!_I2C_CONTROLLER @rbx
    +0x000 Signature        : 0x43633249 'I2cC'
-   +0x010 Regs             : 0xffffd081`2c6f0000 _I2C_REGS
+   +0x010 Regs             : 0xffffd081'2c6f0000 _I2C_REGS
    +0x018 TargetAddress    : 0x2c
    +0x020 BytesPending     : 4
    +0x028 LastError        : 0
    +0x030 TransferCount    : 0n981441
 
-0: kd> dt vendori2c!_I2C_REGS 0xffffd081`2c6f0000
+0: kd> dt vendori2c!_I2C_REGS 0xffffd081'2c6f0000
    +0x000 Control          : 0x00000003
    +0x004 TargetAddr       : 0x0000002c
    +0x008 TxFifo           : 0
@@ -1244,7 +1244,7 @@ FAILURE_BUCKET_ID:  AV_R_INVALID_hidclass!HidpDistributeInterruptReport
 ```
 
 **Reading it:**
-- **0x50**: an invalid kernel address was touched. Not NULL+offset this time: `ffffb40f`7a3c2fd8` looks like a perfectly normal **pool** address. A real-looking address that's invalid is a strong sign the memory **used to be** valid and was freed.
+- **0x50**: an invalid kernel address was touched. Not NULL+offset this time: `ffffb40f'7a3c2fd8` looks like a perfectly normal **pool** address. A real-looking address that's invalid is a strong sign the memory **used to be** valid and was freed.
 - **Arg2** (the help text shows how its meaning differs between x64 and Arm64): `0` = a read.
 - `!analyze` blames **`hidclass.sys`**, Microsoft's HID class driver. But look at the stack: `hidclass` is completing a report that **`tpfilter`** (a vendor touchpad filter) handed to it through a request completion. hidclass may simply be **the victim**: it received a request whose buffer pointed at freed memory.
 
@@ -1442,11 +1442,11 @@ nt!KiIdleLoop+0x...
 0: kd> ~3
 3: kd> k
  # Child-SP          RetAddr               Call Site
-00 ffff8f0c`3a5e7b90 fffff806`32a1e8d8     nt!PpmIdleExecuteTransition+0x...
-01 ffff8f0c`3a5e7c60 00000000`00000000     nt!KiIdleLoop+0x58
+00 ffff8f0c'3a5e7b90 fffff806'32a1e8d8     nt!PpmIdleExecuteTransition+0x...
+01 ffff8f0c'3a5e7c60 00000000'00000000     nt!KiIdleLoop+0x58
 
 3: kd> .frame /r 0
-00 ffff8f0c`3a5e7b90 fffff806`32a1e8d8     nt!PpmIdleExecuteTransition+0x...
+00 ffff8f0c'3a5e7b90 fffff806'32a1e8d8     nt!PpmIdleExecuteTransition+0x...
  x0=0000000000000004  x1=0000000040000000  ...
  pc=fffff8063292b10c ...
 ```
